@@ -1,0 +1,15 @@
+{
+  "name": "opennotepad",
+  "version": "1.0.0",
+  "description": "This program implements Object-Ortiented Programming architecture for the backend",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@tailwindcss/cli": "^4.1.5",
+    "tailwindcss": "^4.1.5"
+  }
+}
