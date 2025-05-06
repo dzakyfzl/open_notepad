@@ -1,12 +1,32 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hello World</title>
-    <link href="/css/output.css" rel="stylesheet">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Dashboard</title>
+  <link rel="stylesheet" href="static/css/css.css" />
 </head>
 <body>
-    <h1 class="text-[100px]">Hello, World!</h1>
+  <header id="navbar">
+    <div class="left">
+      <img src="static/img/logo.png" alt="Logo">
+    </div>
+    <div class="right">
+      <div class="search">
+        <img src="static/img/search.png" alt="Search Icon">
+        <input type="text" placeholder="Search notes">
+      </div>
+
+      <div class="date" onclick="document.getElementById('customDate').showPicker()">
+        <span>Date</span>
+        <img src="static/img/drop.png" alt="Drop Icon">
+        <input id="customDate" type="date">
+      </div>
+      
+      <img src="static/img/upload.png" alt="Upload Icon">
+      <img src="static/img/profile.png" alt="Profile Icon">  
+    </div>
+  </header>
+  <script src="/js/authPage.js"></script>
 </body>
 </html>
