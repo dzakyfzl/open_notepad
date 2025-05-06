@@ -1,16 +1,13 @@
 package com.kelompok5.open_notepad;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.server.WebSession;
-import org.springframework.ui.Model;
+
+import jakarta.servlet.http.HttpSession;
 
 @Controller
 public class PageController{
     @GetMapping("/")
-    public String home(WebSession session) {
+    public String home(HttpSession session) {
         // Check if the user is logged in
         if (session.getAttribute("username") == null) {
             // If not logged in, redirect to the main page
@@ -19,22 +16,13 @@ public class PageController{
         return "index";
     }
     @GetMapping("/login")
-    public String login(WebSession session) {
+    public String login(HttpSession session) {
         // Check if the user is logged in
         if (session.getAttribute("username") != null) {
             // If logged in, redirect to the main page
             return "redirect:/";
         }
-        return "loginPage";
-    }
-    @GetMapping("/register")
-    public String signup(WebSession session) {
-        // Check if the user is logged in
-        if (session.getAttribute("username") != null) {
-            // If logged in, redirect to the main page
-            return "redirect:/";
-        }
-        return "signUp";
+        return "authPage";
     }
 
 

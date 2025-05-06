@@ -19,7 +19,6 @@ body, html {
 
 .image-section {
     width: 70%;
-    background: url('bg.png') no-repeat center center;
     background-size: cover;
     position: relative;
 }
