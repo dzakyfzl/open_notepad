@@ -58,13 +58,3 @@ login.addEventListener("submit", function (event) {
   })
 } );
 
-
-// navbar
-
-
-function showDatePicker() {
-    const input = document.getElementById('customDate');
-    input.type = 'date';
-    input.focus();
-  }
-
