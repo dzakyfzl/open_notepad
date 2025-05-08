@@ -17,8 +17,8 @@ import jakarta.servlet.http.HttpSession;
 
 
 @RestController
-@RequestMapping("/api/auth")
-public class AccountController extends Validation {
+@RequestMapping("/api/account")
+public class AccountController extends Security{
 
     //Authentication API
     @PostMapping("/signin")//login
@@ -46,6 +46,9 @@ public class AccountController extends Validation {
         if(username == null || password == null || email == null || firstName == null || lastName == null) {
             return ResponseEntity.badRequest().body(Map.of("message", "All fields are required"));
         }
+        //Hash password and salt it
+        String salt = generateSalt();
+        String hashedPassword = hashPassword(password, salt);
         session.setAttribute("username", username);
         return ResponseEntity.ok().body(Map.of("message", "User registered successfully"));
     }
@@ -67,11 +70,15 @@ public class AccountController extends Validation {
     }
 
     @PostMapping("/delete")//delete account
-    public ResponseEntity<Map<String,String>> deleteAccount(HttpServletRequest request, HttpSession session) {
-        if(isSessionValid(session, request)) {
-            return ResponseEntity.badRequest().body(Map.of("message", "User not logged in"));
+    public ResponseEntity<Map<String,String>> deleteAccount(@RequestBody Map<String,String> requestData, HttpServletRequest request, HttpSession session) {
+        if(isSessionValid(session, request) || requestData.get("password") == null) {
+            return ResponseEntity.badRequest().body(Map.of("message", "User not logged in or passord not provided"));
         }
-        return ResponseEntity.ok().body(Map.of("message", "User account deleted successfully"));
+        
+        //Database querry to delete user account
+        String password = requestData.get("password");
+        String username = (String) session.getAttribute("username");
+        return ResponseEntity.ok().body(Map.of("message", "User "+  username +" account deleted successfully"));
     }
 
     @GetMapping("/info")//get user info

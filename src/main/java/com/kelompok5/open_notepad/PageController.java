@@ -6,7 +6,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 
 @Controller
-public class PageController extends Validation {
+public class PageController extends Security {
     @GetMapping("/")
     public String home(HttpSession session, HttpServletRequest request) {
         // Check if the user is logged in

@@ -16,7 +16,7 @@ signup.addEventListener("submit", function (event) {
     event.preventDefault(); // Prevent the default form submission
     const formData = new FormData(signup);
     const data = Object.fromEntries(formData.entries());
-    fetch("/api/signup", {
+    fetch("/api/account/signup", {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
@@ -39,7 +39,7 @@ login.addEventListener("submit", function (event) {
     event.preventDefault(); // Prevent the default form submission
     const formData = new FormData(login);
     const data = Object.fromEntries(formData.entries());
-    fetch("/api/auth/signin", {
+    fetch("/api/account/signin", {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
