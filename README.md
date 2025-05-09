@@ -8,6 +8,5 @@ This Program uses :
 - 
 ## How to Run
 for devs, use this steps :
-- in command prompt or terminal, write `cd open_notepad` to access /open_notepad folder
-- then run the command `.\mvnw spring-boot:run`
-- in local server, it will use port 8080
+- in terminal run the command `.\mvnw spring-boot:run`
+- in local server, it will use port `8080`
