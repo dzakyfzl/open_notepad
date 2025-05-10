@@ -1,6 +1,8 @@
 package com.kelompok5.open_notepad;
 import java.util.Map;
 
+import com.kelompok5.open_notepad.entity.*;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -32,7 +34,8 @@ public class AccountController extends Security{
             return ResponseEntity.badRequest().body(Map.of("message", "Username and password are required"));
         }
         session.setAttribute("username", username);
-
+        //Database querry to get user
+        
         return ResponseEntity.ok().body(Map.of("message", "User logged in successfully"));
     }
 
@@ -49,6 +52,10 @@ public class AccountController extends Security{
         //Hash password and salt it
         String salt = generateSalt();
         String hashedPassword = hashPassword(password, salt);
+        //Create User object
+        User user = new User(username, hashedPassword, email, firstName, lastName, salt);
+        //Database querry to insert user
+
         session.setAttribute("username", username);
         return ResponseEntity.ok().body(Map.of("message", "User registered successfully"));
     }
