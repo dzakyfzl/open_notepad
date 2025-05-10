@@ -1,0 +1,172 @@
+body, html {
+    margin: 0;
+    padding: 0;
+    font-family: 'Segoe UI', sans-serif;
+    height: 100%;
+    overflow: hidden;
+}
+/* navbar */
+#navbar {
+    width: 100%;
+    height: 70px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #d9f1e2;
+    padding: 0 20px;
+    box-sizing: border-box;
+}
+
+.left {
+    display: flex;
+    align-items: center;
+}
+
+.left img {
+    height: 43px;
+}
+
+.right {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.right img{
+    height: 40px;
+}
+
+.search {
+    display: flex;
+    align-items: center;
+    background-color: white;
+    padding: 5px 10px;
+    border-radius: 8px 0px 0px 8px;
+}
+
+.search img {
+    width: 16px;
+    height: 16px;
+    margin-right: 8px;
+}
+
+.search input {
+    border: none;
+    outline: none;
+    font-size: 14px;
+}
+
+.date {
+    display: flex;
+    margin-right: 20px;
+    align-items: center;
+    justify-content: space-between;
+    background-color: white;
+    padding: 5px 12px;
+    width: 100px;
+    height: 30px;
+    border-radius: 0px 8px 8px 0px;
+    font-size: 14px;
+    color: #333;
+    position: relative;
+    cursor: pointer;
+}
+
+.date span,
+.date img {
+    pointer-events: none;
+    z-index: 1;
+}
+
+.date img {
+    width: 12px;
+    height: 12px;
+    margin-left: 5px;
+}
+
+.date input {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    border: none;
+    cursor: pointer;
+    z-index: 2;
+}
+/* navbar-end */
+/* upload-notes-content */
+ .search-input {
+  padding: 6px 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+.dropdown {
+  padding: 6px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+}
+
+.icon {
+  width: 24px;
+  height: 24px;
+  cursor: pointer;
+}
+
+.container {
+  max-width: 600px;
+  margin: 40px auto;
+  padding: 0 20px;
+}
+
+h1 {
+  margin-bottom: 10px;
+  font-size: 24px;
+  color: #222;
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+label {
+  font-weight: 500;
+  margin-bottom: px;
+}
+
+.input {
+  padding:10px;
+  border: 1px solid #999;
+  border-radius: 10px;
+  width: 100%;
+}
+
+.row {
+  display: flex;
+  gap: 20px;
+  width: 103%;
+}
+
+.col {
+  flex: 1;
+}
+
+.button {
+  background-color: #205c3b;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  width: 103%;
+}
+
+.button:hover {
+  background-color: #184c30;
+}
+/* upload-notes-content-end */
+  
