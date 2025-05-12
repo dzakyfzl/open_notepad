@@ -7,11 +7,23 @@ public class View {
     private String moduleID;
     private Date dateViewed;
 
-    public View(String userID, String moduleID, Date dateViewed) {
-        this.dateViewed = dateViewed;
+    public void create(String userID, String moduleID) {
         this.userID = userID;
         this.moduleID = moduleID;
+        this.dateViewed = new Date(System.currentTimeMillis());
     }
+    
+    public void getFromDatabase(String userID, String moduleID) {
+        // Implement the logic to retrieve the view from the database
+        // This could involve using JDBC or an ORM framework like Hibernate
+        // Example: DatabaseConnection.getView(userID, moduleID);
+    }
+    public void uploadToDatabase() {
+        // Implement the logic to upload the rate to the database
+        // This could involve using JDBC or an ORM framework like Hibernate
+        // Example: DatabaseConnection.uploadRate(this);
+    }
+    
     // Getters and Setters
     public String getUserID() {
         return userID;
@@ -24,10 +36,5 @@ public class View {
     public Date getDateViewed() {
         return dateViewed;
     }
-    // Upload To Database
-    public void uploadToDatabase() {
-        // Implement the logic to upload the bookmark to the database
-        // This could involve using JDBC or an ORM framework like Hibernate
-        // Example: DatabaseConnection.uploadBookmark(this);
-    }
+
 }

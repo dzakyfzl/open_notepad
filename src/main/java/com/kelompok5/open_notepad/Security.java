@@ -9,7 +9,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 
 @Component
-public abstract class Security{
+public class Security{
     protected boolean isSessionValid(HttpSession session, HttpServletRequest request) {
         String sessionID = "000";
         String IPString = request.getRemoteAddr();

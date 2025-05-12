@@ -3,27 +3,21 @@ package com.kelompok5.open_notepad.entity;
 import java.sql.Date;
 
 public class Module {
-    private final String moduleID;
-    private final String ownerID;
+    private String moduleID;
+    private String ownerID;
     private String title;
     private String description;
     private String course;
+    private String major;
     private Date uploadDate;
     private boolean visibility;
-    private final  String file;
+    private File file;
 
-    public Module(String moduleID, String ownerID, String title, String description, String course, Date uploadDate, boolean visibility, String file) {
-        this.moduleID = moduleID;
-        this.ownerID = ownerID;
-        this.title = title;
-        this.description = description;
-        this.course = course;
-        this.uploadDate = uploadDate;
-        this.visibility = visibility;
-        this.file = file;
-    }
-    public void setVisibility(boolean visibility) {
-        this.visibility = visibility;
+    public void getFromDatabase(String moduleID){
+        this.file = new File();
+        //get module from database logic
+        
+
     }
     public void uploadToDatabase() {
         //upload module to database logic
@@ -50,8 +44,11 @@ public class Module {
     public boolean isVisibility() {
         return visibility;
     }
-    public String getFile() {
+    public File getFile() {
         return file;
+    }
+    public String getMajor() {
+        return major;
     }
 
     //setter
@@ -66,6 +63,12 @@ public class Module {
     }
     public void setUploadDate(Date uploadDate) {
         this.uploadDate = uploadDate;
+    }
+    public void setMajor(String major) {
+        this.major = major;
+    }
+    public void setVisibility(boolean visibility) {
+        this.visibility = visibility;
     }
 
 
