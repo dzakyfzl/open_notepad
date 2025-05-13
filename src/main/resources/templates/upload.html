@@ -1,67 +1,78 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>Upload Notes</title>
-    <link rel="stylesheet" href="/css/styles.css" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" integrity="sha512-DfN3huwA5R8SlB9lg/MqP4whXpqv6GCpMf6VgL9Ih97UQobgb3fpvsvHJZaEm8a+q0xTLF7vIqZHRZTrHeAPvA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Upload Notes - Open Notepad</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" integrity="sha512-DfN3huwA5R8SlB9lg/MqP4whXpqv6GCpMf6VgL9Ih97UQobgb3fpvsvHJZaEm8a+q0xTLF7vIqZHRZTrHeAPvA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body>
-    <!-- navbar -->
-    <header id="navbar">
-        <div class="left">
-            <a href="/"><img src="/img/logo.png" alt="Logo"></a>
+<body class="h-full font-sans">
+  <!-- navbar -->
+  <header class="w-full h-[70px] flex justify-between items-center bg-green-100 px-5 box-border">
+    <div class="flex items-center">
+      <a href="/"><img src="img/logo.png" alt="Logo" class="h-[43px]"></a>
+    </div>
+    <div class="flex items-center gap-2">
+      <div class="flex items-center bg-white px-3 py-1 rounded-l-md">
+        <img src="img/search.png" alt="Search Icon" class="w-4 h-4 mr-2">
+        <input type="text" placeholder="Search notes" class="text-sm border-none outline-none"/>
+      </div>
+      <a href="myNote.html"><img src="img/myNote.png" alt="myNote Icon" class="h-10"></a>
+      <a href="upload.html"><img src="img/upload.png" alt="Upload Icon" class="h-10"></a>
+      <a href="profile.html"><img src="img/profile.png" alt="Profile Icon" class="h-10"></a>
+    </div>
+  </header>
+  <!-- navbar end -->
+
+  <!-- upload form -->
+  <div class="max-w-xl mx-auto mt-10 px-5 bg-white p-8 rounded-lg">
+    <h1 class="text-3xl text-gray-800 mb-6 font-bold">Upload Notes</h1>
+    <form id="uploadForm" class="flex flex-col gap-4">
+      <div>
+        <label class="block text-base font-bold mb-2">Title</label>
+        <input type="text" id="title" name="title" class="p-2 border border-gray-300 rounded-md w-full" required/>
+      </div>
+
+      <div>
+        <label class="block text-base font-bold mb-2">Description</label>
+        <textarea id="description" name="description" class="p-2 border border-gray-300 rounded-md w-full h-24" required></textarea>
+      </div>
+
+      <div class="flex gap-5 w-full">
+        <div class="flex-1">
+          <label class="block text-base font-bold mb-2">Major</label>
+          <select id="major" name="major" onchange="updateCourses()" class="p-2 border border-gray-300 rounded-md w-full" required>
+            <option value="" disabled selected>Select Major</option>
+            <option value="informatika">S1 Informatika</option>
+            <option value="data-sains">S1 Data Sains</option>
+            <option value="rekayasa-perangkat-lunak">S1 Rekayasa Perangkat Lunak</option>
+            <option value="teknologi-informasi">S1 Teknologi Informasi</option>
+          </select>
         </div>
-        <div class="right">
-            <div class="search">
-                <img src="/img/search.png" alt="Search Icon">
-                <input type="text" placeholder="Search notes">
-            </div>
-            <a href="/user/notes"><img src="/img/myNote.png" alt="myNote Icon"></a>
-            <a href="/user/notes/upload"><img src="/img/upload.png" alt="Upload Icon"></a>
-            <a href="/user/profile"><img src="/img/profile.png" alt="Profile Icon"></a>
+        <div class="flex-1">
+          <label class="block text-base font-bold mb-2">Course</label>
+          <select id="course" name="course" class="p-2 border border-gray-300 rounded-md w-full" required>
+            <option value="" disabled selected>Select Course</option>
+          </select>
         </div>
-    </header>  
-    <!-- navbar end -->
+      </div>
 
-    <!-- upload form -->
-     <div class="container">
-      <h1>Upload Notes</h1>
-      <form>
-        <label>Title</label>
-        <input type="text" class="input"/>
+      <div>
+        <label class="block text-base font-bold mb-2">Upload File</label>
+        <input type="file" id="noteFile" name="noteFile" class="p-2 border border-gray-300 rounded-md w-full" required/>
+        <p class="text-sm text-gray-500 mt-1">Supported formats: PDF, DOCX, PPT, TXT (Max: 10MB)</p>
+      </div>
 
-        <label>Description</label>
-        <input type="text" class="input"/>
-
-        <div class="row">
-          <div class="col">
-            <label>Major</label>
-            <select id="major" class="input" onchange="updateCourses()">
-              <option disabled selected>Select Major</option>
-              <option value="informatika">S1 Informatika</option>
-              <option value="data-sains">S1 Data Sains</option>
-              <option value="rekayasa-perangkat-lunak">S1 Rekayasa Perangkat Lunak</option>
-              <option value="teknologi-informasi">S1 Teknologi Informasi</option>
-            </select>
-          </div>
-        <div class="col">
-            <label>Course</label>
-            <select id="course" class="input">
-              <option disabled selected>Select Course</option>
-            </select>
-          </div>
-        </div>
-
-      <label>Upload File</label>
-      <input type="file" class="input"/>
-
-      <button type="submit" class="button">Upload Note</button>
+      <div class="flex justify-end mt-4">
+        <button type="submit" class="bg-emerald-400 px-6 py-2 text-black hover:bg-emerald-500 rounded-md">Upload Note</button>
+      </div>
     </form>
   </div>
-
+  <!-- upload form end -->
+   
   <script>
+    // Course data for dropdown
     const courseData = {
       "informatika": [
         "Agama",
@@ -211,11 +222,12 @@
       ]
     };
 
+    // Update courses dropdown based on selected major
     function updateCourses() {
       const major = document.getElementById("major").value;
       const courseSelect = document.getElementById("course");
 
-      courseSelect.innerHTML = '<option disabled selected>Select Course</option>';
+      courseSelect.innerHTML = '<option value="" disabled selected>Select Course</option>';
 
       if (courseData[major]) {
         courseData[major].forEach(course => {
@@ -226,7 +238,104 @@
         });
       }
     }
+
+    // Load user data from localStorage
+    document.addEventListener('DOMContentLoaded', function() {
+      // Load user data
+      const userData = JSON.parse(localStorage.getItem('userData') || '{}');
+      
+      // Update user info if available
+      if (userData.firstName || userData.lastName || userData.email) {
+        // Show user info panel
+        document.getElementById('userInfo').classList.remove('hidden');
+        
+        // Set user name
+        let displayName = '';
+        if (userData.firstName && userData.lastName) {
+          displayName = `${userData.firstName} ${userData.lastName}`;
+        } else if (userData.firstName) {
+          displayName = userData.firstName;
+        } else if (userData.fullName) {
+          // For backward compatibility with older data format
+          displayName = userData.fullName;
+        } else {
+          displayName = 'User';
+        }
+        document.getElementById('userName').textContent = displayName;
+        
+        // Set user email
+        if (userData.email) {
+          document.getElementById('userEmail').textContent = userData.email;
+        }
+        
+        // Set user avatar if available
+        if (userData.profileImage) {
+          const userAvatarImg = document.getElementById('userAvatarImg');
+          userAvatarImg.src = userData.profileImage;
+          userAvatarImg.classList.remove('hidden');
+          document.getElementById('userAvatarIcon').classList.add('hidden');
+        }
+      }
+      
+      // Handle form submission
+      document.getElementById('uploadForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        // Get form data
+        const title = document.getElementById('title').value;
+        const description = document.getElementById('description').value;
+        const major = document.getElementById('major').value;
+        const course = document.getElementById('course').value;
+        const fileInput = document.getElementById('noteFile');
+        const file = fileInput.files[0];
+        
+        if (!file) {
+          alert('Please select a file to upload');
+          return;
+        }
+        
+        // Create note object
+        const noteData = {
+          id: Date.now(), // Generate unique ID
+          title: title,
+          description: description,
+          major: major,
+          course: course,
+          fileName: file.name,
+          fileSize: file.size,
+          fileType: file.type,
+          uploadDate: new Date().toISOString(),
+          uploadedBy: {
+            id: userData.id || 'anonymous',
+            name: displayName || 'Anonymous User',
+            email: userData.email || 'unknown'
+          }
+        };
+        
+        // Get existing notes or create empty array
+        const existingNotes = JSON.parse(localStorage.getItem('userNotes') || '[]');
+        
+        // Add new note
+        existingNotes.push(noteData);
+        
+        // Save to localStorage
+        try {
+          localStorage.setItem('userNotes', JSON.stringify(existingNotes));
+          alert('Note uploaded successfully!');
+          
+          // Reset form
+          document.getElementById('uploadForm').reset();
+          
+          // Redirect to my notes page
+          setTimeout(() => {
+            window.location.href = 'myNote.html';
+          }, 1000);
+        } catch (error) {
+          console.error('Error saving note:', error);
+          alert('Failed to upload note. Please try again.');
+        }
+      });
+    });
   </script>
-    <!-- upload form end-->
 </body>
 </html>

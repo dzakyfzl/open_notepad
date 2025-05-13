@@ -3,27 +3,171 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My Notes</title>
-    <link rel="stylesheet" href="/css/styles.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" integrity="sha512-DfN3huwA5R8SlB9lg/MqP4whXpqv6GCpMf6VgL9Ih97UQobgb3fpvsvHJZaEm8a+q0xTLF7vIqZHRZTrHeAPvA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <title>Open Notepad - Profile</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+
 </head>
 <body>
     <!-- navbar -->
-   <header id="navbar">
-        <div class="left">
-            <a href="/"><img src="/img/logo.png" alt="Logo"></a>
+    <header class="w-full h-[70px] flex justify-between items-center bg-green-100 px-5 box-border">
+        <div class="flex items-center">
+            <a href="/"><img src="img/logo.png" alt="Logo" class="h-[43px]"></a>
         </div>
-        <div class="right">
-            <div class="search">
-                <img src="/img/search.png" alt="Search Icon">
-                <input type="text" placeholder="Search notes">
+        <div class="flex items-center gap-2">
+            <div class="flex items-center bg-white px-3 py-1 rounded-l-md">
+                <img src="img/search.png" alt="Search Icon" class="w-4 h-4 mr-2">
+                <input type="text" placeholder="Search notes" class="text-sm border-none outline-none"/>
             </div>
-            <a href="/user/notes"><img src="/img/myNote.png" alt="myNote Icon"></a>
-            <a href="/user/notes/upload"><img src="/img/upload.png" alt="Upload Icon"></a>
-            <a href="/user/profile"><img src="/img/profile.png" alt="Profile Icon"></a>
+            <a href="myNote.html"><img src="img/myNote.png" alt="myNote Icon" class="h-10"></a>
+            <a href="upload.html"><img src="img/upload.png" alt="Upload Icon" class="h-10"></a>
+            <a href="profile.html"><img src="img/profile.png" alt="Profile Icon" class="h-10"></a>
         </div>
     </header>
     <!-- navbar end -->
-    
+
+    <!-- Main Content -->
+    <main class="mx-auto max-w-6xl p-8 bg-white mt-4 rounded-lg">
+        <h1 class="mb-8 text-4xl font-bold">Profile</h1>
+
+        <div class="grid grid-cols-1 gap-8 md:grid-cols-2">
+            <!-- Left Column -->
+            <div class="space-y-6">
+                <div>
+                    <h2 class="mb-4 text-xl font-bold">Avatar Profile</h2>
+                    <div class="flex flex-col items-start">
+                        <div id="profileImageContainer" class="mb-4 h-32 w-32 overflow-hidden rounded-full border-2 flex items-center justify-center bg-white">
+                            <img id="profileImageDisplay" class="h-full w-full object-cover hidden" alt="Profile Picture">
+                            <svg id="profileIconDisplay" xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 text-gray-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                            </svg>
+                        </div>
+                        <a href="edit-profile.html" class="text-black underline">Upload Picture</a>
+                    </div>
+                </div>
+
+                <div class="space-y-4">
+                    <div class="flex items-center gap-2">
+                        <img src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/mdi_linkedin-1kMkmeryjsjlD3Rnvvex4zuc38enni.png" alt="LinkedIn" class="w-6 h-6">
+                        <span id="linkedinStatus">Add LinkedIn</span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <img src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/iconsax-instagram-lr8l3JZrI0k0CSIaJSohbMZCCUNBqZ.png" alt="Instagram" class="w-6 h-6">
+                        <span id="instagramStatus">Add Instagram</span>
+                    </div>
+                </div>
+
+                <div>
+                    <h2 class="mb-2 text-xl font-bold">About Me</h2>
+                    <p id="aboutMeDisplay" class="text-gray-700">
+                        Lorem ipsum dolor sit amet consectetur adipiscing elit. Consectetur adipiscing elit quisque faucibus ex sapien vitae. Ex sapien vitae pellentesque sem placerat in id. Placerat in id cursus mi pretium tellus duis. Pretium tellus duis convallis tempus leo eu aenean Lorem ipsum dolor sit amet consectetur adipiscing elit. Consectetur adipiscing elit quisque faucibus ex sapien vitae. Ex sapien vitae pellentesque sem placerat in id. Placerat in id cursus mi pretium tellus duis. Pretium tellus duis convallis tempus.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Right Column -->
+            <div class="space-y-6">
+                <div>
+                    <h2 class="mb-2 text-xl font-bold">Full name</h2>
+                    <p id="fullNameDisplay" class="text-gray-700">Lorem ipsum dolor sit amet</p>
+                </div>
+
+                <div>
+                    <h2 class="mb-2 text-xl font-bold">E-mail</h2>
+                    <p id="emailDisplay" class="text-gray-700">Loremipsum@gmail.com</p>
+                </div>
+
+                <div>
+                    <h2 class="mb-2 text-xl font-bold">Password</h2>
+                    <div class="flex items-center gap-2">
+                        <span id="passwordDisplay" class="text-gray-700">**********</span>
+                        <button id="togglePasswordView" class="text-gray-500">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="flex justify-end pt-4 mt-8">
+                    <a href="editProfile.html" class="bg-emerald-400 px-6 py-2 text-black hover:bg-emerald-500 rounded-md">
+                        Edit Profile
+                    </a>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Load user data from localStorage
+            const userData = JSON.parse(localStorage.getItem('userData') || '{}');
+            
+            // Update profile display with saved data
+            // Handle both new format (firstName, lastName) and old format (fullName)
+            if (userData.firstName || userData.lastName) {
+                // Combine firstName and lastName for display
+                const firstName = userData.firstName || '';
+                const lastName = userData.lastName || '';
+                const fullName = (firstName + ' ' + lastName).trim();
+                
+                document.getElementById('fullNameDisplay').textContent = fullName;
+            } else if (userData.fullName) {
+                // Use existing fullName if available (backward compatibility)
+                document.getElementById('fullNameDisplay').textContent = userData.fullName;
+            }
+            
+            if (userData.email) {
+                document.getElementById('emailDisplay').textContent = userData.email;
+            }
+            
+            if (userData.aboutMe) {
+                document.getElementById('aboutMeDisplay').textContent = userData.aboutMe;
+            }
+            
+            if (userData.password) {
+                document.getElementById('passwordDisplay').textContent = '**********';
+            }
+            
+            // Update LinkedIn status
+            if (userData.linkedinConnected) {
+                document.getElementById('linkedinStatus').textContent = 'LinkedIn Connected';
+            }
+            
+            // Update Instagram status
+            if (userData.instagramConnected) {
+                document.getElementById('instagramStatus').textContent = 'Instagram Connected';
+            }
+            
+            // Display profile image if available
+            if (userData.profileImage) {
+                const profileImage = document.getElementById('profileImageDisplay');
+                profileImage.src = userData.profileImage;
+                profileImage.classList.remove('hidden');
+                document.getElementById('profileIconDisplay').classList.add('hidden');
+            }
+            
+            // Toggle password visibility
+            document.getElementById('togglePasswordView').addEventListener('click', function() {
+                const passwordDisplay = document.getElementById('passwordDisplay');
+                if (passwordDisplay.textContent === '**********' && userData.password) {
+                    passwordDisplay.textContent = userData.password;
+                    this.innerHTML = `
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21" />
+                        </svg>
+                    `;
+                } else {
+                    passwordDisplay.textContent = '**********';
+                    this.innerHTML = `
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                        </svg>
+                    `;
+                }
+            });
+        });
+    </script>
 </body>
 </html>
