@@ -268,6 +268,79 @@ body, html {
   }
   
   
+ /* upload-notes-content */
+ .search-input {
+  padding: 6px 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+.dropdown {
+  padding: 6px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+}
+
+.icon {
+  width: 24px;
+  height: 24px;
+  cursor: pointer;
+}
+
+.container {
+  max-width: 600px;
+  margin: 40px auto;
+  padding: 0 20px;
+}
+
+h1 {
+  margin-bottom: 20px;
+  font-size: 24px;
+  color: #222;
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+label {
+  font-weight: 500;
+  margin-bottom: px;
+}
+
+.input {
+  padding: 10px;
+  border: 1px solid #999;
+  border-radius: 10px;
+  width: 100%;
+}
+
+.row {
+  display: flex;
+  gap: 20px;
+}
+
+.col {
+  flex: 1;
+}
+
+.button {
+  background-color: #205c3b;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.button:hover {
+  background-color: #184c30;
+}
+/* upload-notes-content-end */
+  
+
 /* note page */
 .pdf-container { 
   margin: 40px 150px;
