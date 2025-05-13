@@ -62,5 +62,25 @@ public class PageController{
         }
         return "myNote";
     }
+
+    @GetMapping("/user/profile/edit")
+    public String editProfile(HttpSession session, HttpServletRequest request) {
+        // Check if the user is logged in
+        if (security.isSessionValid(session, request)) {
+            // If not logged in, redirect to the main page
+            return "redirect:/login";
+        }
+        return "editProfile";
+    }
+
+    @GetMapping("/notes")
+    public String notesPage(HttpSession session, HttpServletRequest request) {
+        // Check if the user is logged in
+        if (security.isSessionValid(session, request)) {
+            // If not logged in, redirect to the main page
+            return "redirect:/login";
+        }
+        return "note";
+    }
     
 }
