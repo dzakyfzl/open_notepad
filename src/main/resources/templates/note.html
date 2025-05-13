@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Introduction to OOP</title>
+    <link rel="stylesheet" href="static/css/css.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+
+    <header id="navbar">
+        <div class="left">
+        <img src="static/img/logo.png" alt="Logo">
+        </div>
+        <div class="right">
+        <div class="search">
+            <img src="static/img/search.png" alt="Search Icon">
+            <input type="text" placeholder="Search notes">
+        </div>
+        
+        <a href="myNote.html"><img src="static/img/myNote.png" alt="myNote Icon"></a>
+        <a href="upload.html"><img src="static/img/upload.png" alt="Upload Icon"></a>
+        <a href="profile.html"><img src="static/img/profile.png" alt="Profile Icon">  </a>
+        </div>
+    </header>
+    
+    <div class="pdf-container">
+        <div class="judul">
+            <h2>Introduction to OOP</h2>
+            <h4>Major</h4>
+        </div>     
+        <div class="line"></div>
+        <iframe src="file.pdf"></iframe>
+        <div class="star" >
+            <div id="stars" class="star-rating">
+                <i class="fa-solid fa-star" data-value="1"></i>
+                <i class="fa-solid fa-star" data-value="2"></i>
+                <i class="fa-solid fa-star" data-value="3"></i>
+                <i class="fa-solid fa-star" data-value="4"></i>
+                <i class="fa-solid fa-star" data-value="5"></i>
+            </div>
+            <div>
+                
+            </div>
+        </div>
+    </div>
+    <script>
+    const stars = document.querySelectorAll('#stars i');
+    const ratingText = document.getElementById('rating-value');
+    let currentRating = 0;
+
+    stars.forEach(star => {
+        star.addEventListener('click', () => {
+        currentRating = star.getAttribute('data-value');
+        updateStars(currentRating);
+        ratingText.textContent = `You rated: ${currentRating} star${currentRating > 1 ? 's' : ''}`;
+
+        // Kirim rating ke Spring Boot
+        fetch('http://localhost:8080/api/ratings', {
+            method: 'POST',
+            headers: {
+            'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+            noteId: 123,            // <-- ganti dengan ID catatan sebenarnya
+            rating: currentRating
+            })
+        })
+        .then(response => {
+            if (!response.ok) throw new Error('Network error');
+            return response.json();
+        })
+        .then(data => {
+            console.log('Rating submitted:', data);
+        })
+        .catch(err => {
+            console.error('Submit failed:', err);
+        });
+        });
+
+        star.addEventListener('mouseover', () => updateStars(star.getAttribute('data-value')));
+        star.addEventListener('mouseout', () => updateStars(currentRating));
+    });
+
+    function updateStars(rating) {
+        stars.forEach(star => {
+        star.classList.toggle('active', star.getAttribute('data-value') <= rating);
+        });
+    }
+    </script>
+
+</body>
+</html>
