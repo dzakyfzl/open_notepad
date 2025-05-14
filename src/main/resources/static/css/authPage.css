@@ -166,26 +166,26 @@ body, html {
 
 iframe {
   width:90%;
-  height: 700px;
+  height: 100%;
   background-color: #3C3C3C;
-  padding-bottom: 10px;
   border: none;
 }
 
 .star-rating {
-  text-align: right;
-  width: 21.2%;
-  font-size: 4rem;
+  text-align: left;
+  width: 23%;
+  font-size: 2rem;
   color: #ccc;
   cursor: pointer;
 }
+
 .star-rating .active {
     color: gold;
 }
+
 .star {
-    padding-top: 50px;
     width: 100%; 
     margin: 50px auto;  
     display: flex; 
-    flex-direction: row;
+    flex-direction: column;
   }
