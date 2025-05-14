@@ -15,7 +15,7 @@
         </div>
         <div class="flex items-center gap-2">
             <div class="flex items-center bg-white px-3 py-1 rounded-l-md">
-                <img src="/search.png" alt="Search Icon" class="w-4 h-4 mr-2">
+                <img src="/img/search.png" alt="Search Icon" class="w-4 h-4 mr-2">
                 <input type="text" placeholder="Search notes" class="text-sm border-none outline-none"/>
             </div>
             <a href="/user/notes"><img src="/img/myNote.png" alt="myNote Icon" class="h-10"></a>
@@ -41,7 +41,7 @@
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                             </svg>
                         </div>
-                        <a href="edit-profile.html" class="text-black underline">Upload Picture</a>
+                        <a href="/user/profile/edit" class="text-black underline">Upload Picture</a>
                     </div>
                 </div>
 
@@ -76,21 +76,8 @@
                     <p id="emailDisplay" class="text-gray-700">Loremipsum@gmail.com</p>
                 </div>
 
-                <div>
-                    <h2 class="mb-2 text-xl font-bold">Password</h2>
-                    <div class="flex items-center gap-2">
-                        <span id="passwordDisplay" class="text-gray-700">**********</span>
-                        <button id="togglePasswordView" class="text-gray-500">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                            </svg>
-                        </button>
-                    </div>
-                </div>
-
                 <div class="flex justify-end pt-4 mt-8">
-                    <a href="editProfile.html" class="bg-emerald-400 px-6 py-2 text-black hover:bg-emerald-500 rounded-md">
+                    <a href="/user/profile/edit" class="bg-emerald-400 px-6 py-2 text-black hover:bg-emerald-500 rounded-md">
                         Edit Profile
                     </a>
                 </div>
@@ -124,10 +111,7 @@
             if (userData.aboutMe) {
                 document.getElementById('aboutMeDisplay').textContent = userData.aboutMe;
             }
-            
-            if (userData.password) {
-                document.getElementById('passwordDisplay').textContent = '**********';
-            }
+    
             
             // Update LinkedIn status
             if (userData.linkedinConnected) {
@@ -147,26 +131,6 @@
                 document.getElementById('profileIconDisplay').classList.add('hidden');
             }
             
-            // Toggle password visibility
-            document.getElementById('togglePasswordView').addEventListener('click', function() {
-                const passwordDisplay = document.getElementById('passwordDisplay');
-                if (passwordDisplay.textContent === '**********' && userData.password) {
-                    passwordDisplay.textContent = userData.password;
-                    this.innerHTML = `
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21" />
-                        </svg>
-                    `;
-                } else {
-                    passwordDisplay.textContent = '**********';
-                    this.innerHTML = `
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                        </svg>
-                    `;
-                }
-            });
         });
     </script>
 </body>

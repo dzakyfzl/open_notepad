@@ -54,7 +54,7 @@ public class PageController{
     }
 
     @GetMapping("/user/notes")
-    public String notes(HttpSession session, HttpServletRequest request) {
+    public String myNotes(HttpSession session, HttpServletRequest request) {
         // Check if the user is logged in
         if (security.isSessionValid(session, request)) {
             // If not logged in, redirect to the main page
