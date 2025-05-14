@@ -60,7 +60,7 @@
         </div>
 
         <!-- Note Preview Modal -->
-        <div id="notePreviewModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50">
+        <div id="notePreviewModal" class="fixed inset-0 bg-black bg-opacity-50 items-center justify-center hidden z-50">
             <div class="bg-white p-6 rounded-lg w-full max-w-3xl max-h-[80vh] overflow-y-auto">
                 <div class="flex justify-between items-center mb-4">
                     <h2 id="previewTitle" class="text-2xl font-bold">Note Title</h2>
@@ -166,7 +166,9 @@
             
             // Close preview modal
             document.getElementById('closePreviewBtn').addEventListener('click', function() {
-                document.getElementById('notePreviewModal').classList.add('hidden');
+                const modal = document.getElementById('notePreviewModal');
+                modal.classList.add('hidden');
+                modal.classList.remove('flex');
             });
             
             // Preview approve button
@@ -287,8 +289,10 @@
                 
                 // Set note ID for action buttons
                 document.getElementById('previewApproveBtn').setAttribute('data-note-id', noteId);
-                document.getElementById('previewRejectBtn').setAttribute('data-note-id', noteId);
-                
+                // Show modal
+                const modal = document.getElementById('notePreviewModal');
+                modal.classList.remove('hidden');
+                modal.classList.add('flex');
                 // Show modal
                 document.getElementById('notePreviewModal').classList.remove('hidden');
             }

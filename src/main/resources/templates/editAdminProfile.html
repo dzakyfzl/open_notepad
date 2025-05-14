@@ -126,7 +126,7 @@
         </form>
 
         <!-- LinkedIn Connect Modal -->
-        <div id="linkedinModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50">
+        <div id="linkedinModal" class="fixed inset-0 bg-black bg-opacity-50 items-center justify-center hidden z-50">
             <div class="bg-white p-6 rounded-lg w-full max-w-md">
                 <h2 class="text-2xl font-bold mb-4">Connect LinkedIn</h2>
                 <p class="mb-4">Enter your LinkedIn username to connect your account:</p>
@@ -141,7 +141,7 @@
         </div>
 
         <!-- Instagram Connect Modal -->
-        <div id="instagramModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50">
+        <div id="instagramModal" class="fixed inset-0 bg-black bg-opacity-50 items-center justify-center hidden z-50">
             <div class="bg-white p-6 rounded-lg w-full max-w-md">
                 <h2 class="text-2xl font-bold mb-4">Connect Instagram</h2>
                 <p class="mb-4">Enter your Instagram username to connect your account:</p>
@@ -275,14 +275,18 @@
             
             // LinkedIn connection
             document.getElementById('linkedinBtn').addEventListener('click', function() {
-                document.getElementById('linkedinModal').classList.remove('hidden');
+                const modal = document.getElementById('linkedinModal');
+                modal.classList.remove('hidden');
+                modal.classList.add('flex');
                 if (adminData.linkedinUsername) {
                     document.getElementById('linkedinUsername').value = adminData.linkedinUsername;
                 }
             });
             
             document.getElementById('cancelLinkedinBtn').addEventListener('click', function() {
-                document.getElementById('linkedinModal').classList.add('hidden');
+                const modal = document.getElementById('linkedinModal');
+                modal.classList.add('hidden');
+                modal.classList.remove('flex');
             });
             
             document.getElementById('connectLinkedinBtn').addEventListener('click', function() {
@@ -295,13 +299,20 @@
                     document.getElementById('linkedinModal').classList.add('hidden');
                 }
             });
-            
             // Instagram connection
             document.getElementById('instagramBtn').addEventListener('click', function() {
-                document.getElementById('instagramModal').classList.remove('hidden');
+                const modal = document.getElementById('instagramModal');
+                modal.classList.remove('hidden');
+                modal.classList.add('flex');
                 if (adminData.instagramUsername) {
                     document.getElementById('instagramUsername').value = adminData.instagramUsername;
                 }
+            });
+            
+            document.getElementById('cancelInstagramBtn').addEventListener('click', function() {
+                const modal = document.getElementById('instagramModal');
+                modal.classList.add('hidden');
+                modal.classList.remove('flex');
             });
             
             document.getElementById('cancelInstagramBtn').addEventListener('click', function() {
