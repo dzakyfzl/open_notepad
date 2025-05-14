@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Open Notepad - Admin Profile</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body>
+    <!-- navbar -->
+    <header class="w-full h-[70px] flex justify-between items-center bg-green-100 px-5 box-border">
+        <div class="flex items-center">
+            <a href="/"><img src="img/logo.png" alt="Logo" class="h-[43px]"></a>
+        </div>
+        <div class="flex items-center gap-2">
+            <div class="flex items-center bg-white px-3 py-1 rounded-l-md">
+                <img src="img/search.png" alt="Search Icon" class="w-4 h-4 mr-2">
+                <input type="text" placeholder="Search notes" class="text-sm border-none outline-none"/>
+            </div>
+            <a href="admin.html"><img src="img/admin.png" alt="Admin Icon" class="h-10"></a>
+            <a href="adminProfile.html" id="profileNavLink" class="h-10 w-10 flex items-center justify-center">
+                <div id="profileNavImage" class="h-8 w-8 rounded-full overflow-hidden hidden">
+                    <img id="navProfileImg" src="/placeholder.svg" alt="Profile" class="h-full w-full object-cover">
+                </div>
+                <img id="profileNavIcon" src="img/profile.png" alt="Profile Icon" class="h-10">
+            </a>
+        </div>
+    </header>
+    <!-- navbar end -->
+
+    <!-- Main Content -->
+    <main class="mx-auto max-w-6xl p-8 bg-white mt-4 rounded-lg">
+        <h1 class="mb-8 text-4xl font-bold">Profile</h1>
+
+        <div class="grid grid-cols-1 gap-8 md:grid-cols-2">
+            <!-- Left Column -->
+            <div class="space-y-6">
+                <div>
+                    <h2 class="mb-4 text-xl font-bold">Avatar Profile</h2>
+                    <div class="flex flex-col items-start">
+                        <div id="profileImageContainer" class="mb-4 h-24 w-24 overflow-hidden rounded-full border flex items-center justify-center bg-white">
+                            <img id="profileImage" class="h-full w-full object-cover hidden" alt="Profile Picture">
+                            <svg id="profileIcon" xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-gray-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                            </svg>
+                        </div>
+                        <a href="editAdminProfile.html" class="text-black underline cursor-pointer">
+                            Upload Picture
+                        </a>
+                    </div>
+                </div>
+
+                <div class="space-y-2">
+                    <div id="linkedinContainer" class="flex items-center gap-2">
+                        <img src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/mdi_linkedin-1kMkmeryjsjlD3Rnvvex4zuc38enni.png" alt="LinkedIn" class="w-6 h-6">
+                        <span id="linkedinText">Add LinkedIn</span>
+                    </div>
+                    <div id="instagramContainer" class="flex items-center gap-2">
+                        <img src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/iconsax-instagram-lr8l3JZrI0k0CSIaJSohbMZCCUNBqZ.png" alt="Instagram" class="w-6 h-6">
+                        <span id="instagramText">Add Instagram</span>
+                    </div>
+                </div>
+
+                <div>
+                    <h2 class="mb-2 text-xl font-bold">About Me</h2>
+                    <p id="aboutMeText" class="text-gray-700">
+                        Lorem ipsum dolor sit amet consectetur adipiscing elit. Consectetur adipiscing elit quisque faucibus ex sapien vitae. Ex sapien vitae pellentesque sem placerat in id cursus mi pretium. Pretium tellus duis convallis tempus leo eu aenean Lorem ipsum dolor sit amet consectetur adipiscing elit. Consectetur adipiscing elit quisque faucibus ex sapien vitae. Ex sapien vitae pellentesque sem placerat in id. Placerat in id cursus mi pretium tellus duis. Pretium tellus duis convallis tempus.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Right Column -->
+            <div class="space-y-4">
+                <div>
+                    <h3 class="font-medium text-gray-500">Username</h3>
+                    <p id="usernameText" class="text-black">mhmmdaffariza</p>
+                </div>
+
+                <div>
+                    <h3 class="font-medium text-gray-500">Full Name</h3>
+                    <p id="fullNameText" class="text-black">Muhammad Daffa Fariza</p>
+                </div>
+
+                <div>
+                    <h3 class="font-medium text-gray-500">E-mail</h3>
+                    <p id="emailText" class="text-black">mdaffariza22@gmail.com</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="flex justify-end mt-8">
+            <a href="editAdminProfile.html" class="bg-emerald-400 px-6 py-2 text-black hover:bg-emerald-500 rounded-md">
+                Edit Profile
+            </a>
+        </div>
+    </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Load admin data from localStorage
+            const adminData = JSON.parse(localStorage.getItem('adminData') || '{}');
+            
+            // Update profile information
+            if (adminData.username) {
+                document.getElementById('usernameText').textContent = adminData.username;
+            }
+            
+            // Combine first name and last name for full name
+            if (adminData.firstName || adminData.lastName) {
+                const firstName = adminData.firstName || '';
+                const lastName = adminData.lastName || '';
+                document.getElementById('fullNameText').textContent = `${firstName} ${lastName}`.trim();
+            }
+            
+            if (adminData.email) {
+                document.getElementById('emailText').textContent = adminData.email;
+            }
+            
+            if (adminData.aboutMe) {
+                document.getElementById('aboutMeText').textContent = adminData.aboutMe;
+            }
+            
+            // Display profile image if available
+            if (adminData.profileImage) {
+                // Update profile image in the profile section
+                const profileImage = document.getElementById('profileImage');
+                profileImage.src = adminData.profileImage;
+                profileImage.classList.remove('hidden');
+                document.getElementById('profileIcon').classList.add('hidden');
+                
+                // Update profile image in the navbar
+                const navProfileImg = document.getElementById('navProfileImg');
+                navProfileImg.src = adminData.profileImage;
+                document.getElementById('profileNavImage').classList.remove('hidden');
+                document.getElementById('profileNavIcon').classList.add('hidden');
+            }
+            
+            // Update LinkedIn status
+            if (adminData.linkedinUsername) {
+                document.getElementById('linkedinText').textContent = adminData.linkedinUsername;
+                // Change the container to a link if username exists
+                document.getElementById('linkedinContainer').onclick = function() {
+                    window.open(`https://linkedin.com/in/${adminData.linkedinUsername}`, '_blank');
+                };
+                document.getElementById('linkedinContainer').classList.add('cursor-pointer');
+            } else {
+                document.getElementById('linkedinText').textContent = 'Add LinkedIn';
+                // Make it link to edit profile page
+                document.getElementById('linkedinContainer').onclick = function() {
+                    window.location.href = 'editAdminProfile.html';
+                };
+                document.getElementById('linkedinContainer').classList.add('cursor-pointer');
+            }
+            
+            // Update Instagram status
+            if (adminData.instagramUsername) {
+                document.getElementById('instagramText').textContent = adminData.instagramUsername;
+                // Change the container to a link if username exists
+                document.getElementById('instagramContainer').onclick = function() {
+                    window.open(`https://instagram.com/${adminData.instagramUsername}`, '_blank');
+                };
+                document.getElementById('instagramContainer').classList.add('cursor-pointer');
+            } else {
+                document.getElementById('instagramText').textContent = 'Add Instagram';
+                // Make it link to edit profile page
+                document.getElementById('instagramContainer').onclick = function() {
+                    window.location.href = 'editAdminProfile.html';
+                };
+                document.getElementById('instagramContainer').classList.add('cursor-pointer');
+            }
+        });
+    </script>
+</body>
+</html>
