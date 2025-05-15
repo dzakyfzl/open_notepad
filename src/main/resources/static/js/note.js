@@ -9,7 +9,7 @@ const stars = document.querySelectorAll('#stars i');
         ratingText.textContent = `You rated: ${currentRating} star${currentRating > 1 ? 's' : ''}`;
 
         // Kirim rating ke Spring Boot
-        fetch('http://localhost:8080/api/ratings', {
+        fetch('/api/interface/rate', {
             method: 'POST',
             headers: {
             'Content-Type': 'application/json'
