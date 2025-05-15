@@ -7,7 +7,7 @@ body, html {
     padding: 0;
     font-family: 'Segoe UI', sans-serif;
     height: 100%;
-    overflow: hidden;
+    overflow-y: auto;
 }
 
 .container {
@@ -126,9 +126,13 @@ body, html {
   }
 }
 
+
 /* navbar */
 
 #navbar {
+    top: 0;
+    z-index: 1000;
+    position: sticky;
     width: 100%;
     height: 70px;
     display: flex;
@@ -161,60 +165,21 @@ body, html {
     display: flex;
     align-items: center;
     background-color: white;
-    padding: 5px 10px;
+    padding: 7px 10px;
     border-radius: 8px 0px 0px 8px;
 }
 
 .search img {
-    width: 16px;
-    height: 16px;
+    width: 25px;
+    height: 25px;
     margin-right: 8px;
 }
 
 .search input {
     border: none;
     outline: none;
-    font-size: 14px;
-}
-
-.date {
-    display: flex;
-    margin-right: 20px;
-    align-items: center;
-    justify-content: space-between;
-    background-color: white;
-    padding: 5px 12px;
-    width: 100px;
-    height: 30px;
-    border-radius: 0px 8px 8px 0px;
-    font-size: 14px;
-    color: #333;
-    position: relative;
-    cursor: pointer;
-}
-
-.date span,
-.date img {
-    pointer-events: none;
-    z-index: 1;
-}
-
-.date img {
-    width: 12px;
-    height: 12px;
-    margin-left: 5px;
-}
-
-.date input {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    opacity: 0;
-    border: none;
-    cursor: pointer;
-    z-index: 2;
+    width: 250px;
+    font-size: 20px;
 }
 
 /* dashboard content */
@@ -266,77 +231,104 @@ body, html {
     font-size: 0.875rem;
     color: #444;
   }
-  
-  
- /* upload-notes-content */
- .search-input {
-  padding: 6px 10px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
+
+
+/* note page */
+.pdf-container { 
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  height: 100%;
 }
 
-.dropdown {
-  padding: 6px;
-  border-radius: 5px;
-  border: 1px solid #ccc;
-}
-
-.icon {
-  width: 24px;
-  height: 24px;
-  cursor: pointer;
-}
-
-.container {
-  max-width: 600px;
-  margin: 40px auto;
-  padding: 0 20px;
-}
-
-h1 {
-  margin-bottom: 20px;
-  font-size: 24px;
-  color: #222;
-}
-
-form {
+.desc-cont{
+  width: 30%;
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  height: 100%;
 }
 
-label {
-  font-weight: 500;
-  margin-bottom: px;
-}
-
-.input {
-  padding: 10px;
-  border: 1px solid #999;
-  border-radius: 10px;
+.judul {
+  padding: 30px 50px;
   width: 100%;
+  text-align: start;
 }
 
-.row {
-  display: flex;
-  gap: 20px;
+.judul h2{
+  margin: 0;
+  font-size: 40px;
+  color: #000000;
 }
 
-.col {
-  flex: 1;
+.judul h4{
+  font-weight: 400;
+  font-size: 35px;
+  margin: 0px;
+  color: #6D6565;
 }
 
-.button {
-  background-color: #205c3b;
-  color: white;
-  padding: 10px 20px;
+.line{
+  width: 100%;
+  height: 5px;
+  background-color: rgb(129, 128, 128);
+  margin-bottom: 30px;
+  border-radius: 5px;
+}
+
+iframe {
+  align-self: flex-end;
+  width:70%; 
+  height: 100%;
   border: none;
-  border-radius: 6px;
+}
+
+.bottom{
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end; /* dorong isi ke bawah */
+  height: 100%; /* atau beri tinggi tetap, misal: 300px */
+}
+
+.bottom-item{
+  display: flex;
+  flex-direction: row;
+}
+
+.star-rating {
+  text-align: left;
+  width: 100%;
+  font-size: 2rem;
+  color: #ccc;
   cursor: pointer;
 }
-
-.button:hover {
-  background-color: #184c30;
+.star-rating .active {
+    color: gold;
 }
-/* upload-notes-content-end */
-  
+
+.star {
+    padding-bottom: 30px;
+    padding-left: 50px;
+    width: 100%; 
+    display: flex; 
+    flex-direction: column;
+  }
+
+  .star h2{
+    font-weight: 700;
+    font-size: 30px;
+    margin-bottom:10px ;
+  }
+
+  .account{
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    text-align: left;
+  }
+
+  .account a{
+    margin: 0px;
+    font-weight: 500;
+    color: #2c7a7b;
+    font-size: 20px;
+  }
