@@ -1,0 +1,111 @@
+* {
+    box-sizing: border-box;
+}
+
+body, html {
+    margin: 0;
+    padding: 0;
+    font-family: 'Segoe UI', sans-serif;
+    height: 100%;
+    overflow-y: auto;
+}
+
+/* note page */
+.pdf-container { 
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  height: 100%;
+}
+
+.desc-cont{
+  width: 30%;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.judul {
+  padding: 30px 50px;
+  width: 100%;
+  text-align: start;
+}
+
+.judul h2{
+  margin: 0;
+  font-size: 40px;
+  color: #000000;
+}
+
+.judul h4{
+  font-weight: 400;
+  font-size: 35px;
+  margin: 0px;
+  color: #6D6565;
+}
+
+.line{
+  width: 100%;
+  height: 5px;
+  background-color: rgb(129, 128, 128);
+  margin-bottom: 30px;
+  border-radius: 5px;
+}
+
+iframe {
+  align-self: flex-end;
+  width:70%; 
+  height: 100%;
+  border: none;
+}
+
+.bottom{
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end; /* dorong isi ke bawah */
+  height: 100%; /* atau beri tinggi tetap, misal: 300px */
+}
+
+.bottom-item{
+  display: flex;
+  flex-direction: row;
+}
+
+.star-rating {
+  text-align: left;
+  width: 100%;
+  font-size: 2rem;
+  color: #ccc;
+  cursor: pointer;
+}
+.star-rating .active {
+    color: gold;
+}
+
+.star {
+    padding-bottom: 30px;
+    padding-left: 50px;
+    width: 100%; 
+    display: flex; 
+    flex-direction: column;
+  }
+
+  .star h2{
+    font-weight: 700;
+    font-size: 30px;
+    margin-bottom:10px ;
+  }
+
+  .account{
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    text-align: left;
+  }
+
+  .account a{
+    margin: 0px;
+    font-weight: 500;
+    color: #2c7a7b;
+    font-size: 20px;
+  }
