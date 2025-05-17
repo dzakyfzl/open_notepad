@@ -4,25 +4,32 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Edit Note</title>
-    <link rel="stylesheet" href="/css/navbar.css"/>
-    <link rel="stylesheet" href="/css/editNote.css"/>
+    <link rel="stylesheet" href="static/css/navbar.css"/>
+    <link rel="stylesheet" href="static/css/editNote.css"/>
 </head>
 <body>
     <header id="navbar">
-    <div class="left">
-      <img src="/img/logo.png" alt="Logo">
-    </div>
-    <div class="right">
-      <div class="search">
-        <img src="/img/search.png" alt="Search Icon">
-        <input type="text" placeholder="Search notes">
-      </div>
-      
-      <a href="/user/notes"><img src="/img/myNote.png" alt="myNote Icon"></a>
-      <a href="/user/notes/upload"><img src="/img/upload.png" alt="Upload Icon"></a>
-      <a href="/user/profile"><img src="/img/profile.png" alt="Profile Icon">  </a>
-    </div>
-  </header>
+        <div class="left">
+        <img src="/img/logo.png" alt="Logo">
+        </div>
+        <div class="right">
+            <div class="search">
+                <img src="static/img/search.png" alt="Search Icon">
+                <input type="text" placeholder="Search notes">
+            </div>
+
+            <select class="major-filter">
+                <option value="">All Majors</option>
+                <option value="informatics">Informatics</option>
+                <option value="electrical">Electrical Engineering</option>
+                <option value="mechanical">Mechanical Engineering</option>
+                <option value="civil">Civil Engineering</option>
+            </select>
+        <a href="/user/notes"><img src="/img/myNote.png" alt="myNote Icon"></a>
+        <a href="/user/notes/upload"><img src="/img/upload.png" alt="Upload Icon"></a>
+        <a href="/user/profile"><img src="/img/profile.png" alt="Profile Icon">  </a>
+        </div>
+    </header>
     <div class="cont">
         <div class="container1">
             <div class="body-inside1">
@@ -68,7 +75,7 @@
             <textarea placeholder="Lorem ipsum dolor sit amet consectetur adipisicing elit. Aspernatur, dolores! Quasi, obcaecati. Ipsum consequuntur est aliquam quidem delectus aperiam eligendi repellat sit molestiae, optio consequatur, deleniti tempora. Odit, recusandae officiis?"></textarea>
         </div>
     </div>
-    <button type="submit" class="buttonEdit">Upload Note</button>
+    <button type="submit" class="buttonEdit">Edit Note</button>
     </div>
     <script>
         const input = document.getElementById("file-upload");

@@ -17,24 +17,28 @@
 </head>
 <body>
     <!-- navbar -->
-<header class="w-full h-[70px] flex justify-between items-center bg-green-100 px-5 box-border">
-    <div class="flex items-center">
-        <a href="/"><img src="img/logo.png" alt="Logo" class="h-[43px]"></a>
-    </div>
-    <div class="flex items-center gap-2">
-        <div class="flex items-center bg-white px-3 py-1 rounded-l-md">
-            <img src="img/search.png" alt="Search Icon" class="w-4 h-4 mr-2">
-            <input type="text" placeholder="Search notes" class="text-sm border-none outline-none"/>
+    <header id="navbar">
+        <div class="left">
+        <img src="/img/logo.png" alt="Logo">
         </div>
-        <a href="admin.html"><img src="img/admin.png" alt="Admin Icon" class="h-10"></a>
-        <a href="adminProfile.html" id="profileNavLink" class="h-10 w-10 flex items-center justify-center">
-            <div id="profileNavImage" class="h-8 w-8 rounded-full overflow-hidden hidden">
-                <img id="navProfileImg" src="/placeholder.svg" alt="Profile" class="h-full w-full object-cover">
+        <div class="right">
+            <div class="search">
+                <img src="static/img/search.png" alt="Search Icon">
+                <input type="text" placeholder="Search notes">
             </div>
-            <img id="profileNavIcon" src="img/profile.png" alt="Profile Icon" class="h-10">
-        </a>
-    </div>
-</header>
+
+            <select class="major-filter">
+                <option value="">All Majors</option>
+                <option value="informatics">Informatics</option>
+                <option value="electrical">Electrical Engineering</option>
+                <option value="mechanical">Mechanical Engineering</option>
+                <option value="civil">Civil Engineering</option>
+            </select>
+        <a href="/user/notes"><img src="/img/myNote.png" alt="myNote Icon"></a>
+        <a href="/user/notes/upload"><img src="/img/upload.png" alt="Upload Icon"></a>
+        <a href="/user/profile"><img src="/img/profile.png" alt="Profile Icon">  </a>
+        </div>
+    </header>
 <!-- navbar end -->
 
     <!-- Main Content -->
