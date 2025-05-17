@@ -1,7 +1,15 @@
-CREATE DATABASE OpenNotepad
-    DEFAULT CHARACTER SET = 'utf8mb4';
+-- Active: 1747461409837@@pacipapa.database.windows.net@1433@pacipapaDB
 
-USE OpenNotepad;
+USE pacipapaDB;
+GO
+
+CREATE TABLE Files (
+    fileID INT PRIMARY KEY IDENTITY(1,1),
+    name VARCHAR(100),
+    type VARCHAR(50),
+    size INT,
+    path VARCHAR(MAX)
+);
 
 CREATE TABLE Accounts (
     username VARCHAR(50) PRIMARY KEY,
@@ -9,30 +17,22 @@ CREATE TABLE Accounts (
     email VARCHAR(100),
     firstName VARCHAR(50),
     lastName VARCHAR(50),
-    isAdmin BOOLEAN DEFAULT FALSE,
+    isAdmin BIT DEFAULT 0,
     hashedPassword VARCHAR(255),
     salt VARCHAR(255),
     FOREIGN KEY (fileID) REFERENCES Files(fileID)
 );
 
-CREATE TABLE Files (
-    fileID INT PRIMARY KEY AUTO_INCREMENT,
-    name VARCHAR(100),
-    type VARCHAR(50),
-    size INT,
-    path TEXT
-);
-
 CREATE TABLE Modules (
-    moduleID INT PRIMARY KEY AUTO_INCREMENT,
+    moduleID INT PRIMARY KEY IDENTITY(1,1),
     username VARCHAR(50),
     fileID INT,
     name VARCHAR(100),
-    description TEXT,
+    description VARCHAR(MAX),
     course VARCHAR(100),
     major VARCHAR(100),
     dateUploaded DATETIME,
-    visibility BOOLEAN DEFAULT TRUE,
+    visibility BIT DEFAULT 1,
     FOREIGN KEY (username) REFERENCES Accounts(username),
     FOREIGN KEY (fileID) REFERENCES Files(fileID)
 );
@@ -67,7 +67,7 @@ CREATE TABLE Views (
 
 CREATE TABLE UserDetails (
     username VARCHAR(50) PRIMARY KEY,
-    aboutMe TEXT,
+    aboutMe VARCHAR(MAX),
     instagram VARCHAR(100),
     linkedin VARCHAR(100),
     FOREIGN KEY (username) REFERENCES Accounts(username)
@@ -77,9 +77,7 @@ CREATE TABLE Sessions (
     sessionID VARCHAR(100) PRIMARY KEY,
     username VARCHAR(50),
     IPAddress VARCHAR(45),
-    userAgent TEXT,
+    userAgent VARCHAR(MAX),
     dateCreated DATETIME,
     FOREIGN KEY (username) REFERENCES Accounts(username)
 );
-
-
