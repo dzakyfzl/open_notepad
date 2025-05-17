@@ -1,0 +1,174 @@
+* {
+    box-sizing: border-box;
+}
+
+body, html {
+    margin: 0;
+    padding: 0;
+    font-family: 'Segoe UI', sans-serif;
+    height: 100%;
+    overflow-y: auto;
+}
+
+h2{
+    font-size: 30px;
+    margin: 20px;
+}
+
+.cont{
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 100%;
+    align-items: center ;
+}
+/* for inline */
+.container1{
+    display: flex;
+    flex-direction: column;
+    width: 60%;
+}
+
+/* for div to two block */
+.container2{
+    display: flex;
+    flex-direction: row;
+    width: 60%;
+}
+
+/* course and major input */
+
+.body-inside{
+    width: 50%;
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+}
+
+.body-inside h2{
+    margin:20px 10px ;
+}
+
+.body-inside select {
+    -webkit-appearance: none; /* Menghilangkan default arrow di Safari/Chrome */
+    -moz-appearance: none;    /* Firefox */
+    appearance: none;
+    
+    background-color: white;
+    border-radius: 10px;
+    border: 1px solid #ccc;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    
+    padding: 15px 50px 15px 15px; /* kanan lebih besar untuk beri ruang icon */
+    font-size: 16px;
+    font-weight: 400;
+    width: 100%;
+    background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20width%3D%2215%22%20height%3D%2215%22%20viewBox%3D%220%200%2015%2015%22%20fill%3D%22none%22%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%3E%3Cpath%20d%3D%22M4.5%206L7.5%209L10.5%206%22%20stroke%3D%22%23000%22%20stroke-width%3D%222%22/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 15px center; /* Geser ke kiri sedikit */
+    background-size: 18px; /* Besarkan icon */
+    cursor: pointer;
+}
+
+/* desciption */
+.body-inside2{
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+}
+
+.body-inside2 textarea {
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+    border: none;
+    resize: vertical;
+    overflow-y: auto;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    background-color: white;
+    width: 100%;
+    min-height: 200px;
+    max-height: 400px;
+    font-size: 16px;
+    font-weight: 400;
+    padding: 15px 10px;
+    font-family: 'Segoe UI', sans-serif;
+    box-sizing: border-box;
+}
+
+
+/* button edit */
+.buttonEdit {
+    font-weight: 600;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    background-color:#599E87;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    padding: 12px 40px;
+    font-size: 30px;
+    margin: 20px 0;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.buttonEdit:hover {
+    background-color: #64C0A2;
+}
+
+/* for title and upload file */
+.body-inside1{
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+}
+
+.body-inside1 input{
+    border-radius: 10px;
+    border: none;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    background-color: white;
+    width: 100%;
+    font-size: 20px;
+    font-weight: 500;
+    padding: 15px 10px;
+}
+
+.custom-file-upload {
+    border-radius: 10px;
+    border: none;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    background-color: white;
+    width: 100%;
+    font-size: 18px;
+    font-weight: 500;
+    padding: 15px 10px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.upload-label {
+  background-color: #599E87;
+  color: white;
+  padding: 10px 10px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background-color 0.3s ease;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.upload-label:hover {
+  background-color: #64C0A2;
+}
+
+.custom-file-upload input[type="file"] {
+  display: none;
+}
+
+#file-name {
+  font-size: 16px;
+  color: #333;
+}
