@@ -16,6 +16,7 @@ h2{
 }
 
 .cont{
+    margin-bottom: 100px;
     display: flex;
     flex-direction: column;
     width: 100%;
