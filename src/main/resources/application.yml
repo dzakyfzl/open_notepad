@@ -15,6 +15,6 @@ spring:
             - Path=/api/**
   datasource:
     url: jdbc:sqlserver://pacipapa.database.windows.net:1433;database=pacipapaDB;encrypt=true;trustServerCertificate=false;hostNameInCertificate=*.database.windows.net;loginTimeout=30;
-    username: backendService
-    password: "@1c09d9dc8c164765784de6a64675b49c90e19c2e6da457fed1980845b72fafb7"
+    username: ${SQLusername}
+    password: ${SQLpassword}
     driver-class-name: com.microsoft.sqlserver.jdbc.SQLServerDriver
