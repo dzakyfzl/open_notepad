@@ -13,7 +13,6 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.RowMapper;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -57,27 +56,37 @@ public class AccountController{
         if(username == null || password == null) {
             return ResponseEntity.badRequest().body(Map.of("message", "Username and password are required"));
         }
+
         //Check if the user exists in the database
         String sql = "SELECT * FROM Accounts WHERE username = ?";
         User user = null;
         try {
             user = jdbcTemplate.queryForObject(sql, new Object[]{username}, (rs, rowNum) -> {
-                return new User(rs.getString("username"), rs.getString("hashedPassword"), rs.getString("salt"), rs.getString("email"), rs.getString("firstName"), rs.getString("lastName"));
+                return new User(
+                    rs.getString("username"),
+                    rs.getString("hashedPassword"),
+                    rs.getString("salt"),
+                    rs.getString("email"), 
+                    rs.getString("firstName"), 
+                    rs.getString("lastName"));
             });
 
         } catch (EmptyResultDataAccessException e) {
             return ResponseEntity.badRequest().body(Map.of("message", "User not found"));
         }
 
-    // ✅ Verifikasi password
+        // password verification
         String hashedInputPassword = security.hashPassword(password, user.getSalt());
         if (!hashedInputPassword.equals(user.getHashedPassword())) {
             return ResponseEntity.badRequest().body(Map.of("message", "Invalid password"));
         }
 
-    // ✅ Login sukses
+        //if login success, set the session attribute
         session.setMaxInactiveInterval(60 * 60 * 24);
-        session.setAttribute("username", username);   
+        session.setAttribute("username", username);  
+        
+        //  session in database
+        String sqlUpdate = "UPDATE Accounts SET sessionID = ?, IPString = ? WHERE username = ?";
         return ResponseEntity.ok().body(Map.of("message", "User logged in successfully"));
     }
 
@@ -97,8 +106,15 @@ public class AccountController{
         //Hash password and salt it
         String salt = security.generateSalt();
         String hashedPassword = security.hashPassword(password, salt);
-        //Create User object
         
+        //Check if the username already exists in the database
+        String sqlCheckUsername = "SELECT COUNT(*) FROM Accounts WHERE username = ?";
+        int count = jdbcTemplate.queryForObject(sqlCheckUsername, new Object[]{username}, Integer.class);
+        if (count > 0) {
+            return ResponseEntity.badRequest().body(Map.of("message", "Username or account is already exists"));
+        }
+
+        //Database query for inserting user
         User user = new User(username, hashedPassword, salt, email, firstName, lastName);
         jdbcTemplate.update(
             "INSERT INTO Accounts (username, hashedPassword, salt, email, firstName, lastName) VALUES (?, ?, ?, ?, ?, ?)",
@@ -109,15 +125,7 @@ public class AccountController{
             user.getFirstName(),
             user.getLastName()
         );
-        try {
-            user.register(username, hashedPassword, salt, email, firstName, lastName);
-        } catch (Exception e) {
-            if(e.getMessage().equals("Username already exists")) {
-                return ResponseEntity.badRequest().body(Map.of("message", "User already exists"));
-            }else {
-                return ResponseEntity.badRequest().body(Map.of("message", "Error creating user"));
-            }
-        }
+        
         session.setAttribute("username", username);
         return ResponseEntity.ok().body(Map.of("message", "User registered successfully"));
     }
@@ -129,6 +137,15 @@ public class AccountController{
         }
 
         String username = (String) session.getAttribute("username");
+
+        //delete session from database
+        String sqlUpdate = "DELETE FROM Sessions WHERE username = ?";
+        try {
+            jdbcTemplate.update(sqlUpdate, username);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(Map.of("message", "Error deleting session"));
+        }
+        
         return ResponseEntity.ok().body(Map.of("message", "User logged in successfully"));
     }
 
@@ -138,6 +155,48 @@ public class AccountController{
             return ResponseEntity.badRequest().body(Map.of("message", "User not logged in"));
         }
         String username = (String) session.getAttribute("username");
+
+        //Check if the user exists in the database
+        String sql = "SELECT * FROM Accounts WHERE username = ?";
+        User user = null;
+        try {
+            user = jdbcTemplate.queryForObject(sql, new Object[]{username}, (rs, rowNum) -> {
+                return new User(
+                    rs.getString("username"),
+                    rs.getString("hashedPassword"),
+                    rs.getString("salt"),
+                    rs.getString("email"), 
+                    rs.getString("firstName"), 
+                    rs.getString("lastName"));
+            });
+
+        } catch (EmptyResultDataAccessException e) {
+            return ResponseEntity.badRequest().body(Map.of("message", "User not found"));
+        }
+
+        //Update user profile
+        if(requestData.get("email") != null) {
+            user.setEmail(requestData.get("email"));
+        }
+        if(requestData.get("firstName") != null) {
+            user.setFirstName(requestData.get("firstName"));
+        }
+        if(requestData.get("lastName") != null) {
+            user.setLastName(requestData.get("lastName"));
+        }
+        if(requestData.get("password") != null) {
+            String salt = security.generateSalt();
+            String hashedPassword = security.hashPassword(requestData.get("password"), salt);
+            user.setHashedPassword(hashedPassword);
+            user.setSalt(salt);
+        }
+        //Database query for updating user
+        String sqlUpdate = "UPDATE Accounts SET email = ?, firstName = ?, lastName = ?, hashedPassword = ?, salt = ? WHERE username = ?";
+        try {
+            jdbcTemplate.update(sqlUpdate, user.getEmail(), user.getFirstName(), user.getLastName(), user.getHashedPassword(), user.getSalt(), username);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(Map.of("message", "Error updating user profile"));
+        }
         return ResponseEntity.ok().body(Map.of("message", "User profile updated successfully"));
     }
 
@@ -177,6 +236,24 @@ public class AccountController{
         // if it yes, get the username from the session and create a new User object
         String username = (String) session.getAttribute("username");
 
+        // Query the database to check if the user exists
+        String sql = "SELECT * FROM Accounts WHERE username = ?";
+        User user = null;
+        try {
+            user = jdbcTemplate.queryForObject(sql, new Object[]{username}, (rs, rowNum) -> {
+                return new User(
+                    rs.getString("username"),
+                    rs.getString("hashedPassword"),
+                    rs.getString("salt"),
+                    rs.getString("email"), 
+                    rs.getString("firstName"), 
+                    rs.getString("lastName"));
+            });
+
+        } catch (EmptyResultDataAccessException e) {
+            return ResponseEntity.badRequest().body(Map.of("message", "User not found"));
+        }
+
         // Check if the file is empty
         if (file.isEmpty()) {
             return ResponseEntity.badRequest().body(Map.of("message", "File is empty"));
@@ -205,10 +282,36 @@ public class AccountController{
         try {
             //save the file to the dir and database
             file.transferTo(uploadDir.resolve(fileName));
-            profilePhoto.UploadToDatabase();
+            jdbcTemplate.update(
+                "INSERT INTO Files (name, path, type, size) VALUES (?, ?, ?, ?)",
+                profilePhoto.getName(),
+                profilePhoto.getPath(),
+                profilePhoto.getType(),
+                profilePhoto.getSize()
+            );
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(Map.of("message", "Error uploading file"));
         }
+
+        // Getting just FileID in database
+        String sqlFileID = "SELECT fileID FROM Files WHERE name = ?";
+        String fileID;
+        try {
+            fileID = jdbcTemplate.queryForObject(sqlFileID, new Object[]{fileName}, String.class);
+
+        } catch (EmptyResultDataAccessException e) {
+            return ResponseEntity.badRequest().body(Map.of("message", "Error getting file ID"));
+        }
+
+        // Update the user profile with the file ID
+        String sqlUpdate = "UPDATE Accounts SET fileID = ? WHERE username = ?";
+        try {
+            jdbcTemplate.update(sqlUpdate, fileID, username);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(Map.of("message", "Error updating user profile"));
+        }
+
+
         return ResponseEntity.ok().body(Map.of("message", "User profile photo uploaded successfully"));
     }
     
@@ -220,8 +323,24 @@ public class AccountController{
         }
         // Get the username from the session and create a new User object
         String username = (String) session.getAttribute("username");
+
         // Get the user from the database
-        File profilePhoto = new File();
+        File profilePhoto = null;
+        String sql = "SELECT * FROM Files WHERE fileID = (SELECT fileID FROM Accounts WHERE username = ?)";
+        try {
+            profilePhoto = jdbcTemplate.queryForObject(sql, new Object[]{username}, (rs, rowNum) -> {              
+                File file = new File();
+                file.setFileID(rs.getString("fileID"));
+                file.setName(rs.getString("name"));
+                file.setPath(rs.getString("path"));
+                file.setType(rs.getString("type"));
+                file.setSize(rs.getLong("size"));;
+                return file;
+            });
+
+        } catch (EmptyResultDataAccessException e) {
+            return ResponseEntity.badRequest().build();
+        }
 
         // Check if the profile photo exists
         Path filePath;
