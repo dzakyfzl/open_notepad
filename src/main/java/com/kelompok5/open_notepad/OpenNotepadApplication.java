@@ -1,14 +1,11 @@
 package com.kelompok5.open_notepad;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.jdbc.core.RowMapper;
-import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.stereotype.Repository;
+import io.github.cdimascio.dotenv.Dotenv;
 
-import jakarta.annotation.PostConstruct;
+import org.springframework.jdbc.core.JdbcTemplate;
 //import javax.sql.DataSource;
 //import java.sql.Connection;
 
@@ -19,6 +16,9 @@ public class OpenNotepadApplication {
 	private JdbcTemplate jdbcTemplate;
 
 	public static void main(String[] args) {
+		io.github.cdimascio.dotenv.Dotenv dotenv = io.github.cdimascio.dotenv.Dotenv.load();
+        System.setProperty("SQLusername", dotenv.get("SQLusername"));
+        System.setProperty("SQLpassword", dotenv.get("SQLpassword"));
 		SpringApplication.run(OpenNotepadApplication.class, args);
 	}
 }

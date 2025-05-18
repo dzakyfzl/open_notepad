@@ -5,6 +5,7 @@ target/
 !**/src/test/**/target/
 /uploads/photos/** */
 /uploads/pdf/** */
+.env
 
 ### STS ###
 .apt_generated
