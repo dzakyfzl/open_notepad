@@ -9,6 +9,12 @@ public class User extends Account{
     private String instagram;
     private String linkedin;
 
+    public User(String username, String hashedPassword, String salt, String email, String firstName, String lastName) {
+        super(username, hashedPassword, salt, email, firstName, lastName);
+        this.aboutMe = "";
+        this.instagram = "";
+        this.linkedin = "";
+    }
     public void uploadModule(Module module) {
         //upload module logic
         //save module to database

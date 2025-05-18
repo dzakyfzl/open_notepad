@@ -12,6 +12,16 @@ public abstract  class Account {
     private String lastName;
     private File profilePicture;
 
+    public Account(String username, String hashedPassword, String salt, String email, String firstName, String lastName) {
+        //default constructor
+        this.username = username;   
+        this.hashedPassword = hashedPassword;
+        this.salt = salt;
+        this.email = email;
+        this.firstName = firstName;
+        this.lastName = lastName;
+    }
+
     public void login(String username, String password) {
         //login logic
     }

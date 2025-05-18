@@ -6,10 +6,14 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Map;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.RowMapper;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -32,16 +36,16 @@ import jakarta.servlet.http.HttpSession;
 @RestController
 @RequestMapping("/api/account")
 public class AccountController{
-
+    
     private final Security security;
     public AccountController(Security security) {
         this.security = security;
     }
-
+    @Autowired
+    private JdbcTemplate jdbcTemplate;
     //Authentication API
     @PostMapping("/signin")//login
     public ResponseEntity<Map<String,String>> signIn(@RequestBody Map<String,String> requestData,HttpServletRequest request, HttpSession session) {
-        User user = new User();
         String username = requestData.get("username");
         String password = requestData.get("password");
         if(security.isSessionValid(session, request)) {
@@ -53,7 +57,26 @@ public class AccountController{
         if(username == null || password == null) {
             return ResponseEntity.badRequest().body(Map.of("message", "Username and password are required"));
         }
-        user.login(username, password);
+        //Check if the user exists in the database
+        String sql = "SELECT * FROM Accounts WHERE username = ?";
+        User user = null;
+        try {
+            user = jdbcTemplate.queryForObject(sql, new Object[]{username}, (rs, rowNum) -> {
+                return new User(rs.getString("username"), rs.getString("hashedPassword"), rs.getString("salt"), rs.getString("email"), rs.getString("firstName"), rs.getString("lastName"));
+            });
+
+        } catch (EmptyResultDataAccessException e) {
+            return ResponseEntity.badRequest().body(Map.of("message", "User not found"));
+        }
+
+    // ✅ Verifikasi password
+        String hashedInputPassword = security.hashPassword(password, user.getSalt());
+        if (!hashedInputPassword.equals(user.getHashedPassword())) {
+            return ResponseEntity.badRequest().body(Map.of("message", "Invalid password"));
+        }
+
+    // ✅ Login sukses
+        session.setMaxInactiveInterval(60 * 60 * 24);
         session.setAttribute("username", username);   
         return ResponseEntity.ok().body(Map.of("message", "User logged in successfully"));
     }
@@ -75,7 +98,17 @@ public class AccountController{
         String salt = security.generateSalt();
         String hashedPassword = security.hashPassword(password, salt);
         //Create User object
-        User user = new User();
+        
+        User user = new User(username, hashedPassword, salt, email, firstName, lastName);
+        jdbcTemplate.update(
+            "INSERT INTO Accounts (username, hashedPassword, salt, email, firstName, lastName) VALUES (?, ?, ?, ?, ?, ?)",
+            user.getUsername(),
+            user.getHashedPassword(),
+            user.getSalt(),
+            user.getEmail(),
+            user.getFirstName(),
+            user.getLastName()
+        );
         try {
             user.register(username, hashedPassword, salt, email, firstName, lastName);
         } catch (Exception e) {
@@ -94,10 +127,8 @@ public class AccountController{
         if(security.isSessionValid(session, request)) {
             return ResponseEntity.badRequest().body(Map.of("message", "User not logged in"));
         }
-        User user = new User();
+
         String username = (String) session.getAttribute("username");
-        user.setUsername(username);
-        user.logout();
         return ResponseEntity.ok().body(Map.of("message", "User logged in successfully"));
     }
 
@@ -107,8 +138,6 @@ public class AccountController{
             return ResponseEntity.badRequest().body(Map.of("message", "User not logged in"));
         }
         String username = (String) session.getAttribute("username");
-        User user = new User();
-        user.setUsername(username);
         return ResponseEntity.ok().body(Map.of("message", "User profile updated successfully"));
     }
 
@@ -123,13 +152,9 @@ public class AccountController{
         String username = (String) session.getAttribute("username");
 
         //Check if the password is correct
-        User user = new User();
-        user.getFromDatabase(username);
-        if(!user.getHashedPassword().equals(security.hashPassword(password, user.getSalt()))) {
-            return ResponseEntity.badRequest().body(Map.of("message", "Invalid password"));
-        }
+        
         //Delete the user account
-        user.delete();
+
         return ResponseEntity.ok().body(Map.of("message", "User "+  username +" account deleted successfully"));
     }
 
@@ -139,9 +164,7 @@ public class AccountController{
             return ResponseEntity.badRequest().body(Map.of("message", "User not logged in"));
         }
         String username = (String) session.getAttribute("username");
-        User user = new User();
-        user.getFromDatabase(username);
-        return ResponseEntity.ok().body(user.getInfo(username));
+        return ResponseEntity.ok().body(Map.of("message", "User info retrieved successfully"));
     }
 
     @PostMapping("/upload-photo")//Upload profile photo
@@ -153,8 +176,6 @@ public class AccountController{
 
         // if it yes, get the username from the session and create a new User object
         String username = (String) session.getAttribute("username");
-        User user = new User();
-        user.getFromDatabase(username);
 
         // Check if the file is empty
         if (file.isEmpty()) {
@@ -199,10 +220,8 @@ public class AccountController{
         }
         // Get the username from the session and create a new User object
         String username = (String) session.getAttribute("username");
-        User user = new User();
         // Get the user from the database
-        user.getFromDatabase(username);
-        File profilePhoto = user.getProfilePicture();
+        File profilePhoto = new File();
 
         // Check if the profile photo exists
         Path filePath;
