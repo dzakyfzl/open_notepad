@@ -7,7 +7,7 @@ CREATE TABLE Files (
     fileID INT PRIMARY KEY IDENTITY(1,1),
     name VARCHAR(100),
     type VARCHAR(50),
-    size INT,
+    size BIGINT,
     path VARCHAR(MAX)
 );
 

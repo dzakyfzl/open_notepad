@@ -1,8 +1,11 @@
-package com.kelompok5.open_notepad.entity;
+package com.kelompok5.open_notepad.DAO;
+
 
 import java.sql.Date;
 
-public class Module {
+import com.kelompok5.open_notepad.entity.File;
+
+public class ModuleDAO {
     private String moduleID;
     private String ownerID;
     private String title;

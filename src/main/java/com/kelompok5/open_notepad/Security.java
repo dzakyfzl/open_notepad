@@ -18,7 +18,7 @@ public class Security{
         return session == null;  //Delete if debugging done
     }
 
-    protected String generateSalt() {
+    public String generateSalt() {
         // Implement your salt generation logic here (e.g., using SecureRandom)
         SecureRandom random = new SecureRandom();
         byte[] salt = new byte[16]; // 128-bit salt
@@ -32,7 +32,7 @@ public class Security{
         return hexString.toString();
     }
 
-    protected String hashPassword(String password, String salt) {
+    public  String hashPassword(String password, String salt) {
         // Combine password and salt before hashing
         // Implement your hashing logic here (e.g., using SHA256)
         try {
@@ -51,7 +51,7 @@ public class Security{
         }
     }
 
-    protected boolean passwordIsValid(String password, String hashedPassword, String salt) {
+    public boolean passwordIsValid(String password, String hashedPassword, String salt) {
         String hashedInputPassword = hashPassword(password, salt);
         return hashedInputPassword.equals(hashedPassword);
     }
