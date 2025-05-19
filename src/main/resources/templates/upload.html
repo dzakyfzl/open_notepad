@@ -4,89 +4,339 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Edit Note</title>
-    <link rel="stylesheet" href="/css/navbar.css"/>
-    <link rel="stylesheet" href="/css/editNote.css"/>
-    <link rel="stylesheet" href="/css/output.css" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#599E87',
+                        'primary-hover': '#64C0A2',
+                        'navbar-bg': '#d9f1e2'
+                    }
+                }
+            }
+        }
+    </script>
 </head>
-<body>
-    <header id="navbar">
-        <div class="left">
-        <img src="/img/logo.png" alt="Logo">
+<body class="m-0 p-0 font-['Segoe_UI'] h-full overflow-y-auto">
+    <!-- Navbar -->
+    <header id="navbar" class="sticky top-0 z-50 w-full h-[70px] flex justify-between items-center bg-navbar-bg px-5">
+        <div class="flex items-center">
+            <img src="/img/logo.png" alt="Logo" class="h-[43px]">
         </div>
-        <div class="right">
-            <div class="search">
-                <img src="/img/search.png" alt="Search Icon">
-                <input type="text" placeholder="Search notes">
+        <div class="flex items-center gap-2">
+            <div class="flex items-center bg-white py-[7px] px-[10px] rounded-l-lg">
+                <img src="/img/search.png" alt="Search Icon" class="w-[25px] h-[25px] mr-2">
+                <input type="text" placeholder="Search notes" class="border-none outline-none w-[250px] text-xl">
             </div>
 
-            <select class="major-filter">
+            <select class="bg-white py-[8.1px] px-[10px] rounded-r-lg border-none text-xl font-normal text-[#777B7C] outline-none appearance-none pr-8 bg-[url('data:image/svg+xml;utf8,<svg fill=\"black\" height=\"20\" viewBox=\"0 0 24 24\" width=\"20\" xmlns=\"http://www.w3.org/2000/svg\"><path d=\"M7 10l5 5 5-5z\"/></svg>')] bg-no-repeat bg-right-[10px] bg-[center] bg-[length:16px]">
                 <option value="">All Majors</option>
                 <option value="informatics">Informatics</option>
                 <option value="electrical">Electrical Engineering</option>
                 <option value="mechanical">Mechanical Engineering</option>
                 <option value="civil">Civil Engineering</option>
             </select>
-        <a href="/user/notes"><img src="/img/myNote.png" alt="myNote Icon"></a>
-        <a href="/user/notes/upload"><img src="/img/upload.png" alt="Upload Icon"></a>
-        <a href="/user/profile"><img src="/img/profile.png" alt="Profile Icon">  </a>
+            <a href="/user/notes"><img src="/img/myNote.png" alt="myNote Icon" class="h-[40px]"></a>
+            <a href="/user/notes/upload"><img src="/img/upload.png" alt="Upload Icon" class="h-[40px]"></a>
+            <a href="/user/profile"><img src="/img/profile.png" alt="Profile Icon" class="h-[40px]"></a>
         </div>
     </header>
 
-    <div class="cont">
-        <div class="container1">
-            <div class="body-inside1">
-                <h2>Title</h2>
-                <input type="text" placeholder="Introduction to OOP">
-            </div >
-            <div class="body-inside1">
-                <h2>Upload File</h2>
-                <div class="custom-file-upload">
-                    <label for="file-upload" class="upload-label">
-                        📄 Upload File
-                    </label>
-                    <input id="file-upload" type="file" />
-                    <span id="file-name">No file chosen</span>
+    <!-- Main Content -->
+    <div class="flex flex-col w-full h-full items-center mb-[100px]">
+        <form id="uploadForm" class="w-full flex flex-col items-center">
+            <!-- Title and File Upload -->
+            <div class="flex flex-col w-[60%]">
+                <div class="w-full flex flex-col p-5">
+                    <h2 class="text-3xl my-5">Title</h2>
+                    <input type="text" id="title" placeholder="Introduction to OOP" class="rounded-lg border-none shadow-md bg-white w-full text-xl font-medium py-[15px] px-[10px]">
+                </div>
+                <div class="w-full flex flex-col p-5">
+                    <h2 class="text-3xl my-5">Upload File</h2>
+                    <div class="rounded-lg border-none shadow-md bg-white w-full text-lg font-medium py-[15px] px-[10px] flex items-center gap-[15px]">
+                        <label for="noteFile" class="bg-primary text-white py-[10px] px-[10px] rounded-lg cursor-pointer font-medium shadow-md hover:bg-primary-hover transition-colors duration-300">
+                            📄 Upload File
+                        </label>
+                        <input id="noteFile" type="file" class="hidden">
+                        <span id="file-name" class="text-base text-[#333]">No file chosen</span>
+                    </div>
                 </div>
             </div>
-        </div>
-    <div class="container2">
-        <div class="body-inside">
-            <h2>Course</h2>
-            <select name="course" id="course">
-                <option value="" disabled selected>Select course</option>
-                <option value="oop">Object Oriented Programming</option>
-                <option value="dsa">Data Structure</option>
-                <option value="ai">Artificial Intelligence</option>
-                <option value="web">Web Development</option>
-            </select>
-        </div>
-        <div class="body-inside">
-            <h2>Major</h2>
-            <select name="major" id="major">
-                <option value="" disabled selected>Select major</option>
-                <option value="cs">Computer Science</option>
-                <option value="it">Information Technology</option>
-                <option value="ce">Computer Engineering</option>
-                <option value="se">Software Engineering</option>
-            </select>
-        </div>
+            
+            <!-- Major and Course Selection -->
+            <div class="flex flex-row w-[60%]">
+                <div class="w-1/2 flex flex-col p-5">
+                    <h2 class="text-3xl my-5">Major</h2>
+                    <select name="major" id="major" onchange="updateCourses()" class="appearance-none bg-white rounded-lg border border-[#ccc] shadow-md py-[15px] pr-[50px] pl-[15px] text-base font-normal w-full bg-[url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20width%3D%2215%22%20height%3D%2215%22%20viewBox%3D%220%200%2015%2015%22%20fill%3D%22none%22%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%3E%3Cpath%20d%3D%22M4.5%206L7.5%209L10.5%206%22%20stroke%3D%22%23000%22%20stroke-width%3D%222%22/%3E%3C/svg%3E')] bg-no-repeat bg-[right_15px_center] bg-[length:18px] cursor-pointer">
+                        <option value="" disabled selected>Select major</option>
+                        <option value="informatika">S1 Informatika</option>
+                        <option value="data-sains">S1 Data Sains</option>
+                        <option value="rekayasa-perangkat-lunak">S1 Rekayasa Perangkat Lunak</option>
+                        <option value="teknologi-informasi">S1 Teknologi Informasi</option>
+                    </select>
+                </div>
+                <div class="w-1/2 flex flex-col p-5">
+                    <h2 class="text-3xl my-5">Course</h2>
+                    <select name="course" id="course" class="appearance-none bg-white rounded-lg border border-[#ccc] shadow-md py-[15px] pr-[50px] pl-[15px] text-base font-normal w-full bg-[url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20width%3D%2215%22%20height%3D%2215%22%20viewBox%3D%220%200%2015%2015%22%20fill%3D%22none%22%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%3E%3Cpath%20d%3D%22M4.5%206L7.5%209L10.5%206%22%20stroke%3D%22%23000%22%20stroke-width%3D%222%22/%3E%3C/svg%3E')] bg-no-repeat bg-[right_15px_center] bg-[length:18px] cursor-pointer">
+                        <option value="" disabled selected>Select course</option>
+                    </select>
+                </div>
+            </div>
+            
+            <!-- Description -->
+            <div class="flex flex-col w-[60%]">
+                <div class="w-full flex flex-col p-5">
+                    <h2 class="text-3xl my-5">Description</h2>
+                    <textarea id="description" placeholder="Lorem ipsum dolor sit amet consectetur adipisicing elit. Aspernatur, dolores! Quasi, obcaecati. Ipsum consequuntur est aliquam quidem delectus aperiam eligendi repellat sit molestiae, optio consequatur, deleniti tempora. Odit, recusandae officiis?" class="rounded-lg border-none shadow-md bg-white w-full min-h-[200px] max-h-[400px] text-base font-normal py-[15px] px-[10px] resize-y overflow-y-auto font-['Segoe_UI']"></textarea>
+                </div>
+            </div>
+            
+            <!-- Submit Button -->
+            <button type="submit" class="font-semibold shadow-md bg-primary text-white border-none rounded-lg py-3 px-10 text-3xl my-5 cursor-pointer transition-colors duration-300 hover:bg-primary-hover">Upload Note</button>
+        </form>
     </div>
-    <div class="container1">
-        <div class="body-inside2">
-            <h2>Description</h2>
-            <textarea placeholder="Lorem ipsum dolor sit amet consectetur adipisicing elit. Aspernatur, dolores! Quasi, obcaecati. Ipsum consequuntur est aliquam quidem delectus aperiam eligendi repellat sit molestiae, optio consequatur, deleniti tempora. Odit, recusandae officiis?"></textarea>
-        </div>
-    </div>
-    <button type="submit" class="buttonEdit">Upload Note</button>
-    </div>
-    <script>
-        const input = document.getElementById("file-upload");
-        const fileName = document.getElementById("file-name");
 
-        input.addEventListener("change", () => {
-            fileName.textContent = input.files.length > 0 ? input.files[0].name : "No file chosen";
+    <script>
+        // Course data for dropdown
+        const courseData = {
+          "informatika": [
+            "Agama",
+            "Algoritma dan Pemrograman 1",
+            "Kalkulus",
+            "Logika Matematika",
+            "Matematika Diskrit",
+            "Pancasila",
+            "Pendidikan Karakter",
+            "Statistika",
+            "Algoritma dan Pemrograman 2",
+            "Bahasa Inggris",
+            "Etika dalam AI",
+            "Kalkulus Lanjut",
+            "Matriks dan Ruang Vektor",
+            "Organisasi dan Arsitektur Komputer",
+            "Pemodelan Basis Data",
+            "Analisis dan Perancangan PL",
+            "Analisis Kompleksitas Algoritma",
+            "Sistem Basis Data",
+            "Sistem Operasi",
+            "Struktur Data",
+            "Teori Bahasa dan Automata",
+            "Teori Peluang",
+            "Dasar Kecerdasan Artifisial",
+            "Interaksi Manusia dan Komputer",
+            "Jaringan Komputer",
+            "Pemrograman Berorientasi Objek",
+            "Strategi Algoritma",
+            "Wawasan Global TIK",
+            "Sosio-Informatik dan Keprofesian",
+            "Implementasi dan Pengujian PL",
+            "Keamanan Siber",
+            "Kecerdasan Artifisial",
+            "Komputasi Awan dan Terdistribusi",
+            "Manajemen Projek TIK",
+            "Bahasa Indonesia",
+          ],
+          "data-sains": [
+            "Bahasa Indonesia",
+            "Pancasila",
+            "Pendidikan Karakter",
+            "Statika",
+            "Pengenalan Pemrograman",
+            "Logika Matematika",
+            "Kalkulus",
+            "Aljabar Linear untuk Sains Data",
+            "Agama",
+            "Algoritma dan Pemrograman",
+            "Organisasi dan Arsitektur Komputer",
+            "Matematika Diskrit",
+            "Teori Peluang dan Implementasi",
+            "Perancangan dan Implementasi Basis Data",
+            "Bahasa Inggris",
+            "Struktur Data",
+            "Analisi Kompleksitas Algoritma",
+            "Sistem Manajemen Basis Data",
+            "Pemodelan, Simulasi, dan Optimasi",
+            "Infrastruktur dan Platform untuk Sains Data",
+            "Kecerdasan Buatan",
+            "Wawasan Global TIK",
+            "Interaksi Manusia dan Komputer",
+            "Sistem Operasi",
+            "Analisa Data",
+            "Perancangan Aplikasi Sains Data",
+            "Metode Visualisasi Data",
+            "Pembelajaran Mesin",
+            "Manajemen Proyek",
+            "Pemrograman Berorientasi Objek",
+            "Keamanan Data",
+            "Infrastruktur dan Teknologi Big Data",
+            "Analisa Deret Waktu",
+            "Rekayasa Sistem Informasi",
+            "Sains Data untuk Masyarakat"
+          ],
+          "rekayasa-perangkat-lunak": [
+            "Agama",
+            "Pembentukan Karakter",
+            "Kalkulus",
+            "Logika Matematika",
+            "Algoritma Pemrograman",
+            "Manajemen Proses Bisnis",
+            "Pengantar Rekayasa Perangkat Lunak",
+            "Bahasa Inggris",
+            "Statistika",
+            "Matematika Diskrit",
+            "Dasar Pemrograman Berorientasi Objek",
+            "Organisasi dan Arsitektur Komputer",
+            "Rekayasa Kebutuhan Perangkat Lunak",
+            "Design Thinking",
+            "Struktur Data",
+            "Analisis Kompleksitas Algoritma",
+            "Pemodelan Perangkat Lunak",
+            "Proses Perangkat Lunak",
+            "Keprofesian Rekayasa Perangkat Lunak",
+            "Arsitektur dan Desain Perangkat Lunak",
+            "Pancasila",
+            "Interaksi Manusia dan Komputer",
+            "Basis Data",
+            "Dasar Jaringan Komputer",
+            "Proyek Tingkat II",
+            "Konstruksi Perangkat Lunak",
+            "Kecerdasan Buatan",
+            "Kewirausahaan",
+            "Pemrograman Perangkat Bergerak",
+            "Manajemen Proyek",
+            "Pengalaman Pengguna (UX)",
+            "Perancangan dan Pemrograman Web",
+            "Wawasan Global TIK",
+            "Penjaminan Mutu Perangkat Lunak"
+          ],
+          "teknologi-informasi": [
+            "Logika Matematika",
+            "Berpikir Komputasional & Pengenalan Pemrograman",
+            "Kalkulus",
+            "Pengantar Teknologi Informasi",
+            "Pancasila",
+            "Bahasa Indonesia",
+            "Pendidikan Karakter",
+            "Statistika dan Analitik Data",
+            "Aljabar Linear dan Matriks",
+            "Algoritma Pemrograman",
+            "Matematika Diskrit",
+            "Bahasa Inggris",
+            "Pemeliharaan dan Adminstrasi Teknologi Informasi",
+            "Agama",
+            "Teori Peluang",
+            "Struktur Data",
+            "Sistem Multimedia",
+            "Manajemen Layanan Teknologi Informasi",
+            "Organisasi dan Arsitektur Komputer",
+            "Keterampilan dan Profesionalisme Teknologi Informasi",
+            "Wawasan Global TIK",
+            "Jaringan Komputer",
+            "Interaksi Manusia dan Komputer",
+            "Kewirausahaan",
+            "Sistem Operasi",
+            "Sistem Cerdas",
+            "Sistem Manajemen Basis Data",
+            "Teknologi Informasi Untuk Masyarakat",
+            "Keamanan Siber",
+            "Pengalaman Pengguna",
+            "Pemrograman Berorientasi Obyek",
+            "Pemrograman Web",
+            "Pemrograman Platform & IOT",
+            "Rekayasa Perangkat Lunak"
+          ]
+        };
+
+        // Update courses dropdown based on selected major
+        function updateCourses() {
+          const major = document.getElementById("major").value;
+          const courseSelect = document.getElementById("course");
+
+          courseSelect.innerHTML = '<option value="" disabled selected>Select Course</option>';
+
+          if (courseData[major]) {
+            courseData[major].forEach(course => {
+              const option = document.createElement("option");
+              option.value = course;
+              option.textContent = course;
+              courseSelect.appendChild(option);
+            });
+          }
+        }
+
+        // Show file name when file is selected
+        document.getElementById('noteFile').addEventListener('change', function() {
+          const fileName = this.files[0] ? this.files[0].name : 'No file chosen';
+          document.getElementById('file-name').textContent = fileName;
+        });
+
+        // Load user data from localStorage
+        document.addEventListener('DOMContentLoaded', function() {
+          // Get user data from localStorage or set default values
+          const userData = JSON.parse(localStorage.getItem('userData') || '{}');
+          const displayName = userData.name || 'Anonymous User';
+          
+          // Handle form submission
+          document.getElementById('uploadForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // Get form data
+            const title = document.getElementById('title').value;
+            const description = document.getElementById('description').value;
+            const major = document.getElementById('major').value;
+            const course = document.getElementById('course').value;
+            const fileInput = document.getElementById('noteFile');
+            const file = fileInput.files[0];
+            
+            if (!file) {
+              alert('Please select a file to upload');
+              return;
+            }
+            
+            // Create note object
+            const noteData = {
+              id: Date.now(), // Generate unique ID
+              title: title,
+              description: description,
+              major: major,
+              course: course,
+              fileName: file.name,
+              fileSize: file.size,
+              fileType: file.type,
+              uploadDate: new Date().toISOString(),
+              uploadedBy: {
+                id: userData.id || 'anonymous',
+                name: displayName || 'Anonymous User',
+                email: userData.email || 'unknown'
+              }
+            };
+            
+            // Get existing notes or create empty array
+            const existingNotes = JSON.parse(localStorage.getItem('userNotes') || '[]');
+            
+            // Add new note
+            existingNotes.push(noteData);
+            
+            // Save to localStorage
+            try {
+              localStorage.setItem('userNotes', JSON.stringify(existingNotes));
+              alert('Note uploaded successfully!');
+              
+              // Reset form
+              document.getElementById('uploadForm').reset();
+              
+              // Redirect to my notes page
+              setTimeout(() => {
+                window.location.href = 'myNote.html';
+              }, 1000);
+            } catch (error) {
+              console.error('Error saving note:', error);
+              alert('Failed to upload note. Please try again.');
+            }
+          });
         });
     </script>
-
 </body>
 </html>
