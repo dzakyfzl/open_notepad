@@ -82,5 +82,35 @@ public class PageController{
         }
         return "note";
     }
+
+    @GetMapping("/admin")
+    public String adminPage(HttpSession session, HttpServletRequest request) {
+        // Check if the user is logged in
+        if (security.isSessionValid(session, request)) {
+            // If not logged in, redirect to the main page
+            return "redirect:/login";
+        }
+        return "admin";
+    }
+
+    @GetMapping("/admin/profile")
+    public String adminProfile(HttpSession session, HttpServletRequest request) {
+        // Check if the user is logged in
+        if (security.isSessionValid(session, request)) {
+            // If not logged in, redirect to the main page
+            return "redirect:/login";
+        }
+        return "adminProfile";
+    }
+
+    @GetMapping("/admin/profile/edit")
+    public String adminEditProfile(HttpSession session, HttpServletRequest request) {
+        // Check if the user is logged in
+        if (security.isSessionValid(session, request)) {
+            // If not logged in, redirect to the main page
+            return "redirect:/login";
+        }
+        return "editAdminProfile";
+    }
     
 }
