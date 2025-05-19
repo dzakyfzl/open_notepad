@@ -32,8 +32,183 @@
         <a href="/user/profile"><img src="/img/profile.png" alt="Profile Icon">  </a>
         </div>
     </header>
-
     <!-- navbar end -->
-    
+     <!-- Notes Grid -->
+        <main class="container mx-auto py-8 px-4">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Note 1 -->
+                <div class="note-card border border-gray-300 rounded-lg p-4 bg-white" onclick="selectNote(this, 'Introduction to OOP', 'Programming')">
+                    <h3 class="text-xl font-bold">Introduction to OOP</h3>
+                    <div class="flex justify-between mt-1">
+                        <p class="text-gray-600">Programming</p>
+                        <div class="flex items-center">
+                            <i class="fas fa-eye text-gray-600 mr-1"></i>
+                            <span class="text-gray-600">120</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Note 2 -->
+                <div class="note-card border border-gray-300 rounded-lg p-4 bg-white" onclick="selectNote(this, 'Database Design', 'Database System')">
+                    <h3 class="text-xl font-bold">Database Design</h3>
+                    <div class="flex justify-between mt-1">
+                        <p class="text-gray-600">Database System</p>
+                        <div class="flex items-center">
+                            <i class="fas fa-eye text-gray-600 mr-1"></i>
+                            <span class="text-gray-600">120</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Note 3 -->
+                <div class="note-card border border-gray-300 rounded-lg p-4 bg-white" onclick="selectNote(this, 'Introduction to OOP', 'Programming')">
+                    <h3 class="text-xl font-bold">Introduction to OOP</h3>
+                    <div class="flex justify-between mt-1">
+                        <p class="text-gray-600">Programming</p>
+                        <div class="flex items-center">
+                            <i class="fas fa-eye text-gray-600 mr-1"></i>
+                            <span class="text-gray-600">120</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Note 4 -->
+                <div class="note-card border border-gray-300 rounded-lg p-4 bg-white" onclick="selectNote(this, 'Database Design', 'Database System')">
+                    <h3 class="text-xl font-bold">Database Design</h3>
+                    <div class="flex justify-between mt-1">
+                        <p class="text-gray-600">Database System</p>
+                        <div class="flex items-center">
+                            <i class="fas fa-eye text-gray-600 mr-1"></i>
+                            <span class="text-gray-600">120</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Note 5 -->
+                <div class="note-card border border-gray-300 rounded-lg p-4 bg-white" onclick="selectNote(this, 'Introduction to OOP', 'Programming')">
+                    <h3 class="text-xl font-bold">Introduction to OOP</h3>
+                    <div class="flex justify-between mt-1">
+                        <p class="text-gray-600">Programming</p>
+                        <div class="flex items-center">
+                            <i class="fas fa-eye text-gray-600 mr-1"></i>
+                            <span class="text-gray-600">120</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Note 6 -->
+                <div class="note-card border border-gray-300 rounded-lg p-4 bg-white" onclick="selectNote(this, 'Database Design', 'Database System')">
+                    <h3 class="text-xl font-bold">Database Design</h3>
+                    <div class="flex justify-between mt-1">
+                        <p class="text-gray-600">Database System</p>
+                        <div class="flex items-center">
+                            <i class="fas fa-eye text-gray-600 mr-1"></i>
+                            <span class="text-gray-600">120</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Note 7 -->
+                <div class="note-card border border-gray-300 rounded-lg p-4 bg-white" onclick="selectNote(this, 'Introduction to OOP', 'Programming')">
+                    <h3 class="text-xl font-bold">Introduction to OOP</h3>
+                    <div class="flex justify-between mt-1">
+                        <p class="text-gray-600">Programming</p>
+                        <div class="flex items-center">
+                            <i class="fas fa-eye text-gray-600 mr-1"></i>
+                            <span class="text-gray-600">120</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Note 8 -->
+                <div class="note-card border border-gray-300 rounded-lg p-4 bg-white" onclick="selectNote(this, 'Database Design', 'Database System')">
+                    <h3 class="text-xl font-bold">Database Design</h3>
+                    <div class="flex justify-between mt-1">
+                        <p class="text-gray-600">Database System</p>
+                        <div class="flex items-center">
+                            <i class="fas fa-eye text-gray-600 mr-1"></i>
+                            <span class="text-gray-600">120</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+        
+        <!-- Note Detail Modal (Hidden by default) -->
+        <div id="noteModal" class="fixed inset-0 bg-black bg-opacity-50 items-center justify-center hidden">
+            <div class="bg-white rounded-lg p-6 w-full max-w-2xl">
+                <div class="flex justify-between items-center mb-4">
+                    <h2 id="modalTitle" class="text-2xl font-bold">Note Title</h2>
+                    <button onclick="closeModal()" class="text-gray-500 hover:text-gray-700">
+                        <i class="fas fa-times text-xl"></i>
+                    </button>
+                </div>
+                <p id="modalCategory" class="text-gray-600 mb-2">Category</p>
+                <div class="flex items-center text-gray-600 mb-4">
+                    <i class="fas fa-eye mr-1"></i>
+                    <span id="modalViews">120</span> views
+                </div>
+                <div class="border-t border-gray-200 pt-4">
+                    <p class="text-gray-700">
+                        This is a placeholder for the note content. When you click on a note, its content would appear here.
+                        The actual content would be loaded from your data source.
+                    </p>
+                </div>
+                <div class="mt-6 flex justify-end">
+                    <button onclick="closeModal()" class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">
+                        Close
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Function to select a note and show details
+        function selectNote(element, title, category) {
+            // Remove selected class from all notes
+            document.querySelectorAll('.note-card').forEach(note => {
+                note.classList.remove('selected');
+            });
+            
+            // Add selected class to clicked note
+            element.classList.add('selected');
+            
+            // Update view count (in a real app, this would be saved to a database)
+            const viewCountElement = element.querySelector('.fa-eye').nextElementSibling;
+            let viewCount = parseInt(viewCountElement.textContent);
+            viewCount++;
+            viewCountElement.textContent = viewCount;
+            
+            // Update modal content
+            document.getElementById('modalTitle').textContent = title;
+            document.getElementById('modalCategory').textContent = category;
+            document.getElementById('modalViews').textContent = viewCount;
+            
+            // Show modal
+            const modal = document.getElementById('noteModal');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+        }
+        
+            const modal = document.getElementById('noteModal');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+        function closeModal() {
+            document.getElementById('noteModal').classList.add('hidden');
+        }
+        
+        // Close modal when clicking outside of it
+        document.getElementById('noteModal').addEventListener('click', function(event) {
+            if (event.target === this) {
+                closeModal();
+            }
+        });
+
+        // Function to open profile editor
+        function openProfileEditor() {
+            window.location.href = 'editProfile.html';
+        }
+    </script>
 </body>
 </html>
