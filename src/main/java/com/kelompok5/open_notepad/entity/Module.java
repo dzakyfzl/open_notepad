@@ -13,15 +13,6 @@ public class Module {
     private boolean visibility;
     private File file;
 
-    public void getFromDatabase(String moduleID){
-        this.file = new File(rs.getString("fileID"), rs.getString("name"), rs.getString("type"), rs.getBytes("size"), rs.getString("path"));
-        //get module from database logic
-        
-
-    }
-    public void uploadToDatabase() {
-        //upload module to database logic
-    }
     //getter
     public String getModuleID() {
         return moduleID;

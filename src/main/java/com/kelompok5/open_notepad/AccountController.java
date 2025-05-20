@@ -76,7 +76,9 @@ public class AccountController{
         String sql = "SELECT isAdmin FROM Accounts WHERE username = ?";
         boolean isAdmin;
         try {
-            isAdmin = jdbcTemplate.queryForObject(sql, new Object[]{username},Boolean.class);
+            isAdmin = jdbcTemplate.queryForObject(sql, new Object[]{username},(rs, rowNum) -> {
+                return rs.getBoolean("isAdmin");
+            });
         } catch (Exception e) {
             throw new RuntimeException("failed to get isAdmin from database");
         }
@@ -89,7 +91,7 @@ public class AccountController{
                 return ResponseEntity.badRequest().body(Map.of("message","account not found"));
             }
             // Check if the password matches
-            if (security.passwordIsValid(password, admin.getHashedPassword(), admin.getSalt())) {
+            if (!security.passwordIsValid(password, admin.getHashedPassword(), admin.getSalt())) {
                 // If the password does not match, return an error message
                 return ResponseEntity.badRequest().body(Map.of("message","invalid password"));
             }
@@ -100,7 +102,7 @@ public class AccountController{
                 return ResponseEntity.badRequest().body(Map.of("message","account not found"));
             }
             // Check if the password matches
-            if (security.passwordIsValid(password, user.getHashedPassword(), user.getSalt())) {
+            if (!security.passwordIsValid(password, user.getHashedPassword(), user.getSalt())) {
                 // If the password does not match, return an error message
                 return ResponseEntity.badRequest().body(Map.of("message","invalid password"));
             }
@@ -137,7 +139,11 @@ public class AccountController{
         String hashedPassword = security.hashPassword(password, salt);
 
         //using UserDAO to register the user
-        userDAO.register(username, hashedPassword, salt, email, firstName, lastName);
+        try {
+            userDAO.register(username, hashedPassword, salt, email, firstName, lastName);
+        }catch(Exception e){
+            return ResponseEntity.badRequest().body(Map.of("message", e.getMessage()));
+        }
         //if register success, set the session attribute
         session.setMaxInactiveInterval(60 * 60 * 24);
         session.setAttribute("username", username);
@@ -153,7 +159,7 @@ public class AccountController{
     }
 
     @PostMapping("/logout")//logout
-    public ResponseEntity<Map<String,String>> checkSession(HttpServletRequest request, HttpSession session) {
+    public ResponseEntity<Map<String,String>> logout(HttpServletRequest request, HttpSession session) {
         if(security.isSessionValid(session, request)) {
             return ResponseEntity.badRequest().body(Map.of("message", "User not logged in"));
         }

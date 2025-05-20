@@ -19,7 +19,7 @@ public class FileDAO {
         try {
             return jdbcTemplate.queryForObject(sql, new Object[]{fileID}, (rs, rowNum) -> {
                 return new File(
-                    rs.getString("fileID"),
+                    rs.getInt("fileID"),
                     rs.getString("name"),
                     rs.getString("type"),
                     rs.getLong("size"),

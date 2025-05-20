@@ -3,9 +3,11 @@ package com.kelompok5.open_notepad.DAO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.stereotype.Component;
 
 import com.kelompok5.open_notepad.entity.Admin;
 
+@Component
 public class AdminDAO extends AccountDAO {
 
     @Autowired

@@ -6,10 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 
-import com.kelompok5.open_notepad.Security;
-import com.kelompok5.open_notepad.entity.Admin;
 import com.kelompok5.open_notepad.entity.Module;
-import com.kelompok5.open_notepad.entity.User;
 
 
 @Component
@@ -18,58 +15,14 @@ public abstract  class AccountDAO {
     @Autowired
     private JdbcTemplate jdbcTemplate;
 
-    @Autowired
-    private Security security;
 
-    @Autowired
-    private UserDAO userDAO;
-
-    @Autowired
-    private AdminDAO adminDAO;
-
-
-    public void login(String username, String password) {
-        //login logic
-        // Query the database to check if the account is admin or not
-        String sql = "SELECT isAdmin FROM Accounts WHERE username = ?";
-        boolean isAdmin;
-        try {
-            isAdmin = jdbcTemplate.queryForObject(sql, new Object[]{username},Boolean.class);
-        } catch (Exception e) {
-            throw new RuntimeException("failed to get isAdmin from database");
-        }
-
-        //if statement
-        if(isAdmin){
-            Admin admin = adminDAO.getFromDatabase(username);
-            if (admin == null) {
-                // If the user is not found, return an error message
-                throw new RuntimeException("User not found");
-            }
-            // Check if the password matches
-            if (security.passwordIsValid(password, admin.getHashedPassword(), admin.getSalt())) {
-                // If the password does not match, return an error message
-                throw new RuntimeException("Invalid password");
-            }
-        }else{
-            User user = userDAO.getFromDatabase(username);
-            if (user == null) {
-                // If the user is not found, return an error message
-                throw new RuntimeException("User not found");
-            }
-            // Check if the password matches
-            if (security.passwordIsValid(password, user.getHashedPassword(), user.getSalt())) {
-                // If the password does not match, return an error message
-                throw new RuntimeException("Invalid password");
-            }
-        }
-    }
 
     public void register(String username, String hashedPassword, String salt, String email, String firstName, String lastName){
         //registration logic
         // Query the database to check if the user exists
-        String sql = "SELECT * FROM Accounts WHERE username = ?";
-        int rowCount = jdbcTemplate.queryForObject(sql, new Object[]{username}, Integer.class);
+        int rowCount = 0;
+        String sql = "SELECT COUNT(*) AS Account FROM Accounts WHERE username = ?";
+        rowCount = jdbcTemplate.queryForObject(sql, new Object[]{username}, (rs, rowNum) -> rs.getInt("Account"));
         if (rowCount > 0) {
             // If the user already exists, return an error message
             throw new RuntimeException("user already exist");

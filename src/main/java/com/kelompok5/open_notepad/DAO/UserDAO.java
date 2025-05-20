@@ -5,10 +5,11 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.stereotype.Component;
 
 import com.kelompok5.open_notepad.entity.User;
 
-
+@Component
 public class UserDAO extends AccountDAO{
 
     @Autowired
