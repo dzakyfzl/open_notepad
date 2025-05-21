@@ -40,7 +40,7 @@ public class UserDAO extends AccountDAO {
     }
 
     public void editDetails(String username, String aboutMe, String instagram, String linkedin) {
-        String sql = "INSERT INTO UserDetails(username,,aboutMe,instagram,linkedin) VALUE (?,?,?,?)";
+        String sql = "INSERT INTO UserDetails(username,aboutMe,instagram,linkedin) VALUE (?,?,?,?)";
         try {
             jdbcTemplate.update(sql, username, aboutMe, instagram, linkedin);
         } catch (Exception e) {
