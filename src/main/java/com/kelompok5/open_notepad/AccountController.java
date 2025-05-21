@@ -369,6 +369,14 @@ public class AccountController {
         return ResponseEntity.ok().contentType(MediaType.parseMediaType(contentType)).body(fileResource);
     }
 
+<<<<<<< HEAD
+
+
+
+
+
+=======
+>>>>>>> 0ca30ff87709fcde9c4acc8356e1f10aa6a8f033
     /*
      * @GetMapping("/download-file/{filename}")//Download file
      * public ResponseEntity<Resource> downloadPhoto(@PathVariable String filename)
