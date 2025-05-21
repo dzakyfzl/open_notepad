@@ -22,9 +22,3 @@ public class OpenNotepadApplication {
 		SpringApplication.run(OpenNotepadApplication.class, args);
 	}
 }
-// 	@PostConstruct
-//     public void testConnection() {
-//          result = jdbcTemplate.queryForObject("SELECT * FROM Accounts", Integer.class);
-//         System.out.println("Koneksi JDBC berhasil, hasil query: " + result);
-//     }
-// }

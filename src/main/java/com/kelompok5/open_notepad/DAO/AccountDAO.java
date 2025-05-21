@@ -49,37 +49,5 @@ public abstract  class AccountDAO {
         }
     }
 
-   public void delete(String username, String password) {
-    // Ambil hashedPassword dari database
-    String sql = "SELECT hashedPassword FROM Accounts WHERE username = ?";
-    try {
-        String hashedPassword = jdbcTemplate.queryForObject(sql, new Object[]{username}, String.class);
-        // Bandingkan password (asumsi password sudah di-hash sebelum dikirim ke method ini)
-        if (!hashedPassword.equals(password)) {
-            throw new RuntimeException("Wrong password");
-        }
-        // Hapus akun
-        sql = "DELETE FROM Accounts WHERE username = ?";
-        int rows = jdbcTemplate.update(sql, username);
-        if (rows == 0) {
-            throw new RuntimeException("User not found");
-        }
-    } catch (Exception e) {
-        throw new RuntimeException("Error deleting user: " + e.getMessage());
-    }
-}
-
-    //Modules Interaction
-    public List<Module> findModule(String keyParams) {
-        //find module logic
-        //search module in database
-        return null;
-    }
-    public void deleteModule(Module module) {
-        //delete module logic
-        //remove module from database
-    }
-
-    
 
 }

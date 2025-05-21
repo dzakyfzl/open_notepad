@@ -44,4 +44,28 @@ public class AdminDAO extends AccountDAO {
     public void setStatusModule(Module module) {
         //set status module logic
     }
+
+    public void deleteAccount(String username, String hashedPassword) {
+        String sql = "SELECT hashedPassword FROM Accounts WHERE username = ?";
+        try {
+            String storedHashed = jdbcTemplate.queryForObject(sql, new Object[] { username }, String.class);
+
+            if (!storedHashed.equals(hashedPassword)) {
+                throw new RuntimeException("Wrong password");
+            }
+
+            // Hapus session user dari tabel Sessions
+            String deleteSessionSql = "DELETE FROM Sessions WHERE username = ?";
+            jdbcTemplate.update(deleteSessionSql, username);
+
+            // Hapus akun
+            sql = "DELETE FROM Accounts WHERE username = ?";
+            int rows = jdbcTemplate.update(sql, username);
+            if (rows == 0) {
+                throw new RuntimeException("User not found");
+            }
+        } catch (Exception e) {
+            throw new RuntimeException("Error deleting user: " + e.getMessage());
+        }
+    }
 }
