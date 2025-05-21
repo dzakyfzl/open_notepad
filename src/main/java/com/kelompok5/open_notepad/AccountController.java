@@ -362,9 +362,6 @@ public class AccountController{
 
 
 
-
-
-
     /*
     @GetMapping("/download-file/{filename}")//Download file
     public ResponseEntity<Resource> downloadPhoto(@PathVariable String filename) throws IOException {

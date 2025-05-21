@@ -4,136 +4,163 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Dashboard</title>
-  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="/css/navbar.css" />
+  <link rel="stylesheet" href="/css/Dashboard.css" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" integrity="sha512-DfN3huwA5R8SlB9lg/MqP4whXpqv6GCpMf6VgL9Ih97UQobgb3fpvsvHJZaEm8a+q0xTLF7vIqZHRZTrHeAPvA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Dashboard</title>
+  <link rel="stylesheet" href="/css/navbar.css" />
+  <link rel="stylesheet" href="/css/Dashboard.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" integrity="sha512-DfN3huwA5R8SlB9lg/MqP4whXpqv6GCpMf6VgL9Ih97UQobgb3fpvsvHJZaEm8a+q0xTLF7vIqZHRZTrHeAPvA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+   <script>
+    fetch('/api/account/info', {
+      method: 'GET',
+      credentials: 'include'
+    })
+    .then(response => response.json())
+    .then(data => {
+      console.log(data);
+      if (data.message === "User info retrieved successfully") {
+        // Kalau berhasil login, bisa tampilkan username dari session
+        document.getElementById('username').textContent = 'User';
+      } else {
+        // Kalau belum login, redirect ke login
+        window.location.href = '/login';
+      }
+    })
+    .catch(err => {
+      console.error('Error fetching user info:', err);
+      window.location.href = '/login';
+    });
+  </script>
 </head>
-<body class="font-['Segoe_UI'] m-0 p-0 h-full overflow-y-auto">
-  <!-- Navbar -->
-  <header class="sticky top-0 z-50 w-full h-[70px] flex justify-between items-center bg-[#d9f1e2] px-5">
-    <div class="flex items-center">
-      <img src="/img/logo.png" alt="Logo" class="h-[43px]">
-    </div>
-    <div class="flex items-center gap-2">
-      <div class="flex items-center bg-white py-[7px] px-[10px] rounded-l-lg">
-        <img src="/img/search.png" alt="Search Icon" class="w-[25px] h-[25px] mr-2">
-        <input type="text" placeholder="Search notes" class="border-none outline-none w-[250px] text-xl">
-      </div>
+<body>
+  <header id="navbar">
+        <div class="left">
+        <img src="/img/logo.png" alt="Logo">
+        </div>
+        <div class="right">
+            <div class="search">
+                <img src="/img/search.png" alt="Search Icon">
+                <input type="text" placeholder="Search notes">
+            </div>
 
-      <select class="bg-white py-[8.1px] px-[10px] rounded-r-lg border-none text-xl font-normal text-[#777B7C] outline-none appearance-none pr-8 bg-[url('data:image/svg+xml;utf8,<svg fill=\"black\" height=\"20\" viewBox=\"0 0 24 24\" width=\"20\" xmlns=\"http://www.w3.org/2000/svg\"><path d=\"M7 10l5 5 5-5z\"/></svg>')] bg-no-repeat bg-right-[10px] bg-[center] bg-[length:16px]">
-        <option value="">All Majors</option>
-        <option value="informatics">Informatics</option>
-        <option value="electrical">Electrical Engineering</option>
-        <option value="mechanical">Mechanical Engineering</option>
-        <option value="civil">Civil Engineering</option>
-      </select>
-      <a href="/user/notes"><img src="/img/myNote.png" alt="myNote Icon" class="h-[40px]"></a>
-      <a href="/user/notes/upload"><img src="/img/upload.png" alt="Upload Icon" class="h-[40px]"></a>
-      <a href="/user/profile"><img src="/img/profile.png" alt="Profile Icon" class="h-[40px]"></a>
-    </div>
+            <select class="major-filter">
+                <option value="">All Majors</option>
+                <option value="informatics">Informatics</option>
+                <option value="electrical">Electrical Engineering</option>
+                <option value="mechanical">Mechanical Engineering</option>
+                <option value="civil">Civil Engineering</option>
+            </select>
+        <a href="/user/notes"><img src="/img/myNote.png" alt="myNote Icon"></a>
+        <a href="/user/notes/upload"><img src="/img/upload.png" alt="Upload Icon"></a>
+        <a href="/user/profile"><img src="/img/profile.png" alt="Profile Icon">  </a>
+        </div>
   </header>
   
-  <!-- Card Grid -->
-  <div class="py-5 max-w-[90%] mx-auto grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-8 w-full box-border">
+  <div class="container">
     
-    <div class="flex flex-col text-left bg-white pl-5 rounded-lg shadow-md transition-all duration-200 hover:translate-y-[-4px] hover:shadow-lg">
+    <div class="card">
       <!-- maksimal 22 huruf untuk judul note  -->
-      <h3 class="text-2xl m-0">aaaaaa aaaaaa aaaaaaaa</h3>
-      <p class="font-semibold text-base text-[#555] pb-5">Programming</p>
-      <div class="h-full mt-2.5 pb-2.5 flex flex-col justify-end items-baseline text-sm text-[#444]">
-        <span class="font-medium mb-2.5">Alice border</span>
+      <h3>aaaaaa aaaaaa aaaaaaaa</h3>
+      <p class="category">Programming</p>
+      <div class="card-footer">
+        <span>Alice border</span>
       </div>
     </div>
 
-    <div class="flex flex-col text-left bg-white pl-5 rounded-lg shadow-md transition-all duration-200 hover:translate-y-[-4px] hover:shadow-lg">
-      <h3 class="text-2xl m-0">Introduction to OOP</h3>
-      <p class="font-semibold text-base text-[#555] pb-5">Programming</p>
-      <div class="h-full mt-2.5 pb-2.5 flex flex-col justify-end items-baseline text-sm text-[#444]">
-        <span class="font-medium mb-2.5">Alice border</span>
+    <div class="card">
+      <h3>Introduction to OOP</h3>
+      <p class="category">Programming</p>
+      <div class="card-footer">
+        <span>Alice border</span>
       </div>
     </div>
   
-    <div class="flex flex-col text-left bg-white pl-5 rounded-lg shadow-md transition-all duration-200 hover:translate-y-[-4px] hover:shadow-lg">
-      <h3 class="text-2xl m-0">Introduction to OOP</h3>
-      <p class="font-semibold text-base text-[#555] pb-5">Programming</p>
-      <div class="h-full mt-2.5 pb-2.5 flex flex-col justify-end items-baseline text-sm text-[#444]">
-        <span class="font-medium mb-2.5">Alice border</span>
+    <div class="card">
+      <h3>Introduction to OOP</h3>
+      <p class="category">Programming</p>
+      <div class="card-footer">
+        <span>Alice border</span>
       </div>
     </div>
   
-    <div class="flex flex-col text-left bg-white pl-5 rounded-lg shadow-md transition-all duration-200 hover:translate-y-[-4px] hover:shadow-lg">
-      <h3 class="text-2xl m-0">Introduction to OOP</h3>
-      <p class="font-semibold text-base text-[#555] pb-5">Programming</p>
-      <div class="h-full mt-2.5 pb-2.5 flex flex-col justify-end items-baseline text-sm text-[#444]">
-        <span class="font-medium mb-2.5">Alice border</span>
+    <div class="card">
+      <h3>Introduction to OOP</h3>
+      <p class="category">Programming</p>
+      <div class="card-footer">
+        <span>Alice border</span>
       </div>
     </div>
 
-    <div class="flex flex-col text-left bg-white pl-5 rounded-lg shadow-md transition-all duration-200 hover:translate-y-[-4px] hover:shadow-lg">
-      <h3 class="text-2xl m-0">Introduction to OOP</h3>
-      <p class="font-semibold text-base text-[#555] pb-5">Programming</p>
-      <div class="h-full mt-2.5 pb-2.5 flex flex-col justify-end items-baseline text-sm text-[#444]">
-        <span class="font-medium mb-2.5">Alice border</span>
+    <div class="card">
+      <h3>Introduction to OOP</h3>
+      <p class="category">Programming</p>
+      <div class="card-footer">
+        <span>Alice border</span>
       </div>
     </div>
   
-    <div class="flex flex-col text-left bg-white pl-5 rounded-lg shadow-md transition-all duration-200 hover:translate-y-[-4px] hover:shadow-lg">
-      <h3 class="text-2xl m-0">Introduction to OOP</h3>
-      <p class="font-semibold text-base text-[#555] pb-5">Programming</p>
-      <div class="h-full mt-2.5 pb-2.5 flex flex-col justify-end items-baseline text-sm text-[#444]">
-        <span class="font-medium mb-2.5">Alice border</span>
+    <div class="card">
+      <h3>Introduction to OOP</h3>
+      <p class="category">Programming</p>
+      <div class="card-footer">
+        <span>Alice border</span>
       </div>
     </div>
   
-    <div class="flex flex-col text-left bg-white pl-5 rounded-lg shadow-md transition-all duration-200 hover:translate-y-[-4px] hover:shadow-lg">
-      <h3 class="text-2xl m-0">Introduction to OOP</h3>
-      <p class="font-semibold text-base text-[#555] pb-5">Programming</p>
-      <div class="h-full mt-2.5 pb-2.5 flex flex-col justify-end items-baseline text-sm text-[#444]">
-        <span class="font-medium mb-2.5">Alice border</span>
+    <div class="card">
+      <h3>Introduction to OOP</h3>
+      <p class="category">Programming</p>
+      <div class="card-footer">
+        <span>Alice border</span>
       </div>
     </div>
 
-    <div class="flex flex-col text-left bg-white pl-5 rounded-lg shadow-md transition-all duration-200 hover:translate-y-[-4px] hover:shadow-lg">
-      <h3 class="text-2xl m-0">Introduction to OOP</h3>
-      <p class="font-semibold text-base text-[#555] pb-5">Programming</p>
-      <div class="h-full mt-2.5 pb-2.5 flex flex-col justify-end items-baseline text-sm text-[#444]">
-        <span class="font-medium mb-2.5">Alice border</span>
+    <div class="card">
+      <h3>Introduction to OOP</h3>
+      <p class="category">Programming</p>
+      <div class="card-footer">
+        <span>Alice border</span>
       </div>
     </div>
   
-    <div class="flex flex-col text-left bg-white pl-5 rounded-lg shadow-md transition-all duration-200 hover:translate-y-[-4px] hover:shadow-lg">
-      <h3 class="text-2xl m-0">Introduction to OOP</h3>
-      <p class="font-semibold text-base text-[#555] pb-5">Programming</p>
-      <div class="h-full mt-2.5 pb-2.5 flex flex-col justify-end items-baseline text-sm text-[#444]">
-        <span class="font-medium mb-2.5">Alice border</span>
+    <div class="card">
+      <h3>Introduction to OOP</h3>
+      <p class="category">Programming</p>
+      <div class="card-footer">
+        <span>Alice border</span>
       </div>
     </div>
   
-    <div class="flex flex-col text-left bg-white pl-5 rounded-lg shadow-md transition-all duration-200 hover:translate-y-[-4px] hover:shadow-lg">
-      <h3 class="text-2xl m-0">Introduction to OOP</h3>
-      <p class="font-semibold text-base text-[#555] pb-5">Programming</p>
-      <div class="h-full mt-2.5 pb-2.5 flex flex-col justify-end items-baseline text-sm text-[#444]">
-        <span class="font-medium mb-2.5">Alice border</span>
+    <div class="card">
+      <h3>Introduction to OOP</h3>
+      <p class="category">Programming</p>
+      <div class="card-footer">
+        <span>Alice border</span>
       </div>
     </div>
 
-    <div class="flex flex-col text-left bg-white pl-5 rounded-lg shadow-md transition-all duration-200 hover:translate-y-[-4px] hover:shadow-lg">
-      <h3 class="text-2xl m-0">Introduction to OOP</h3>
-      <p class="font-semibold text-base text-[#555] pb-5">Programming</p>
-      <div class="h-full mt-2.5 pb-2.5 flex flex-col justify-end items-baseline text-sm text-[#444]">
-        <span class="font-medium mb-2.5">Alice border</span>
+    <div class="card">
+      <h3>Introduction to OOP</h3>
+      <p class="category">Programming</p>
+      <div class="card-footer">
+        <span>Alice border</span>
       </div>
     </div>
   
-    <div class="flex flex-col text-left bg-white pl-5 rounded-lg shadow-md transition-all duration-200 hover:translate-y-[-4px] hover:shadow-lg">
-      <h3 class="text-2xl m-0">Introduction to OOP</h3>
-      <p class="font-semibold text-base text-[#555] pb-5">Programming</p>
-      <div class="h-full mt-2.5 pb-2.5 flex flex-col justify-end items-baseline text-sm text-[#444]">
-        <span class="font-medium mb-2.5">Alice border</span>
+    <div class="card">
+      <h3>Introduction to OOP</h3>
+      <p class="category">Programming</p>
+      <div class="card-footer">
+        <span>Alice border</span>
       </div>
     </div>
   
   </div>
-
-  <script src="/js/indexPage.js"></script>
 </body>
 </html>
