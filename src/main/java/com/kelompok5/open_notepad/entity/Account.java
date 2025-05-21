@@ -51,33 +51,6 @@ public abstract  class Account {
                       "firstName", firstName,
                       "lastName", lastName);
     }
-    public void logout() {
-        //logout logic
-        //database to remove all sessions
-    }
-    public void delete() {
-        //delete account logic
-        //remove all data from database
-    }
-    public void uploadToDatabase() {
-        //upload file to database logic
-        if(this.profilePicture != null) {
-            //save file to database
-        }else {
-            //save default file to database
-        }
-    }
-
-    //Modules Interaction
-        public List<Module> findModule(String keyParams) {
-        //find module logic
-        //search module in database
-        return null;
-    }
-    public void deleteModule(Module module) {
-        //delete module logic
-        //remove module from database
-    }
 
     // Getter and Setter methods
     public String getUsername() {

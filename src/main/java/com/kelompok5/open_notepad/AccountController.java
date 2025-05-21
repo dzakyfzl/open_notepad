@@ -238,13 +238,11 @@ public class AccountController {
         }
         // Hash password and salt
         String hashedPassword = security.hashPassword(password, user.getSalt());
-
         try {
             userDAO.deleteAccount(username, hashedPassword);
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(Map.of("message", "Error deleting user: " + e.getMessage()));
         }
-
         // Hapus session
         session.invalidate();
 
@@ -369,14 +367,6 @@ public class AccountController {
         return ResponseEntity.ok().contentType(MediaType.parseMediaType(contentType)).body(fileResource);
     }
 
-<<<<<<< HEAD
-
-
-
-
-
-=======
->>>>>>> 0ca30ff87709fcde9c4acc8356e1f10aa6a8f033
     /*
      * @GetMapping("/download-file/{filename}")//Download file
      * public ResponseEntity<Resource> downloadPhoto(@PathVariable String filename)
