@@ -1,7 +1,15 @@
 package com.kelompok5.open_notepad.entity;
 
 public class File {
-    private String fileID;
+
+    public File(int fileID, String name, String type, long size, String path) {
+        this.fileID = fileID;
+        this.name = name;
+        this.type = type;
+        this.size = size;
+        this.path = path;
+    }
+    private int fileID;
     private String name;
     private String path;
     private String type;
@@ -16,10 +24,10 @@ public class File {
     }
 
     //getter and setter methods
-    public String getFileID() {
+    public int getFileID() {
         return fileID;
     }
-    public void setFileID(String fileID) {
+    public void setFileID(int fileID) {
         this.fileID = fileID;
     }
     public String getName() {

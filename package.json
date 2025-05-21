@@ -4,12 +4,13 @@
   "description": "This program implements Object-Ortiented Programming architecture for the backend",
   "main": "index.js",
   "scripts": {
-    "dev": "npx @tailwindcss/cli -i ./src/main/resources/static/css/input.css -o ./src/main/resources/static/css/output.css --watch"
+    "update": "npx tailwindcss -i ./src/main/resources/static/css/input.css -o ./src/main/resources/static/css/output.css"
   },
   "author": "",
   "license": "ISC",
-  "dependencies": {
-    "@tailwindcss/cli": "^4.1.5",
-    "tailwindcss": "^4.1.5"
+  "devDependencies": {
+    "autoprefixer": "^10.4.21",
+    "postcss": "^8.5.3",
+    "tailwindcss": "^3.4.17"
   }
 }
