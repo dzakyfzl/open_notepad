@@ -23,7 +23,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.kelompok5.open_notepad.DAO.AccountDAO;
 import com.kelompok5.open_notepad.DAO.AdminDAO;
 import com.kelompok5.open_notepad.DAO.FileDAO;
 import com.kelompok5.open_notepad.DAO.SessionDAO;
@@ -67,9 +66,8 @@ public class AccountController {
         if (security.isSessionValid(session, request)) {
             return ResponseEntity.badRequest().body(Map.of("message", "User already logged in"));
         }
-        String IPString = request.getRemoteAddr();
-        String sessionID = session.getId();
-        session.setMaxInactiveInterval(60 * 60 * 24); // 1 day
+
+
         if (username == null || password == null) {
             return ResponseEntity.badRequest().body(Map.of("message", "Username and password are required"));
         }
@@ -112,8 +110,10 @@ public class AccountController {
         session.setMaxInactiveInterval(60 * 60 * 24);
         session.setAttribute("username", username);
         // upload session to database
+        String sessionID = session.getId();
+        session.setMaxInactiveInterval(60 * 60 * 24); // 1 day
         try {
-            sessionDAO.uploadToDatabase(sessionID, username, IPString, request.getHeader("User-Agent"));
+            sessionDAO.uploadToDatabase(sessionID, username, request.getHeader("User-Agent"));
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(Map.of("message", e.getMessage()));
         }
@@ -124,7 +124,7 @@ public class AccountController {
 
     @PostMapping("/signup") // register
     public ResponseEntity<Map<String, String>> signUp(@RequestBody Map<String, String> requestData,
-            HttpServletRequest request, HttpSession session) {
+        HttpServletRequest request, HttpSession session) {
         String username = requestData.get("username");
         String password = requestData.get("password");
         String email = requestData.get("email");
@@ -151,9 +151,8 @@ public class AccountController {
         session.setAttribute("username", username);
         // upload session to database
         String sessionID = session.getId();
-        String IPString = request.getRemoteAddr();
         try {
-            sessionDAO.uploadToDatabase(sessionID, username, IPString, request.getHeader("User-Agent"));
+            sessionDAO.uploadToDatabase(sessionID, username, request.getHeader("User-Agent"));
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(Map.of("message", e.getMessage()));
         }

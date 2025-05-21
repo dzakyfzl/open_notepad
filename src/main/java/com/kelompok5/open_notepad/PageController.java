@@ -17,7 +17,7 @@ public class PageController{
     @GetMapping("/")
     public String home(HttpSession session, HttpServletRequest request) {
         // Check if the user is logged in
-        if (security.isSessionValid(session, request)) {
+        if (!security.isSessionValid(session, request)) {
             // If not logged in, redirect to the main page
             return "redirect:/login";
         }
@@ -36,7 +36,7 @@ public class PageController{
     @GetMapping("/user/profile")
     public String profile(HttpSession session, HttpServletRequest request) {
         // Check if the user is logged in
-        if (security.isSessionValid(session, request)) {
+        if (!security.isSessionValid(session, request)) {
             // If not logged in, redirect to the main page
             return "redirect:/login";
         }
@@ -46,7 +46,7 @@ public class PageController{
     @GetMapping("/user/notes/upload")
     public String uploadNotes(HttpSession session, HttpServletRequest request) {
         // Check if the user is logged in
-        if (security.isSessionValid(session, request)) {
+        if (!security.isSessionValid(session, request)) {
             // If not logged in, redirect to the main page
             return "redirect:/login";
         }
@@ -56,7 +56,7 @@ public class PageController{
     @GetMapping("/user/notes")
     public String myNotes(HttpSession session, HttpServletRequest request) {
         // Check if the user is logged in
-        if (security.isSessionValid(session, request)) {
+        if (!security.isSessionValid(session, request)) {
             // If not logged in, redirect to the main page
             return "redirect:/login";
         }
@@ -66,7 +66,7 @@ public class PageController{
     @GetMapping("/user/profile/edit")
     public String editProfile(HttpSession session, HttpServletRequest request) {
         // Check if the user is logged in
-        if (security.isSessionValid(session, request)) {
+        if (!security.isSessionValid(session, request)) {
             // If not logged in, redirect to the main page
             return "redirect:/login";
         }
@@ -76,7 +76,7 @@ public class PageController{
     @GetMapping("/notes")
     public String notesPage(HttpSession session, HttpServletRequest request) {
         // Check if the user is logged in
-        if (security.isSessionValid(session, request)) {
+        if (!security.isSessionValid(session, request)) {
             // If not logged in, redirect to the main page
             return "redirect:/login";
         }
@@ -86,7 +86,7 @@ public class PageController{
     @GetMapping("/admin")
     public String adminPage(HttpSession session, HttpServletRequest request) {
         // Check if the user is logged in
-        if (security.isSessionValid(session, request)) {
+        if (!security.isSessionValid(session, request)) {
             // If not logged in, redirect to the main page
             return "redirect:/login";
         }
@@ -96,7 +96,7 @@ public class PageController{
     @GetMapping("/admin/profile")
     public String adminProfile(HttpSession session, HttpServletRequest request) {
         // Check if the user is logged in
-        if (security.isSessionValid(session, request)) {
+        if (!security.isSessionValid(session, request)) {
             // If not logged in, redirect to the main page
             return "redirect:/login";
         }
@@ -106,7 +106,7 @@ public class PageController{
     @GetMapping("/admin/profile/edit")
     public String adminEditProfile(HttpSession session, HttpServletRequest request) {
         // Check if the user is logged in
-        if (security.isSessionValid(session, request)) {
+        if (!security.isSessionValid(session, request)) {
             // If not logged in, redirect to the main page
             return "redirect:/login";
         }

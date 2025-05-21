@@ -3,19 +3,38 @@ package com.kelompok5.open_notepad;
 import java.security.MessageDigest;
 import java.security.SecureRandom;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import com.kelompok5.open_notepad.DAO.SessionDAO;
+import com.kelompok5.open_notepad.entity.Session;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 
 @Component
 public class Security{
-    protected boolean isSessionValid(HttpSession session, HttpServletRequest request) {
-        String sessionID = "000";
-        String IPString = request.getRemoteAddr();
-        //Querry IP from database
 
-        return session == null;  //Delete if debugging done
+    @Autowired
+    private SessionDAO sessionDAO;
+
+    protected boolean isSessionValid(HttpSession session, HttpServletRequest request) {
+        String sessionID = session.getId();
+        String username = (String) session.getAttribute("username");
+        String UserAgent = request.getHeader("User-Agent");
+        //Querry from database using SessionDAO
+        Session savedSession; 
+        try {
+            sessionDAO.deleteExpiredSessions();
+            savedSession = sessionDAO.getFromDatabase(username);
+        } catch (Exception e) {
+            return false;
+        }
+        // Return true if the sessionID and UserAgent match
+        if (savedSession == null) {
+            return false;
+        }
+        return sessionID.equals(savedSession.getSessionID()) && UserAgent.equals(savedSession.getUserAgent());
     }
 
     public String generateSalt() {

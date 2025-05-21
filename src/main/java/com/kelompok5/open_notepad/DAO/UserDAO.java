@@ -7,6 +7,7 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 
+import com.kelompok5.open_notepad.entity.Note;
 import com.kelompok5.open_notepad.entity.User;
 
 @Component
@@ -15,27 +16,27 @@ public class UserDAO extends AccountDAO {
     @Autowired
     private JdbcTemplate jdbcTemplate;
 
-    public void uploadModule(Module module) {
-        // upload module logic
-        // save module to database
+    public void uploadNote(Note note) {
+        // upload note logic
+        // save note to database
     }
 
-    public Module downloadModule(Module module) {
-        // download module logic
-        // get module from database
-        // return module
+    public Note downloadNote(Note note) {
+        // download note logic
+        // get note from database
+        // return note
         return null;
     }
 
-    public void editModule(Module module) {
-        // edit module logic
-        // check if module is owned by user
-        // update module in database
+    public void editNote(Note note) {
+        // edit note logic
+        // check if note is owned by user
+        // update note in database
 
     }
 
-    public List<Module> showModules() {
-        // get module list logic
+    public List<Note> showNotes() {
+        // get note list logic
         return null;
     }
 
@@ -48,10 +49,10 @@ public class UserDAO extends AccountDAO {
         }
     }
 
-    public void deleteModule(Module module) {
-        // delete module logic
-        // check if module is owned by user
-        // remove module from database
+    public void deleteNote(Note note) {
+        // delete note logic
+        // check if note is owned by user
+        // remove note from database
     }
 
     public void uploadToDatabase(User user) {

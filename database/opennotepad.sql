@@ -23,7 +23,7 @@ CREATE TABLE Accounts (
     FOREIGN KEY (fileID) REFERENCES Files(fileID)
 );
 
-CREATE TABLE Modules (
+CREATE TABLE Notes (
     moduleID INT PRIMARY KEY IDENTITY(1,1),
     username VARCHAR(50),
     fileID INT,

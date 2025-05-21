@@ -1,19 +1,15 @@
 package com.kelompok5.open_notepad.DAO;
 
-import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
-
-import com.kelompok5.open_notepad.entity.Module;
 
 
 @Component
 public abstract  class AccountDAO {
 
     @Autowired
-    private JdbcTemplate jdbcTemplate;
+    protected JdbcTemplate jdbcTemplate;
 
 
 

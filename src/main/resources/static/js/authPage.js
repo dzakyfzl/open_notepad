@@ -24,7 +24,7 @@ document.addEventListener('DOMContentLoaded', function () {
     alert(result.message);
 
     if (response.ok) {
-      window.location.href = '/index.html'; // ganti dengan halaman utama kamu
+      window.location.href = '/'; // ganti dengan halaman utama kamu
     }
   });
 
@@ -61,7 +61,7 @@ document.addEventListener('DOMContentLoaded', function () {
     alert(result.message);
 
     if (response.ok) {
-      window.location.href = '/home'; // ganti juga dengan halaman utama
+      window.location.href = '/'; // ganti juga dengan halaman utama
     }
   });
 });

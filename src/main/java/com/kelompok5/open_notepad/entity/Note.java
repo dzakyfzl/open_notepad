@@ -2,7 +2,7 @@ package com.kelompok5.open_notepad.entity;
 
 import java.sql.Date;
 
-public class Module {
+public class Note {
     private String moduleID;
     private String ownerID;
     private String title;
