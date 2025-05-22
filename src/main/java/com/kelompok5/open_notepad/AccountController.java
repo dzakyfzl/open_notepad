@@ -66,6 +66,15 @@ public class AccountController {
         if (security.isSessionValid(session, request)) {
             return ResponseEntity.badRequest().body(Map.of("message", "User already logged in"));
         }
+        //check if there is another session
+        // delete session from database
+        if (sessionDAO.getFromDatabase(username) != null) {
+            try {
+                sessionDAO.deleteSession(username);
+            } catch (Exception e) {
+                return ResponseEntity.badRequest().body(Map.of("message", "Error deleting session"));
+            }
+        }
 
 
         if (username == null || password == null) {

@@ -3,6 +3,7 @@ package com.kelompok5.open_notepad.DAO;
 import java.sql.Date;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 
@@ -53,8 +54,12 @@ public class SessionDAO {
                             rs.getString("userAgent"),
                             rs.getDate("dateCreated")
                     ));
-        } catch (Exception e) {
-            throw new RuntimeException("Failed to upload session data to the database");
+        } catch (EmptyResultDataAccessException e) {
+            // Handle the case where no session is found for the given username
+            return null;
+            
+        }catch (Exception e) {
+            throw new RuntimeException("Failed to retrieve session data from the database");
         }
 
     }
