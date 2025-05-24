@@ -81,3 +81,24 @@ CREATE TABLE Sessions (
     dateCreated DATETIME,
     FOREIGN KEY (username) REFERENCES Accounts(username)
 );
+
+-- 1. Insert data dummy ke tabel Files (diperlukan untuk relasi foreign key)
+INSERT INTO Files (name, type, size, path) VALUES
+('note1.pdf', 'application/pdf', 1024, '/uploads/note1.pdf'),
+('note2.pdf', 'application/pdf', 2048, '/uploads/note2.pdf'),
+('note3.pdf', 'application/pdf', 3072, '/uploads/note3.pdf');
+
+-- 2. Insert data dummy ke tabel Accounts (diperlukan untuk relasi foreign key)
+INSERT INTO Accounts (username, email, firstName, lastName, hashedPassword, salt, isAdmin) VALUES
+('john_doe', 'john@example.com', 'John', 'Doe', 'hashed123', 'salt123', 0),
+('jane_smith', 'jane@example.com', 'Jane', 'Smith', 'hashed456', 'salt456', 0),
+('bob_brown', 'bob@example.com', 'Bob', 'Brown', 'hashed789', 'salt789', 0);
+
+-- 3. Insert data dummy ke tabel Notes (data utama untuk diambil API)
+INSERT INTO Notes (username, fileID, name, description, course, major, dateUploaded, visibility) VALUES
+('john_doe', 1, 'Pemrograman Dasar', 'Pengenalan algoritma dan pemrograman', 'CS101', 'Computer Science', GETDATE(), 1),
+('jane_smith', 2, 'Struktur Data', 'Array, Linked List, dan Tree', 'CS201', 'Computer Science', GETDATE(), 1),
+('bob_brown', 3, 'Basis Data', 'Konsep database dan SQL', 'CS301', 'Information Systems', GETDATE(), 1),
+('john_doe', 1, 'Kalkulus', 'Limit, turunan, dan integral', 'MATH101', 'Mathematics', GETDATE(), 1),
+('jane_smith', 2, 'Fisika Dasar', 'Mekanika klasik', 'PHY101', 'Physics', GETDATE(), 0); -- Note tidak visible
+
