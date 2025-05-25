@@ -296,69 +296,42 @@
           document.getElementById('file-name').textContent = fileName;
         });
 
-        // Load user data from localStorage
-        document.addEventListener('DOMContentLoaded', function() {
-          // Get user data from localStorage or set default values
-          const userData = JSON.parse(localStorage.getItem('userData') || '{}');
-          const displayName = userData.name || 'Anonymous User';
-          
-          // Handle form submission
-          document.getElementById('uploadForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            
-            // Get form data
-            const title = document.getElementById('title').value;
-            const description = document.getElementById('description').value;
-            const major = document.getElementById('major').value;
-            const course = document.getElementById('course').value;
-            const fileInput = document.getElementById('noteFile');
-            const file = fileInput.files[0];
-            
-            if (!file) {
-              alert('Please select a file to upload');
-              return;
-            }
-            
-            // Create note object
-            const noteData = {
-              id: Date.now(), // Generate unique ID
-              title: title,
-              description: description,
-              major: major,
-              course: course,
-              fileName: file.name,
-              fileSize: file.size,
-              fileType: file.type,
-              uploadDate: new Date().toISOString(),
-              uploadedBy: {
-                id: userData.id || 'anonymous',
-                name: displayName || 'Anonymous User',
-                email: userData.email || 'unknown'
-              }
-            };
-            
-            // Get existing notes or create empty array
-            const existingNotes = JSON.parse(localStorage.getItem('userNotes') || '[]');
-            
-            // Add new note
-            existingNotes.push(noteData);
-            
-            // Save to localStorage
-            try {
-              localStorage.setItem('userNotes', JSON.stringify(existingNotes));
-              alert('Note uploaded successfully!');
-              
-              // Reset form
-              document.getElementById('uploadForm').reset();
-              
-              // Redirect to my notes page
-              setTimeout(() => {
-                window.location.href = 'myNote.html';
-              }, 1000);
-            } catch (error) {
-              console.error('Error saving note:', error);
-              alert('Failed to upload note. Please try again.');
-            }
+        // Handle form submission
+        document.getElementById('uploadForm').addEventListener('submit', function(event) {
+          event.preventDefault();
+
+          const title = document.getElementById('title').value;
+          const fileInput = document.getElementById('noteFile');
+          const major = document.getElementById('major').value;
+          const course = document.getElementById('course').value;
+          const description = document.getElementById('description').value;
+
+          if (!title || !fileInput.files.length || !major || !course || !description) {
+            alert("Please fill in all fields and select a file.");
+            return;
+          }
+
+          // Kirim data ke NoteController via fetch
+          const formData = new FormData();
+          formData.append('title', title);
+          formData.append('file', fileInput.files[0]);
+          formData.append('major', major);
+          formData.append('course', course);
+          formData.append('description', description);
+
+          fetch('/api/note/upload', {
+            method: 'POST',
+            body: formData
+          })
+          .then(response => response.json())
+          .then(data => {
+            alert(data.message || "Upload berhasil!");
+            // Reset form jika perlu
+            document.getElementById('uploadForm').reset();
+            document.getElementById('file-name').textContent = 'No file chosen';
+          })
+          .catch(error => {
+            alert("Upload gagal: " + error);
           });
         });
     </script>
