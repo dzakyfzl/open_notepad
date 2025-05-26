@@ -3,7 +3,6 @@ package com.kelompok5.open_notepad.DAO;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 
@@ -72,9 +71,10 @@ public class UserDAO extends AccountDAO {
                         rs.getString("salt"),
                         rs.getString("email"),
                         rs.getString("firstName"),
-                        rs.getString("lastName"));
+                        rs.getString("lastName")
+                );
             });
-        } catch (EmptyResultDataAccessException e) {
+        } catch (Exception e) {
             // If the user is not found, return an error message
             return null;
         }

@@ -259,12 +259,16 @@ public class AccountController {
 
     @GetMapping("/info") // get user info
     public ResponseEntity<Map<String, String>> getUserInfo(HttpServletRequest request, HttpSession session) {
-        if (security.isSessionValid(session, request)) {
+        if (!security.isSessionValid(session, request)) {
             return ResponseEntity.badRequest().body(Map.of("message", "User not logged in"));
         }
         String username = (String) session.getAttribute("username");
+        User user = userDAO.getFromDatabase(username);
+        if (user == null) {
+            return ResponseEntity.badRequest().body(Map.of("message", "User not found"));
+        }
 
-        return ResponseEntity.ok().body(Map.of("message", "User info retrieved successfully"));
+        return ResponseEntity.ok().body(user.getInfo(username));
     }
 
     @PostMapping("/upload-photo") // Upload profile photo

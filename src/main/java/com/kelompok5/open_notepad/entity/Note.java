@@ -3,7 +3,7 @@ package com.kelompok5.open_notepad.entity;
 import java.sql.Date;
 
 public class Note {
-    private String moduleID;
+    private int moduleID;
     private String ownerID;
     private String title;
     private String description;
@@ -14,7 +14,7 @@ public class Note {
     private File file;
 
     //getter
-    public String getModuleID() {
+    public int  moduleID() {
         return moduleID;
     }
     public String getOwnerID() {
@@ -41,6 +41,9 @@ public class Note {
     public String getMajor() {
         return major;
     }
+    public String getOwnerID(String ownerID) {
+        return this.ownerID;
+    }
 
     //setter
     public void setTitle(String title) {
@@ -60,6 +63,15 @@ public class Note {
     }
     public void setVisibility(boolean visibility) {
         this.visibility = visibility;
+    }
+    public void setOwnerID(String ownerID) {
+        this.ownerID = ownerID;
+    }
+    public void setFile(File file) {
+        this.file = file;
+    }
+    public void setModuleID(int moduleID) {
+        this.moduleID = moduleID;
     }
 
 

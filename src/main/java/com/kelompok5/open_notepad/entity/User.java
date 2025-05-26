@@ -16,6 +16,13 @@ public class User extends Account{
         this.linkedin = "";
     }
 
+    public User(String username, String hashedPassword, String salt, String email, String firstName, String lastName, String aboutMe, String instagram, String linkedin) {
+        super(username, hashedPassword, salt, email, firstName, lastName);
+        this.aboutMe = aboutMe;
+        this.instagram = instagram;
+        this.linkedin = linkedin;
+    }
+
     public List<Module> showModules() {
         //get module list logic
         return null;
@@ -34,5 +41,7 @@ public class User extends Account{
         userInfo.put("linkedin", linkedin);
         return userInfo;
     }
+
+
 
 }
