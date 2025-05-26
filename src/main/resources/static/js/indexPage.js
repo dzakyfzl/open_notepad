@@ -1,3 +1,5 @@
+
+
 // Fungsi untuk membuat card note
 function createNoteCard(note) {
   const card = document.createElement('div');

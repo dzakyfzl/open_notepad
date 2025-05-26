@@ -306,6 +306,10 @@
           const course = document.getElementById('course').value;
           const description = document.getElementById('description').value;
 
+          // Ambil username dari /api/account/info
+          
+
+
           if (!title || !fileInput.files.length || !major || !course || !description) {
             alert("Please fill in all fields and select a file.");
             return;
@@ -318,6 +322,7 @@
           formData.append('major', major);
           formData.append('course', course);
           formData.append('description', description);
+          formData.append('username', username);
 
           fetch('/api/note/upload', {
             method: 'POST',
@@ -326,6 +331,16 @@
           .then(response => response.json())
           .then(data => {
             alert(data.message || "Upload berhasil!");
+            // Tampilkan hasil upload di console
+            console.log("Data yang diupload:");
+            console.log({
+              title,
+              file: fileInput.files[0].name,
+              major,
+              course,
+              description,
+              username
+            });
             // Reset form jika perlu
             document.getElementById('uploadForm').reset();
             document.getElementById('file-name').textContent = 'No file chosen';
