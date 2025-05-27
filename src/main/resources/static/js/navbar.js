@@ -20,3 +20,4 @@ profilePicture.addEventListener('mouseout', function() {
     profilePicture.classList.add('border-gray-300');
     profilePicture.classList.remove('border-sky-500');
 });
+

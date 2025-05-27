@@ -187,19 +187,20 @@ public class AccountController {
 
     @PostMapping("/edit") // edit profile 
     public ResponseEntity<Map<String, String>> editProfile(
-        @RequestParam("file") MultipartFile file,
+        @RequestParam(name = "file", required = false) MultipartFile file,
         @RequestParam("email") String newEmail,
         @RequestParam("firstName") String newFirstName,
         @RequestParam("lastName") String newLastName,
         @RequestParam("password") String newPassword,
-        @RequestParam("aboutMe") String newAboutMe,
-        @RequestParam("instagram") String newInstagram,
-        @RequestParam("linkedin") String newLinkedin,
+        @RequestParam(name = "aboutMe", required = false) String newAboutMe,
+        @RequestParam(name = "instagram", required = false) String newInstagram,
+        @RequestParam(name = "linkedin", required = false) String newLinkedin,
         HttpServletRequest request, HttpSession session) {
         if (!security.isSessionValid(session, request)) {
             return ResponseEntity.badRequest().body(Map.of("message", "User not logged in"));
         }
         String username = (String) session.getAttribute("username");
+        System.out.println("Profile edit request from user: " + username);
 
         // Check if the user exists in the database
         User user = userDAO.getFromDatabase(username);
@@ -231,17 +232,17 @@ public class AccountController {
             ", Email: " + newEmail + ", First Name: " + newFirstName + ", Last Name: " + newLastName);
         //Check if aboutMe, instagram, and linkedin are empty
         if (newAboutMe.equals("")) {
-            newAboutMe = "";
+            newAboutMe = user.getAboutMe();
         }
         if (newInstagram.equals("")) {
-            newInstagram = "";
+            newInstagram = user.getInstagram();
         }
         if (newLinkedin.equals("")) {
-            newLinkedin = "";
+            newLinkedin = user.getLinkedin();
         }
 
         // Check if the file is not empty
-        if (!file.isEmpty()) {
+        if (file != null && !file.isEmpty()) {
             // Check if the file is an image
             String contentType = file.getContentType();
             if (!contentType.startsWith("image/")) {   
@@ -251,6 +252,39 @@ public class AccountController {
             if (file.getSize() > 10 * 1024 * 1024) {
                 return ResponseEntity.badRequest().body(Map.of("message", "File size is too large"));
             }
+
+            // Delete the old profile picture if it exists
+            // Get Profile Picture ID from database
+            File oldProfilePicture = null;
+            String sql = "SELECT * FROM Files WHERE fileID = (SELECT fileID FROM Accounts WHERE username = ?)";
+            try {
+                oldProfilePicture = jdbcTemplate.queryForObject(sql, new Object[] { username },
+                        (rs, rowNum) -> new File(rs.getInt("fileID"), rs.getString("name"), rs.getString("type"),
+                                rs.getLong("size"), rs.getString("path")));
+            } catch (EmptyResultDataAccessException e) {
+                // No profile picture found, continue
+            }
+            if (oldProfilePicture != null) {
+                // set fikeID attribute from accounts to null
+                String updateSQL = "UPDATE Accounts SET fileID = NULL WHERE username = ?";
+                jdbcTemplate.update(updateSQL, username);
+                // Delete the old profile picture file from the server
+                Path oldFilePath = Paths.get(oldProfilePicture.getPath());
+                try {
+                    Files.deleteIfExists(oldFilePath);
+                } catch (IOException e) {
+                    return ResponseEntity.badRequest().body(Map.of("message", "Error deleting old profile picture"));
+                }
+                // Delete the old profile picture from the database
+                try {
+                    fileDAO.DeleteFromDatabase(oldProfilePicture.getFileID());
+                } catch (Exception e) {
+                    return ResponseEntity.badRequest().body(Map.of("message", "Error deleting old profile picture from database"));
+                }
+
+            }
+
+
             // Create a new file name and upload directory
             String fileName = System.currentTimeMillis() + "_" + file.getOriginalFilename();
             Path uploadDir = Paths.get("uploads/photos");
@@ -318,12 +352,15 @@ public class AccountController {
         }
         // Hash password and salt
         String hashedPassword = security.hashPassword(password, user.getSalt());
+
+        
+        //Delete user from database
         try {
             userDAO.deleteAccount(username, hashedPassword);
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(Map.of("message", "Error deleting user: " + e.getMessage()));
         }
-        // Hapus session
+        // Delete session from database
         session.invalidate();
 
         return ResponseEntity.ok().body(Map.of("message", "User " + username + " account deleted successfully"));
@@ -364,7 +401,7 @@ public class AccountController {
             });
 
         } catch (EmptyResultDataAccessException e) {
-            return ResponseEntity.badRequest().build();
+            profilePhoto = new File(-1, "profile.png", "image/png", 0, "uploads/photos/profile.png");
         }
 
         // Check if the profile photo exists

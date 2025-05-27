@@ -62,7 +62,7 @@
           
       </div>
         <a class="p-2 flex items-center" href="/user/profile">
-          <img id="profile-picture" src="/img/profile.png" class="w-11 h-11 rounded-full border-[1px] border-gray-300" />
+          <img id="profile-picture" src="/api/account/profile-photo" class="w-11 h-11 rounded-full border-[1px] border-gray-300" />
           <div class="border-sky-500"></div>
         </a>
       </div>
@@ -77,32 +77,29 @@
             <!-- Left Column -->
             <div class="space-y-6">
                 <div>
-                    <h2 class="mb-4 text-xl font-bold">Avatar Profile</h2>
                     <div class="flex flex-col items-start">
                         <div id="profileImageContainer" class="mb-4 h-32 w-32 overflow-hidden rounded-full border-2 flex items-center justify-center bg-white">
-                            <img id="profileImageDisplay" class="h-full w-full object-cover hidden" alt="Profile Picture">
-                            <svg id="profileIconDisplay" xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 text-gray-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                            </svg>
+                            <img src="/api/account/profile-photo" class="h-full w-full object-cover" alt="Profile Picture">
                         </div>
                     </div>
+                    <h2 id="username" class="mt-4 text-xl font-semibold">Avatar Profile</h2>
                 </div>
 
                 <div class="space-y-4">
                     <div class="flex items-center gap-2">
                         <img src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/mdi_linkedin-1kMkmeryjsjlD3Rnvvex4zuc38enni.png" alt="LinkedIn" class="w-6 h-6">
-                        <span id="linkedinStatus">Add LinkedIn</span>
+                        <span id="linkedIn">Add LinkedIn</span>
                     </div>
                     <div class="flex items-center gap-2">
                         <img src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/iconsax-instagram-lr8l3JZrI0k0CSIaJSohbMZCCUNBqZ.png" alt="Instagram" class="w-6 h-6">
-                        <span id="instagramStatus">Add Instagram</span>
+                        <span id="instagram">Add Instagram</span>
                     </div>
                 </div>
 
                 <div>
                     <h2 class="mb-2 text-xl font-bold">About Me</h2>
-                    <p id="aboutMeDisplay" class="text-gray-700">
-                        Lorem ipsum dolor sit amet consectetur adipiscing elit. Consectetur adipiscing elit quisque faucibus ex sapien vitae. Ex sapien vitae pellentesque sem placerat in id. Placerat in id cursus mi pretium tellus duis. Pretium tellus duis convallis tempus leo eu aenean Lorem ipsum dolor sit amet consectetur adipiscing elit. Consectetur adipiscing elit quisque faucibus ex sapien vitae. Ex sapien vitae pellentesque sem placerat in id. Placerat in id cursus mi pretium tellus duis. Pretium tellus duis convallis tempus.
+                    <p id="aboutMe" class="text-gray-700">
+                        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
                     </p>
                 </div>
             </div>
@@ -111,12 +108,12 @@
             <div class="space-y-6">
                 <div>
                     <h2 class="mb-2 text-xl font-bold">Full name</h2>
-                    <p id="fullNameDisplay" class="text-gray-700">Lorem ipsum dolor sit amet</p>
+                    <p id="fullName" class="text-gray-700">Lorem ipsum dolor sit amet</p>
                 </div>
 
                 <div>
                     <h2 class="mb-2 text-xl font-bold">E-mail</h2>
-                    <p id="emailDisplay" class="text-gray-700">Loremipsum@gmail.com</p>
+                    <p id="email" class="text-gray-700">Loremipsum@gmail.com</p>
                 </div>
 
                 <div class="flex justify-end pt-4 mt-8">
@@ -128,53 +125,6 @@
         </div>
     </main>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // Load user data from localStorage
-            const userData = JSON.parse(localStorage.getItem('userData') || '{}');
-            
-            // Update profile display with saved data
-            // Handle both new format (firstName, lastName) and old format (fullName)
-            if (userData.firstName || userData.lastName) {
-                // Combine firstName and lastName for display
-                const firstName = userData.firstName || '';
-                const lastName = userData.lastName || '';
-                const fullName = (firstName + ' ' + lastName).trim();
-                
-                document.getElementById('fullNameDisplay').textContent = fullName;
-            } else if (userData.fullName) {
-                // Use existing fullName if available (backward compatibility)
-                document.getElementById('fullNameDisplay').textContent = userData.fullName;
-            }
-            
-            if (userData.email) {
-                document.getElementById('emailDisplay').textContent = userData.email;
-            }
-            
-            if (userData.aboutMe) {
-                document.getElementById('aboutMeDisplay').textContent = userData.aboutMe;
-            }
-    
-            
-            // Update LinkedIn status
-            if (userData.linkedinConnected) {
-                document.getElementById('linkedinStatus').textContent = 'LinkedIn Connected';
-            }
-            
-            // Update Instagram status
-            if (userData.instagramConnected) {
-                document.getElementById('instagramStatus').textContent = 'Instagram Connected';
-            }
-            
-            // Display profile image if available
-            if (userData.profileImage) {
-                const profileImage = document.getElementById('profileImageDisplay');
-                profileImage.src = userData.profileImage;
-                profileImage.classList.remove('hidden');
-                document.getElementById('profileIconDisplay').classList.add('hidden');
-            }
-            
-        });
-    </script>
+    <script src="/js/profile.js"></script>
 </body>
 </html>

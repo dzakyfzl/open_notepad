@@ -56,6 +56,34 @@ public class User extends Account{
         return userInfo;
     }
 
+    public String getAboutMe() {
+        if (aboutMe == null) {
+            return " ";
+        }
+        return aboutMe;
+    }
+    public void setAboutMe(String aboutMe) {
+        this.aboutMe = aboutMe;
+    }
+    public String getInstagram() {
+        if (instagram == null) {
+            return " ";
+        }
+        return instagram;
+    }
+    public void setInstagram(String instagram) {
+        this.instagram = instagram;
+    }
+    public String getLinkedin() {
+        if (linkedin == null) {
+            return " ";
+        }
+        return linkedin;
+    }
+    public void setLinkedin(String linkedin) {
+        this.linkedin = linkedin;
+    }
+
 
 
 }

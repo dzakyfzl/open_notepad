@@ -55,25 +55,32 @@ public class NoteDAO {
     public Note getFromDatabase(int noteID) {
         String sql = "SELECT * FROM Files INNER JOIN Notes ON Files.fileID = Notes.fileID WHERE moduleID = ?";
         // Querry to get note by ID
-        Note noted = jdbcTemplate.queryForObject(sql, new Object[]{noteID} , (rs, rowNum) -> {
-            Note note = new Note();
-            note.setModuleID(rs.getInt("moduleID"));
-            note.setOwnerID(rs.getString("username"));
-            note.setTitle(rs.getString("name"));
-            note.setDescription(rs.getString("description"));
-            note.setCourse(rs.getString("course"));
-            note.setMajor(rs.getString("major"));
-            note.setUploadDate(rs.getDate("dateUploaded"));
-            note.setVisibility(rs.getBoolean("visibility"));
-            note.setFile(new File(
-                rs.getInt("fileID"),
-                rs.getString("name"),
-                rs.getString("type"),
-                rs.getLong("size"),
-                rs.getString("path")
-            ));
-            return note;
-        });
+        Note noted;
+        System.out.println("Retrieving note with ID: " + noteID);
+        try {
+            noted = jdbcTemplate.queryForObject(sql, new Object[]{noteID} , (rs, rowNum) -> {
+                Note note = new Note();
+                note.setModuleID(rs.getInt("moduleID"));
+                note.setOwnerID(rs.getString("username"));
+                note.setTitle(rs.getString("name"));
+                note.setDescription(rs.getString("description"));
+                note.setCourse(rs.getString("course"));
+                note.setMajor(rs.getString("major"));
+                note.setUploadDate(rs.getDate("dateUploaded"));
+                note.setVisibility(rs.getBoolean("visibility"));
+                note.setFile(new File(
+                    rs.getInt("fileID"),
+                    rs.getString("name"),
+                    rs.getString("type"),
+                    rs.getLong("size"),
+                    rs.getString("path")
+                ));
+                return note;
+            });
+        } catch (Exception e) {
+            System.out.println("Error retrieving note: " + e.getMessage());
+            throw new RuntimeException("Failed to retrieve note from the database");
+        }
         return noted;
     }
 

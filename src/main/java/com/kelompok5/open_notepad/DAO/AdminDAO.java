@@ -16,22 +16,13 @@ public class AdminDAO extends AccountDAO {
 
 
 
-        public void createUserDetails(String username) {
-        // create user details logic
-        // save user details to database
-        String sql = "INSERT INTO UserDetails(username) VALUES (?)";
-        try {
-            jdbcTemplate.update(sql, username);
-        } catch (Exception e) {
-            throw new RuntimeException("failed to creating user details");
-        }
-    }
 
     public void editDetails(String username, String aboutMe, String instagram, String linkedin) {
-        String sql = "INSERT INTO UserDetails(username,aboutMe,instagram,linkedin) VALUE (?,?,?,?)";
+        String sql = "UPDATE UserDetails SET aboutMe = ?, instagram = ?, linkedin = ? WHERE username = ?";
         try {
-            jdbcTemplate.update(sql, username, aboutMe, instagram, linkedin);
+            jdbcTemplate.update(sql, aboutMe, instagram, linkedin, username );
         } catch (Exception e) {
+            System.out.println(e.getMessage());
             throw new RuntimeException("failed to inserting details");
         }
     }

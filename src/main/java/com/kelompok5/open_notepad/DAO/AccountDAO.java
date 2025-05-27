@@ -49,6 +49,7 @@ public abstract  class AccountDAO {
             jdbcTemplate.update(sql, email, firstName, lastName, hashedPassword, salt, username);
         } catch (Exception e) {
             // If there is an error during update, return an error message
+            System.out.println(e.getMessage());
             throw new RuntimeException("Error updating user info");
         }
     }

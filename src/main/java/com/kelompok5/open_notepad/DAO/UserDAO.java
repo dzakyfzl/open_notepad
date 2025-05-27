@@ -1,11 +1,16 @@
 package com.kelompok5.open_notepad.DAO;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 
+import com.kelompok5.open_notepad.entity.File;
 import com.kelompok5.open_notepad.entity.Note;
 import com.kelompok5.open_notepad.entity.User;
 
@@ -51,10 +56,11 @@ public class UserDAO extends AccountDAO {
     }
 
     public void editDetails(String username, String aboutMe, String instagram, String linkedin) {
-        String sql = "INSERT INTO UserDetails(username,aboutMe,instagram,linkedin) VALUE (?,?,?,?)";
+        String sql = "UPDATE UserDetails SET aboutMe = ?, instagram = ?, linkedin = ? WHERE username = ?";
         try {
-            jdbcTemplate.update(sql, username, aboutMe, instagram, linkedin);
+            jdbcTemplate.update(sql, aboutMe, instagram, linkedin, username );
         } catch (Exception e) {
+            System.out.println(e.getMessage());
             throw new RuntimeException("failed to inserting details");
         }
     }
@@ -72,6 +78,21 @@ public class UserDAO extends AccountDAO {
         String sql = "SELECT * FROM Accounts INNER JOIN UserDetails ON Accounts.username = UserDetails.username WHERE Accounts.username = ?";
         try {
             return jdbcTemplate.queryForObject(sql, new Object[] { username }, (rs, rowNum) -> {
+                String aboutMe= rs.getString("aboutMe");
+                String instagram= rs.getString("instagram"); 
+                String linkedin = rs.getString("linkedin");
+
+                // null prevention in aboutMe, Instagram and Inkedin
+                if (rs.getString("aboutMe").equals(",")) {
+                    aboutMe = "";
+                }
+                if (rs.getString("instagram").equals(",")) {
+                    instagram = "";
+                }
+                if (rs.getString("linkedin").equals(",")) {
+                    linkedin = "";
+                }
+
                 return new User(
                         rs.getString("username"),
                         rs.getString("hashedPassword"),
@@ -79,9 +100,9 @@ public class UserDAO extends AccountDAO {
                         rs.getString("email"),
                         rs.getString("firstName"),
                         rs.getString("lastName"),
-                        rs.getString("aboutMe"),
-                        rs.getString("instagram"),
-                        rs.getString("linkedin")
+                        aboutMe,
+                        instagram,
+                        linkedin
                 );
             });
         } catch (Exception e) {
@@ -100,9 +121,69 @@ public class UserDAO extends AccountDAO {
                 throw new RuntimeException("Wrong password");
             }
 
+            // Ambil Data catatan yang terkait dengan akun
+            String notesSql = "SELECT * FROM Files INNER JOIN Notes on Notes.fileID = Files.fileID WHERE Notes.username = ?";
+            List<File> files = jdbcTemplate.query(notesSql, new Object[] { username }, (rs, rowNum) -> {
+                File file = new File(
+                        rs.getInt("fileID"),
+                        rs.getString("name"),
+                        rs.getString("type"),
+                        rs.getLong("size"),
+                        rs.getString("path")
+                );
+                return file;
+            });
+            for (File file : files) {
+                // Hapus file di server
+                Path oldFilePath = Paths.get(file.getPath());
+                try {
+                    Files.deleteIfExists(oldFilePath);
+                } catch (IOException e) {
+                    System.out.println("Error deleting file: " + e.getMessage());
+                    throw new RuntimeException("Failed to delete file");
+                }
+            }
+            
+            // Hapus catatan yang terkait dengan akun
+            String deleteNotesSql = "DELETE FROM Notes WHERE username = ?";
+            jdbcTemplate.update(deleteNotesSql, username);
+
+            //Ambil ID file foto profil dari Accounts
+            sql = "SELECT fileID FROM Accounts WHERE username = ?";
+            int fileID = jdbcTemplate.queryForObject(sql, new Object[] { username }, Integer.class);
+            sql = "UPDATE Accounts SET fileID = NULL WHERE username = ?";
+            jdbcTemplate.update(sql, username);
+
+           
+            // Ambil data foto profil dari tabel Files
+            String profilePhotoSql = "SELECT * FROM Files WHERE fileID = ?";
+            File profilePhoto = jdbcTemplate.queryForObject(profilePhotoSql, new Object[] { fileID }, (rs, rowNum) -> {
+                return new File(rs.getInt("fileID"), rs.getString("name"), rs.getString("type"), rs.getLong("size"), rs.getString("path"));
+            });
+            if (profilePhoto != null) {
+                // Hapus file foto profil di server
+                Path oldFilePath = Paths.get(profilePhoto.getPath());
+                try {
+                    Files.deleteIfExists(oldFilePath);
+                } catch (IOException e) {
+                    System.out.println("Error deleting profile photo file: " + e.getMessage());
+                    throw new RuntimeException("Failed to delete profile photo file");
+                }
+
+                 // Hapus data file foto profil di database
+                String deleteProfilePicSql = "DELETE FROM Files WHERE fileID = (SELECT fileID FROM UserDetails WHERE username = ?)";
+                jdbcTemplate.update(deleteProfilePicSql, username);
+            }
+            
+
             // Hapus session user dari tabel Sessions
             String deleteSessionSql = "DELETE FROM Sessions WHERE username = ?";
             jdbcTemplate.update(deleteSessionSql, username);
+
+            // Hapus detail user dari tabel UserDetails
+            String deleteDetailsSql = "DELETE FROM UserDetails WHERE username = ?";
+            jdbcTemplate.update(deleteDetailsSql, username);
+
 
             // Hapus akun
             sql = "DELETE FROM Accounts WHERE username = ?";
@@ -111,7 +192,8 @@ public class UserDAO extends AccountDAO {
                 throw new RuntimeException("User not found");
             }
         } catch (Exception e) {
-            throw new RuntimeException("Error deleting user: " + e.getMessage());
+            System.out.println("Error deleting account: " + e.getMessage());
+            throw new RuntimeException("Failed to delete account");
         }
     }
 }

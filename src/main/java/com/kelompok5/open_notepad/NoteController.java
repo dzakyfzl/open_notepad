@@ -186,12 +186,31 @@ public class NoteController {
             System.out.println("Error retrieving file ID for note: " + e.getMessage());
             return ResponseEntity.badRequest().body(Map.of("message", "Error retrieving file ID for note"));
         }
+        //get file from database
+        File file = fileDAO.GetFromDatabase(note.getFile().getFileID());
+        if (file == null) {
+            return ResponseEntity.badRequest().body(Map.of("message", "File not found"));
+        }
+        // Delete the file from the server
+        Path filePath = Paths.get(file.getPath());
+        try {
+            Files.deleteIfExists(filePath);
+        } catch (IOException e) {
+            return ResponseEntity.badRequest().body(Map.of("message", "Error deleting file from server"));
+        }        
         // Delete the note from the database
         try {
             noteDAO.deleteFromDatabase(noteID);
         } catch (Exception e) {
             System.out.println("Error deleting note from database: " + e.getMessage());
             return ResponseEntity.badRequest().body(Map.of("message", "Error deleting note from database"));
+        }
+        // Delete the file from the database
+        try {
+            fileDAO.DeleteFromDatabase(file.getFileID());
+        } catch (Exception e) {
+            System.out.println("Error deleting file from database: " + e.getMessage());
+            return ResponseEntity.badRequest().body(Map.of("message", "Error deleting file from database"));
         }
         return ResponseEntity.ok().body(Map.of("message", "Note deleted successfully"));
 
