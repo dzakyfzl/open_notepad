@@ -79,17 +79,12 @@
                 <div>
                     
                     <div class="flex flex-col items-start">
-                        <div id="profileImageContainer" class="mb-4 h-32 w-32 overflow-hidden rounded-full border-2 flex items-center justify-center bg-white">
-                            <img id="profileImage" src="/api/account/profile-photo" class="h-full w-full object-cover" alt="Profile Picture"> 
-                            
-                        </div>
-                        <h2 class="mx-4 text-xl font-semibold font-inter" id="username">Avatar Profile</h2>
-                        <label for="profilePicture" class="text-black underline cursor-pointer">
-                            Upload Picture
+                        <label for="profilePicture" id="profileImageContainer" class="cursor-pointer mb-4 h-32 w-32 overflow-hidden rounded-full border-2 flex items-center justify-center bg-white">
+                            <img id="profileImage" src="/api/account/profile-photo" class="h-full w-full object-cover" alt="Profile Picture">
                         </label>
+                        <p class="text-black text-center font-inter font-extralight text-sm">Click Profile Picture to change it</p>
                         <input type="file" id="profilePicture" accept="image/*" class="hidden">
-                        <!-- Hidden input to track if image was changed -->
-                        <input type="hidden" id="imageChanged" value="false">
+                        <h2 class="mx-4 text-xl font-semibold font-inter" id="username">Avatar Profile</h2>
                     </div>
                 </div>
 
@@ -155,7 +150,7 @@
                 </div>
 
                 <div class="flex justify-end pt-4">
-                    <button onclick="uploadProfile()" id="updateProfileBtn" class="bg-green-600 px-6 py-2 text-white font-inter rounded-md">
+                    <button type="submit" id="updateProfileButton" class="bg-green-600 px-6 py-2 text-white font-inter rounded-md">
                         Update Profile
                     </button>
                 </div>

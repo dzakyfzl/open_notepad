@@ -36,7 +36,6 @@ public class User extends Account{
     @Override
     public Map<String, String> getInfo(String username) {
         Map<String, String> userInfo = super.getInfo(username);
-        System.out.println("User Info: " + userInfo);
         if (this.aboutMe != null) {
             userInfo.put("aboutMe", this.aboutMe);
         } else {
@@ -52,7 +51,7 @@ public class User extends Account{
         } else {
             userInfo.put("linkedin", " ");
         }
-        System.out.println("User Info 2: " + userInfo);
+        System.out.println("User Info from : " + username);
         return userInfo;
     }
 

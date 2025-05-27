@@ -187,14 +187,14 @@ public class AccountController {
 
     @PostMapping("/edit") // edit profile 
     public ResponseEntity<Map<String, String>> editProfile(
-        @RequestParam(name = "file", required = false) MultipartFile file,
+        @RequestParam(value = "file", required = false) MultipartFile file,
         @RequestParam("email") String newEmail,
         @RequestParam("firstName") String newFirstName,
         @RequestParam("lastName") String newLastName,
         @RequestParam("password") String newPassword,
-        @RequestParam(name = "aboutMe", required = false) String newAboutMe,
-        @RequestParam(name = "instagram", required = false) String newInstagram,
-        @RequestParam(name = "linkedin", required = false) String newLinkedin,
+        @RequestParam(value = "aboutMe", required = false) String newAboutMe,
+        @RequestParam(value = "instagram", required = false) String newInstagram,
+        @RequestParam(value = "linkedin", required = false) String newLinkedin,
         HttpServletRequest request, HttpSession session) {
         if (!security.isSessionValid(session, request)) {
             return ResponseEntity.badRequest().body(Map.of("message", "User not logged in"));
@@ -242,7 +242,8 @@ public class AccountController {
         }
 
         // Check if the file is not empty
-        if (file != null && !file.isEmpty()) {
+        if (file != null) {
+            System.out.println("file is not empty \nfile name :" + file.getOriginalFilename());
             // Check if the file is an image
             String contentType = file.getContentType();
             if (!contentType.startsWith("image/")) {   
@@ -376,7 +377,6 @@ public class AccountController {
         if (user == null) {
             return ResponseEntity.badRequest().body(Map.of("message", "User not found"));
         }
-        System.out.println(user.getInfo(username));
         return ResponseEntity.ok().body(user.getInfo(username));
     }
 

@@ -1,3 +1,17 @@
+document.getElementById('profilePicture').addEventListener('change', function() {
+    const fileInput = document.getElementById('profilePicture');
+    const file = fileInput.files[0];
+    console.log('Selected file:', file);
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            document.getElementById('profileImage').src = e.target.result;
+        };
+        reader.readAsDataURL(file);
+    }
+});
+
+
 // Load saved user data if available
 fetch('/api/account/info').then(response => {
     if (response.ok) {
@@ -90,20 +104,17 @@ document.getElementById('repeatPassword').addEventListener('input', validatePass
 
 
 // Form submission - FIXED VERSION
-function uploadProfile(){
-    
+function uploadProfile(event){
+    if (event) event.preventDefault();
     // Validate passwords if both fields have values
     const password = document.getElementById('password').value;
     const repeatPassword = document.getElementById('repeatPassword').value;
-    
     if ((password || repeatPassword) && !validatePasswords()) {
         alert('Passwords do not match. Please try again.');
         return; // Don't submit if passwords don't match
     }
-    
     // Get form data
     const formData = new FormData();
-    //append profile image if exists
     if (document.getElementById('profilePicture').files.length > 0) {
         formData.append('file', document.getElementById('profilePicture').files[0]);
         console.log('Profile image selected:', document.getElementById('profilePicture').files[0]);
@@ -115,24 +126,9 @@ function uploadProfile(){
     formData.append('aboutMe', document.getElementById('aboutMe').value);
     formData.append('linkedin', document.getElementById('linkedin').value);
     formData.append('instagram', document.getElementById('instagram').value);
-    formData.append('linkedin', document.getElementById('linkedin').value);
-    formData.append('instagram', document.getElementById('instagram').value);
-
     console.log('Form data prepared:', formData);
-
-    
-    // Add password if provided
-    if (password) {
-        formData.password = password;
-    } else if (userData.password) {
-        // Keep existing password if not changed
-        formData.password = userData.password;
-    }
-    
-    // Save data to the server
     fetch('/api/account/edit', {
         method: 'POST',
-        headers: new Headers(), 
         body: formData,
     }).then(response => {
         if (response.ok) {
@@ -144,7 +140,12 @@ function uploadProfile(){
         console.log('Profile updated successfully:', data);
         alert('Profile updated successfully!');
     }).catch(error => {
-        console.error('Error updating profile:', error);
+        console.log('Error updating profile:', error);
         alert('Failed to update profile. Please try again later.');
     });
-};
+}
+// Attach to form submit event
+const profileForm = document.getElementById('profileForm');
+if (profileForm) {
+    profileForm.addEventListener('submit', uploadProfile);
+}
