@@ -1,6 +1,6 @@
 package com.kelompok5.open_notepad.entity;
 
-import java.util.List;
+import java.util.HashMap;
 import java.util.Map;
 
 public abstract  class Account {
@@ -46,10 +46,12 @@ public abstract  class Account {
     }
     public Map<String, String> getInfo(String username) {
         //return user info
-        return Map.of("username", username,
-                      "email", email,
-                      "firstName", firstName,
-                      "lastName", lastName);
+        Map<String, String> info = new HashMap<>();
+        info.put("username", this.username);
+        info.put("email", this.email);
+        info.put("firstName", this.firstName);
+        info.put("lastName", this.lastName);
+        return info;
     }
 
     // Getter and Setter methods

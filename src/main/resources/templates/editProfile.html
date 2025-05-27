@@ -8,34 +8,69 @@
     <link rel="stylesheet" href="/css/output.css" />
 </head>
 <body>
-    <!-- navbar -->
-    <header id="navbar">
-        <div class="left">
-        <img src="/img/logo.png" alt="Logo">
+     <!-- Navbar -->
+  <header
+      class="fixed shadow-lg flex top-0  bg-ijomuda w-full justify-between z-30"
+    >
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
+    </style>
+      <div class="flex items-stretch">
+        <div class="py-2 px-4 max-md:hover:bg-ijotaik">
+          <a class="" href="/">
+            <img class="w-[125px]" src="/img/logo.png" />
+          </a>
         </div>
-        <div class="right">
-            <div class="search">
-                <img src="/img/search.png" alt="Search Icon">
-                <input type="text" placeholder="Search notes">
-            </div>
+      </div>
 
-            <select class="major-filter">
-                <option value="">All Majors</option>
-                <option value="informatics">Informatics</option>
-                <option value="electrical">Electrical Engineering</option>
-                <option value="mechanical">Mechanical Engineering</option>
-                <option value="civil">Civil Engineering</option>
-            </select>
-        <a href="/user/notes"><img src="/img/myNote.png" alt="myNote Icon"></a>
-        <a href="/user/notes/upload"><img src="/img/upload.png" alt="Upload Icon"></a>
-        <a href="/user/profile"><img src="/img/profile.png" alt="Profile Icon">  </a>
+      <!--Navigation on left-->
+      <div class="flex items-center mr-0 ml-auto max-md:hidden">
+        <div
+          class="p-3 font-inter font-semibold hover:bg-ijomudagelap border-b-[2px] border-ijomuda hover:border-black transition-all duration-300 ease-in-out"
+        >
+          <a href="/user/notes/upload" class="inline-block relative p-1">Upload</a>
         </div>
+        <div
+          class="p-3 font-inter font-semibold hover:bg-ijomudagelap border-b-[2px] border-ijomuda hover:border-black transition-all duration-300 ease-in-out"
+        >
+          <a href="/user/notes" class="inline-block relative p-1">MyNotes</a>
+        </div>
+        <div
+          class="p-3 font-inter font-semibold hover:bg-ijomudagelap border-b-[2px] border-ijomuda hover:border-black transition-all duration-300 ease-in-out"
+        >
+          <a href="/user/notes/bookmark" class="inline-block relative p-1">Saved</a>
+        </div>
+      </div>
+      </div>
+
+      <!--SearchBar-->
+      <div class="flex">
+        
+        <div class="p-3 max-md:hidden">
+          <input
+            id="search-input"
+            type="text"
+            class="border-greenwhitey rounded-lg p-1"
+            placeholder="Search..."
+          />
+          <button
+            class="pl-1"
+            onclick="searchByName()"
+            >
+            <img class="w-4" src="/img/search.png" />
+          </button>
+          
+      </div>
+        <a class="p-2 flex items-center" href="/user/profile">
+          <img id="profile-picture" src="/img/profile.png" class="w-11 h-11 rounded-full border-[1px] border-gray-300" />
+          <div class="border-sky-500"></div>
+        </a>
+      </div>
     </header>
-
-  <!-- navbar end -->
+    <script src="/js/navbar.js"></script>
 
     <!-- Main Content -->
-    <main class="mx-auto max-w-6xl p-8 bg-white mt-4 rounded-lg">
+    <main class="mx-auto max-w-6xl p-8 bg-white mt-20 rounded-lg">
         <h1 class="mb-8 text-4xl font-bold">Profile</h1>
 
         <form id="profileForm" class="grid grid-cols-1 gap-8 md:grid-cols-2">

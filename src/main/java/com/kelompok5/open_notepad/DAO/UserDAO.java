@@ -39,6 +39,17 @@ public class UserDAO extends AccountDAO {
         return null;
     }
 
+    public void createUserDetails(String username) {
+        // create user details logic
+        // save user details to database
+        String sql = "INSERT INTO UserDetails(username) VALUES (?)";
+        try {
+            jdbcTemplate.update(sql, username);
+        } catch (Exception e) {
+            throw new RuntimeException("failed to creating user details");
+        }
+    }
+
     public void editDetails(String username, String aboutMe, String instagram, String linkedin) {
         String sql = "INSERT INTO UserDetails(username,aboutMe,instagram,linkedin) VALUE (?,?,?,?)";
         try {
@@ -54,15 +65,11 @@ public class UserDAO extends AccountDAO {
         // remove note from database
     }
 
-    public void uploadToDatabase(User user) {
-        // upload user to database logic
-        // save user to database
-    }
 
     public User getFromDatabase(String username) {
         // get user from database logic
         // Query the database to check if the user exists
-        String sql = "SELECT * FROM Accounts WHERE username = ?";
+        String sql = "SELECT * FROM Accounts INNER JOIN UserDetails ON Accounts.username = UserDetails.username WHERE Accounts.username = ?";
         try {
             return jdbcTemplate.queryForObject(sql, new Object[] { username }, (rs, rowNum) -> {
                 return new User(
@@ -71,11 +78,15 @@ public class UserDAO extends AccountDAO {
                         rs.getString("salt"),
                         rs.getString("email"),
                         rs.getString("firstName"),
-                        rs.getString("lastName")
+                        rs.getString("lastName"),
+                        rs.getString("aboutMe"),
+                        rs.getString("instagram"),
+                        rs.getString("linkedin")
                 );
             });
         } catch (Exception e) {
             // If the user is not found, return an error message
+            System.out.println("User not found: " + e.getMessage());
             return null;
         }
     }

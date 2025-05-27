@@ -1,11 +1,11 @@
 package com.kelompok5.open_notepad.DAO;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 
 import com.kelompok5.open_notepad.entity.Admin;
+
 
 @Component
 public class AdminDAO extends AccountDAO {
@@ -13,27 +13,51 @@ public class AdminDAO extends AccountDAO {
     @Autowired
     private JdbcTemplate jbdcTemplate;
     
-    public void uploadToDatabase(Admin admin) {
-        //upload user to database logic
-        //save user to database
+
+
+
+        public void createUserDetails(String username) {
+        // create user details logic
+        // save user details to database
+        String sql = "INSERT INTO UserDetails(username) VALUES (?)";
+        try {
+            jdbcTemplate.update(sql, username);
+        } catch (Exception e) {
+            throw new RuntimeException("failed to creating user details");
+        }
     }
 
-    public Admin getFromDatabase(String username){
-        //get user from database logic
-        // Query the database to check if the user exists
-        String sql = "SELECT * FROM Accounts WHERE username = ?";
+    public void editDetails(String username, String aboutMe, String instagram, String linkedin) {
+        String sql = "INSERT INTO UserDetails(username,aboutMe,instagram,linkedin) VALUE (?,?,?,?)";
         try {
-            return jbdcTemplate.queryForObject(sql, new Object[]{username}, (rs, rowNum) -> {
+            jdbcTemplate.update(sql, username, aboutMe, instagram, linkedin);
+        } catch (Exception e) {
+            throw new RuntimeException("failed to inserting details");
+        }
+    }
+
+
+    public Admin getFromDatabase(String username) {
+        // get user from database logic
+        // Query the database to check if the user exists
+        String sql = "SELECT * FROM Accounts INNER JOIN UserDetails ON Accounts.username = UserDetails.username WHERE Accounts.username = ?";
+        try {
+            return jdbcTemplate.queryForObject(sql, new Object[] { username }, (rs, rowNum) -> {
                 return new Admin(
-                    rs.getString("username"),
-                    rs.getString("hashedPassword"),
-                    rs.getString("salt"),
-                    rs.getString("email"), 
-                    rs.getString("firstName"), 
-                    rs.getString("lastName"));
+                        rs.getString("username"),
+                        rs.getString("hashedPassword"),
+                        rs.getString("salt"),
+                        rs.getString("email"),
+                        rs.getString("firstName"),
+                        rs.getString("lastName"),
+                        rs.getString("aboutMe"),
+                        rs.getString("instagram"),
+                        rs.getString("linkedin")
+                );
             });
-        } catch (EmptyResultDataAccessException e) {
+        } catch (Exception e) {
             // If the user is not found, return an error message
+            System.out.println("User not found: " + e.getMessage());
             return null;
         }
     }

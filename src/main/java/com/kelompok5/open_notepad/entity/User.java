@@ -36,9 +36,23 @@ public class User extends Account{
     @Override
     public Map<String, String> getInfo(String username) {
         Map<String, String> userInfo = super.getInfo(username);
-        userInfo.put("aboutMe", aboutMe);
-        userInfo.put("instagram", instagram);
-        userInfo.put("linkedin", linkedin);
+        System.out.println("User Info: " + userInfo);
+        if (this.aboutMe != null) {
+            userInfo.put("aboutMe", this.aboutMe);
+        } else {
+            userInfo.put("aboutMe", " ");
+        }
+        if (this.instagram != null) {
+            userInfo.put("instagram", this.instagram);
+        } else {
+            userInfo.put("instagram", " ");
+        }
+        if (this.linkedin != null) {
+            userInfo.put("linkedin", this.linkedin);
+        } else {
+            userInfo.put("linkedin", " ");
+        }
+        System.out.println("User Info 2: " + userInfo);
         return userInfo;
     }
 

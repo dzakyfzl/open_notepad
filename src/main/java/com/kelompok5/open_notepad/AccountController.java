@@ -87,8 +87,8 @@ public class AccountController {
             isAdmin = jdbcTemplate.queryForObject(sql, new Object[] { username }, (rs, rowNum) -> {
                 return rs.getBoolean("isAdmin");
             });
-        } catch (Exception e) {
-            throw new RuntimeException("failed to get isAdmin from database");
+        }catch (Exception e) {
+            return ResponseEntity.badRequest().body(Map.of("message", "account not found"));
         }
 
         // if statement
@@ -170,7 +170,7 @@ public class AccountController {
 
     @PostMapping("/logout") // logout
     public ResponseEntity<Map<String, String>> logout(HttpServletRequest request, HttpSession session) {
-        if (security.isSessionValid(session, request)) {
+        if (!security.isSessionValid(session, request)) {
             return ResponseEntity.badRequest().body(Map.of("message", "User not logged in"));
         }
 
@@ -182,13 +182,21 @@ public class AccountController {
             return ResponseEntity.badRequest().body(Map.of("message", e.getMessage()));
         }
 
-        return ResponseEntity.ok().body(Map.of("message", "User logged in successfully"));
+        return ResponseEntity.ok().body(Map.of("message", "User logged out successfully"));
     }
 
-    @PostMapping("/edit") // edit profile
-    public ResponseEntity<Map<String, String>> editProfile(@RequestBody Map<String, String> requestData,
-            HttpServletRequest request, HttpSession session) {
-        if (security.isSessionValid(session, request)) {
+    @PostMapping("/edit") // edit profile 
+    public ResponseEntity<Map<String, String>> editProfile(
+        @RequestParam("file") MultipartFile file,
+        @RequestParam("email") String newEmail,
+        @RequestParam("firstName") String newFirstName,
+        @RequestParam("lastName") String newLastName,
+        @RequestParam("password") String newPassword,
+        @RequestParam("aboutMe") String newAboutMe,
+        @RequestParam("instagram") String newInstagram,
+        @RequestParam("linkedin") String newLinkedin,
+        HttpServletRequest request, HttpSession session) {
+        if (!security.isSessionValid(session, request)) {
             return ResponseEntity.badRequest().body(Map.of("message", "User not logged in"));
         }
         String username = (String) session.getAttribute("username");
@@ -199,29 +207,93 @@ public class AccountController {
             return ResponseEntity.badRequest().body(Map.of("message", "User not found"));
         }
 
+        String hashedPassword;
+        String salt;
+
         // Get the new values from the request
-        String newEmail = requestData.get("email");
-        String newFirstName = requestData.get("firstName");
-        String newLastName = requestData.get("lastName");
-        String newPassword = requestData.get("password");
-        if (newEmail == null) {
+        if (newEmail.equals("")) {
             newEmail = user.getEmail();
         }
-        if (newFirstName == null) {
+        if (newFirstName.equals("")) {
             newFirstName = user.getFirstName();
         }
-        if (newLastName == null) {
+        if (newLastName.equals("")) {
             newLastName = user.getLastName();
         }
-        if (newPassword == null) {
-            newPassword = user.getHashedPassword();
+        if (newPassword.equals("")) {
+            hashedPassword= user.getHashedPassword();
+            salt = user.getSalt();
+        }else{
+            salt = security.generateSalt();
+            hashedPassword = security.hashPassword(newPassword, salt);
         }
-        // Hash the new password and salt it
-        String salt = security.generateSalt();
-        String hashedPassword = security.hashPassword(newPassword, salt);
+        System.out.println(" Username: " + username + 
+            ", Email: " + newEmail + ", First Name: " + newFirstName + ", Last Name: " + newLastName);
+        //Check if aboutMe, instagram, and linkedin are empty
+        if (newAboutMe.equals("")) {
+            newAboutMe = "";
+        }
+        if (newInstagram.equals("")) {
+            newInstagram = "";
+        }
+        if (newLinkedin.equals("")) {
+            newLinkedin = "";
+        }
+
+        // Check if the file is not empty
+        if (!file.isEmpty()) {
+            // Check if the file is an image
+            String contentType = file.getContentType();
+            if (!contentType.startsWith("image/")) {   
+                return ResponseEntity.badRequest().body(Map.of("message", "File is not an image file"));
+            }
+            // Check if the file size is less than 10MB
+            if (file.getSize() > 10 * 1024 * 1024) {
+                return ResponseEntity.badRequest().body(Map.of("message", "File size is too large"));
+            }
+            // Create a new file name and upload directory
+            String fileName = System.currentTimeMillis() + "_" + file.getOriginalFilename();
+            Path uploadDir = Paths.get("uploads/photos");
+
+            // Create a file object and set the file properties
+            File profilePicture = new File(-1, fileName, uploadDir.toString(), file.getSize(), contentType);
+            profilePicture.setName(fileName);
+            profilePicture.setPath("uploads/photos/" + fileName);
+            profilePicture.setType(contentType);
+            profilePicture.setSize(file.getSize());
+
+            // Save the file to the server
+            try {
+                Files.createDirectories(uploadDir);
+                file.transferTo(uploadDir.resolve(fileName));
+            } catch (IOException e) {
+                return ResponseEntity.badRequest().body(Map.of("message", "Error uploading file"));
+            }
+
+            // Save the file information to the database
+            try {
+                fileDAO.UploadToDatabase(profilePicture);
+            } catch (Exception e) {
+                System.out.println("Error uploading file to database: " + e.getMessage());
+                return ResponseEntity.badRequest().body(Map.of("message", "Error uploading photo to database"));
+            }
+
+            // Getting just FileID in database
+            int ID = fileDAO.getFileID(fileName);
+            profilePicture.setFileID(ID);
+
+            //Attach the file to the user
+            try {
+                userDAO.uploadProfilePicture(username, ID);
+            } catch (Exception e) {
+                return ResponseEntity.badRequest().body(Map.of("message", "Error uploading profile picture"));
+            }
+        }
+
         // Update the user in the database
         try {
-            userDAO.updateInfo(username, hashedPassword, salt, newEmail, newFirstName, newLastName);
+            userDAO.updateInfo(username, newEmail, newFirstName, newLastName, hashedPassword, salt);
+            userDAO.editDetails(username, newAboutMe, newInstagram, newLinkedin);
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(Map.of("message", "Error updating user info"));
         }
@@ -232,7 +304,7 @@ public class AccountController {
     @PostMapping("/delete")
     public ResponseEntity<Map<String, String>> deleteAccount(@RequestBody Map<String, String> requestData,
             HttpServletRequest request, HttpSession session) {
-        if (security.isSessionValid(session, request) || requestData.get("password") == null) {
+        if (!security.isSessionValid(session, request) || requestData.get("password") == null) {
             return ResponseEntity.badRequest().body(Map.of("message", "User not logged in or password not provided"));
         }
 
@@ -267,84 +339,15 @@ public class AccountController {
         if (user == null) {
             return ResponseEntity.badRequest().body(Map.of("message", "User not found"));
         }
-
+        System.out.println(user.getInfo(username));
         return ResponseEntity.ok().body(user.getInfo(username));
-    }
-
-    @PostMapping("/upload-photo") // Upload profile photo
-    public ResponseEntity<Map<String, String>> uploadProfilePhoto(@RequestParam("file") MultipartFile file,
-            HttpServletRequest request, HttpSession session) {
-        // Check if the user is logged in
-        if (security.isSessionValid(session, request)) {
-            return ResponseEntity.badRequest().body(Map.of("message", "User not logged in"));
-        }
-
-        // if it yes, get the username from the session and create a new User object
-        String username = (String) session.getAttribute("username");
-
-        // Check if the file is empty
-        if (file.isEmpty()) {
-            return ResponseEntity.badRequest().body(Map.of("message", "File is empty"));
-        }
-        // Check if the file is an image
-        String contentType = file.getContentType();
-        if (!contentType.startsWith("image/")) {
-            return ResponseEntity.badRequest().body(Map.of("message", "File is not an image"));
-        }
-        // Check if the file size is less than 2MB
-        if (file.getSize() > 2 * 1024 * 1024) {
-            return ResponseEntity.badRequest().body(Map.of("message", "File size is too large"));
-        }
-        // Create a new file name and upload directory
-        String fileName = System.currentTimeMillis() + "_" + file.getOriginalFilename();
-        Path uploadDir = Paths.get("uploads/photos");
-
-        // Create a file object and set the file properties
-        File profilePhoto = new File(-1, fileName, uploadDir.toString(), file.getSize(), contentType);
-        profilePhoto.setName(fileName);
-        profilePhoto.setPath(uploadDir.toString());
-        profilePhoto.setType(contentType);
-        profilePhoto.setSize(file.getSize());
-
-        // Save the file to the server
-        try {
-            Files.createDirectories(uploadDir);
-            file.transferTo(uploadDir.resolve(fileName));
-        } catch (IOException e) {
-            return ResponseEntity.badRequest().body(Map.of("message", "Error uploading file"));
-        }
-
-        // Save the file information to the database
-        try {
-            fileDAO.UploadToDatabase(profilePhoto);
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body(Map.of("message", e.getMessage()));
-        }
-
-        // Getting just FileID in database
-        int ID;
-        try {
-            ID = jdbcTemplate.queryForObject("SELECT fileID FROM Files ORDER BY fileID DESC LIMIT 1", Integer.class);
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body(Map.of("message", "failed to get ID file"));
-        }
-
-        // Update the user profile with the file ID
-        String sqlUpdate = "UPDATE Accounts SET fileID = ? WHERE username = ?";
-        try {
-            jdbcTemplate.update(sqlUpdate, ID, username);
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body(Map.of("message", "Error updating user profile"));
-        }
-
-        return ResponseEntity.ok().body(Map.of("message", "User profile photo uploaded successfully"));
     }
 
     @GetMapping("/profile-photo") // Get profile photo
     public ResponseEntity<Resource> getProfilePhoto(HttpServletRequest request, HttpSession session)
             throws MalformedURLException, IOException {
         // Check if the user is logged in
-        if (security.isSessionValid(session, request)) {
+        if (!security.isSessionValid(session, request)) {
             return ResponseEntity.badRequest().build();
         }
         // Get the username from the session and create a new User object
