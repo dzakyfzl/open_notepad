@@ -107,7 +107,7 @@ allCourses.forEach(course => {
   courseSelect.appendChild(option);
 });
 
-fetch("/api/data/getdefault",{
+fetch("/api/data/getAllnotes",{
   method: "GET",
   headers: {
     "Content-Type": "application/json"
@@ -116,13 +116,13 @@ fetch("/api/data/getdefault",{
   if (!response.ok) {
     throw new Error("Network response was not ok");
   }
-  return JSON.parse(response.body);
+  return response.json();
 }).then(data => {
   for (item of data) {
     cardGrid.innerHTML += `
      <a href="/note/view/${item.id}" class="flex h-[250px] flex-col text-left bg-white px-5 rounded-lg shadow-md transition-all duration-200 hover:translate-y-[-4px] hover:shadow-lg">
           <!-- maksimal 22 huruf untuk judul note  -->
-          <h3 class="text-2xl m-0 pt-2">${item.title}}</h3>
+          <h3 class="text-2xl m-0 pt-2">${item.name}</h3>
           <p class="font-semibold text-base text-[#555]">${item.course} - ${item.major}</p>
           <span class="font-extralight text-sm text-[#555] mb-2.5 pt-2">${item.username}</span>
           <div class="h-full mt-2.5 pb-5 flex flex-col justify-end items-baseline text-sm text-[#444]">
