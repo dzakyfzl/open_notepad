@@ -40,7 +40,7 @@ public class DataController {
     public ResponseEntity<List<Map<String, Object>>> getAllnotesByMajor(String major) {
         List<Map<String, Object>> notes;
         try {
-            notes = noteDAO.getAllnotesByMajor(major);
+            notes = noteDAO.searchByNames(major);
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(List.of(Map.of("error", "Failed to retrieve notes")));
         }

@@ -272,6 +272,12 @@
             "Rekayasa Perangkat Lunak"
           ]
         };
+        const majorData = {
+          'informatika':'S1 Informatika',
+          'data-sains':'S1 Data Sains',
+          'rekayasa-perangkat-lunak':'S1 Rekayasa Perangkat Lunak',
+          'teknologi-informasi':'S1 Teknologi Informasi'
+        }
 
         // Update courses dropdown based on selected major
         function updateCourses() {
@@ -302,7 +308,7 @@
 
           const title = document.getElementById('title').value;
           const fileInput = document.getElementById('noteFile');
-          const major = document.getElementById('major').value;
+          const major = majorData[document.getElementById('major').value];
           const course = document.getElementById('course').value;
           const description = document.getElementById('description').value;
 
