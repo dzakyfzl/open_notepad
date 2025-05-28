@@ -275,20 +275,20 @@
 
         // Update courses dropdown based on selected major
         function updateCourses() {
-          const major = document.getElementById("major").value;
-          const courseSelect = document.getElementById("course");
+          const major = document.getElementById('major').value;
+          const courseSelect = document.getElementById('course');
+          courseSelect.innerHTML = '<option value="" disabled selected>Select course</option>'; // Reset options
 
-          courseSelect.innerHTML = '<option value="" disabled selected>Select Course</option>';
-
-          if (courseData[major]) {
+          if (major && courseData[major]) {
             courseData[major].forEach(course => {
-              const option = document.createElement("option");
+              const option = document.createElement('option');
               option.value = course;
               option.textContent = course;
               courseSelect.appendChild(option);
             });
           }
         }
+
 
         // Show file name when file is selected
         document.getElementById('noteFile').addEventListener('change', function() {
@@ -298,7 +298,7 @@
 
         // Handle form submission
         document.getElementById('uploadForm').addEventListener('submit', function(event) {
-          event.preventDefault();
+          event.preventDefault(); // Prevent default form submission
 
           const title = document.getElementById('title').value;
           const fileInput = document.getElementById('noteFile');
@@ -306,47 +306,37 @@
           const course = document.getElementById('course').value;
           const description = document.getElementById('description').value;
 
-          // Ambil username dari /api/account/info
-          
-
-
           if (!title || !fileInput.files.length || !major || !course || !description) {
-            alert("Please fill in all fields and select a file.");
+            alert('Please fill in all fields and select a file.');
             return;
           }
 
-          // Kirim data ke NoteController via fetch
+          // Create FormData object to send data
           const formData = new FormData();
-          formData.append('title', title);
+          formData.append('name', title);
           formData.append('file', fileInput.files[0]);
           formData.append('major', major);
           formData.append('course', course);
           formData.append('description', description);
-          formData.append('username', username);
 
+          // Send data to server (replace '/api/notes/upload' with your actual endpoint)
           fetch('/api/note/upload', {
             method: 'POST',
             body: formData
           })
-          .then(response => response.json())
+          .then(response => {
+            if (!response.ok) {
+              throw new Error('Network response was not ok');
+            }
+            return response.json();
+          })
           .then(data => {
-            alert(data.message || "Upload berhasil!");
-            // Tampilkan hasil upload di console
-            console.log("Data yang diupload:");
-            console.log({
-              title,
-              file: fileInput.files[0].name,
-              major,
-              course,
-              description,
-              username
-            });
-            // Reset form jika perlu
-            document.getElementById('uploadForm').reset();
-            document.getElementById('file-name').textContent = 'No file chosen';
+            alert('Note uploaded successfully!');
+            window.location.href = '/'; // Redirect to notes page
           })
           .catch(error => {
-            alert("Upload gagal: " + error);
+            console.error('Error:', error);
+            alert('An error occurred while uploading the note.');
           });
         });
     </script>
