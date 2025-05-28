@@ -18,7 +18,11 @@ public class NoteDAO {
 
 
     public List<Map<String, Object>> getAllnotes() {
-        String sql = "SELECT * FROM Notes WHERE visibility = 1";
+        String sql = "SELECT n.name, COALESCE(AVG(r.rating), 0) AS avg_rating, n.major, n.course " +
+                 "FROM Notes n " +
+                 "LEFT JOIN Ratings r ON n.moduleID = r.moduleID " +
+                 "WHERE n.visibility = 1 " +
+                 "GROUP BY n.name, n.major, n.course";
         // Querry to get all notes
         List<Map<String, Object>> notes = jdbcTemplate.queryForList(sql);
         return notes;

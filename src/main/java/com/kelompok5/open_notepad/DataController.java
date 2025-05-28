@@ -32,6 +32,6 @@ public class DataController {
             return ResponseEntity.badRequest().body(List.of(Map.of("error", "Failed to retrieve notes")));
         }
         //Return note Name, Rating, Major, Course
-        return ResponseEntity.ok(List.of());
+        return ResponseEntity.ok(notes);
     }
 }
