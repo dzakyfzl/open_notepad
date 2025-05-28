@@ -216,5 +216,38 @@ public class NoteController {
 
     }
 
+    //method to get a note by ID
+    @PostMapping("/getID")
+public ResponseEntity<Map<String, Object>> getNoteByID(
+        @RequestParam("noteID") int noteID,
+        HttpServletRequest request,
+        HttpSession session) {
+    if (!security.isSessionValid(session, request)) {
+        return ResponseEntity.badRequest().body(Map.of(
+            "success", false,
+            "message", "User not logged in"
+        ));
+    }
+    String username = (String) session.getAttribute("username");
+    User user = userDAO.getFromDatabase(username);
+    if (user == null) {
+        return ResponseEntity.badRequest().body(Map.of(
+            "success", false,
+            "message", "User not found"
+        ));
+    }
+    Note note = noteDAO.getFromDatabase(noteID);
+    if (note == null) {
+        return ResponseEntity.badRequest().body(Map.of(
+            "success", false,
+            "message", "Note not found"
+        ));
+    }
+    return ResponseEntity.ok(Map.of(
+        "success", true,
+        "message", "Note found",
+        "data", note
+    ));
+}
 }
 

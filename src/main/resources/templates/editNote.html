@@ -16,7 +16,7 @@
     <style>
       @import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
     </style>
-      <div class="flex items-stretch">
+      <div class="flex items-stretch" >
         <div class="py-2 px-4 max-md:hover:bg-ijotaik">
           <a class="" href="/">
             <img class="w-[125px]" src="/img/logo.png" />
@@ -30,6 +30,8 @@
           class="p-3 font-inter font-semibold hover:bg-ijomudagelap border-b-[2px] border-ijomuda hover:border-black transition-all duration-300 ease-in-out"
         >
           <a href="/user/notes/upload" class="inline-block relative p-1">Upload</a>
+
+
         </div>
         <div
           class="p-3 font-inter font-semibold hover:bg-ijomudagelap border-b-[2px] border-ijomuda hover:border-black transition-all duration-300 ease-in-out"
@@ -69,62 +71,98 @@
       </div>
     </header>
     <script src="/js/navbar.js"></script>
+    <div class="hidden" th:text="${noteID}" id="getNote"></div>
 
-    <div class="cont">
-        <div class="container1">
-            <div class="body-inside1">
-                <h2>Title</h2>
-                <input type="text" placeholder="Introduction to OOP">
-            </div >
-            <div class="body-inside1">
-                <h2>Upload File</h2>
-                <div class="custom-file-upload">
-                    <label for="file-upload" class="upload-label">
-                        📄 Upload File
-                    </label>
-                    <input id="file-upload" type="file" />
-                    <span id="file-name">No file chosen</span>
+    <!-- Main Content -->
+          <div class="cont">
+            <div class="container1">
+                <div class="body-inside1">
+                    <h2>Title</h2>
+                    <input type="text" placeholder="Title of your note" />
+                </div >
+                <div class="body-inside1">
+                    <h2>Upload File</h2>
+                    <div class="custom-file-upload">
+                        <label for="file-upload" class="upload-label">
+                            📄 Upload File
+                        </label>
+                        <input id="file-upload" type="file" />
+                        <span id="file-name">No file chosen</span>
+                    </div>
                 </div>
             </div>
+            <div class="container2">
+                <div class="body-inside">
+                    <h2>Course</h2>
+                    <select name="course" id="course">
+                        <option value="" disabled selected>Select course</option>
+                        <option value="oop">Object Oriented Programming</option>
+                        <option value="dsa">Data Structure</option>
+                        <option value="ai">Artificial Intelligence</option>
+                        <option value="web">Web Development</option>
+                    </select>
+                </div>
+                <div class="body-inside">
+                    <h2>Major</h2>
+                    <select name="major" id="major">
+                        <option value="" disabled selected>Select major</option>
+                        <option value="cs">Computer Science</option>
+                        <option value="it">Information Technology</option>
+                        <option value="ce">Computer Engineering</option>
+                        <option value="se">Software Engineering</option>
+                    </select>
+                </div>
+            </div>
+            <div class="container1">
+                <div class="body-inside2">
+                    <h2>Description</h2>
+                    <textarea placeholder="Lorem ipsum dolor sit amet consectetur adipisicing elit. Aspernatur, dolores! Quasi, obcaecati. Ipsum consequuntur est aliquam quidem delectus aperiam eligendi repellat sit molestiae, optio consequatur, deleniti tempora. Odit, recusandae officiis?"></textarea>
+                </div>
+            </div>
+            <button type="submit" class="buttonEdit">Edit Note</button>
         </div>
-    <div class="container2">
-        <div class="body-inside">
-            <h2>Course</h2>
-            <select name="course" id="course">
-                <option value="" disabled selected>Select course</option>
-                <option value="oop">Object Oriented Programming</option>
-                <option value="dsa">Data Structure</option>
-                <option value="ai">Artificial Intelligence</option>
-                <option value="web">Web Development</option>
-            </select>
-        </div>
-        <div class="body-inside">
-            <h2>Major</h2>
-            <select name="major" id="major">
-                <option value="" disabled selected>Select major</option>
-                <option value="cs">Computer Science</option>
-                <option value="it">Information Technology</option>
-                <option value="ce">Computer Engineering</option>
-                <option value="se">Software Engineering</option>
-            </select>
-        </div>
-    </div>
-    <div class="container1">
-        <div class="body-inside2">
-            <h2>Description</h2>
-            <textarea placeholder="Lorem ipsum dolor sit amet consectetur adipisicing elit. Aspernatur, dolores! Quasi, obcaecati. Ipsum consequuntur est aliquam quidem delectus aperiam eligendi repellat sit molestiae, optio consequatur, deleniti tempora. Odit, recusandae officiis?"></textarea>
-        </div>
-    </div>
-    <button type="submit" class="buttonEdit">Edit Note</button>
-    </div>
-    <script>
-        const input = document.getElementById("file-upload");
-        const fileName = document.getElementById("file-name");
-
-        input.addEventListener("change", () => {
-            fileName.textContent = input.files.length > 0 ? input.files[0].name : "No file chosen";
+  <script>
+    // Ambil noteID dari elemen tersembunyi (misal: <div id="getNote" th:text="${noteID}"></div>)
+    document.addEventListener('DOMContentLoaded', function () {
+      // Ambil noteID dari innerText (bukan attribute th:text)
+      const noteId = document.getElementById('getNote').innerText.trim();
+      if (noteId) {
+        getNoteById(noteId);
+      }
+    });
+    async function getNoteById(noteId) {
+      try {
+        const response = await fetch('/api/note/getID', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded'
+          },
+          body: 'noteID=' + encodeURIComponent(noteId)
         });
-    </script>
 
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+
+        const note = await response.json();
+        if (!note) {
+          alert('Note not found!');
+          return;
+        }
+        // Isi form dengan data note
+        document.querySelector('input[type="text"]').value = note.title || '';
+        document.querySelector('textarea').value = note.description || '';
+        document.getElementById('course').value = note.course || '';
+        document.getElementById('major').value = note.major || '';
+        // Jika ingin menampilkan nama file:
+        if (note.file && note.file.name) {
+          document.getElementById('file-name').textContent = note.file.name;
+        }
+      } catch (error) {
+        console.error('Error fetching note:', error);
+        alert('Gagal mengambil data note.');
+      }
+    }
+  </script>
 </body>
 </html>
