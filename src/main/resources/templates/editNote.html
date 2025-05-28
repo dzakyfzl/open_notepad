@@ -73,54 +73,60 @@
     <script src="/js/navbar.js"></script>
     <div class="hidden" th:text="${noteID}" id="getNote"></div>
 
-    <!-- Main Content -->
-          <div class="cont">
-            <div class="container1">
-                <div class="body-inside1">
-                    <h2>Title</h2>
-                    <input type="text" placeholder="Title of your note" />
-                </div >
-                <div class="body-inside1">
-                    <h2>Upload File</h2>
-                    <div class="custom-file-upload">
-                        <label for="file-upload" class="upload-label">
+    <!-- main content -->
+    <div class="flex flex-col w-full h-full items-center mb-[100px] pt-20">
+        <form id="uploadForm" class="w-full flex flex-col items-center">
+            <!-- Title and File Upload -->
+            <div class="flex flex-col w-[60%]">
+                <div class="w-full flex flex-col p-5">
+                    <h2 class="text-3xl my-5">Title</h2>
+                    <input type="text" id="title" placeholder="Title" class="rounded-lg border-none shadow-md bg-white w-full text-xl font-medium py-[15px] px-[10px]">
+                </div>
+                <div class="w-full flex flex-col p-5">
+                    <h2 class="text-3xl my-5">Upload File</h2>
+                    <div class="rounded-lg border-none shadow-md bg-white w-full text-lg font-medium py-[15px] px-[10px] flex items-center gap-[15px]">
+                        <label for="noteFile" class="bg-primary text-white py-[10px] px-[10px] rounded-lg cursor-pointer font-medium shadow-md hover:bg-primary-hover transition-colors duration-300">
                             📄 Upload File
                         </label>
-                        <input id="file-upload" type="file" />
-                        <span id="file-name">No file chosen</span>
+                        <input id="noteFile" type="file" class="hidden">
+                        <span id="file-name" class="text-base text-[#333]">No file chosen</span>
                     </div>
                 </div>
             </div>
-            <div class="container2">
-                <div class="body-inside">
-                    <h2>Course</h2>
-                    <select name="course" id="course">
-                        <option value="" disabled selected>Select course</option>
-                        <option value="oop">Object Oriented Programming</option>
-                        <option value="dsa">Data Structure</option>
-                        <option value="ai">Artificial Intelligence</option>
-                        <option value="web">Web Development</option>
-                    </select>
-                </div>
-                <div class="body-inside">
-                    <h2>Major</h2>
-                    <select name="major" id="major">
+            
+            <!-- Major and Course Selection -->
+            <div class="flex flex-row w-[60%]">
+                <div class="w-1/2 flex flex-col p-5">
+                    <h2 class="text-3xl my-5">Major</h2>
+                    <select name="major" id="major" onchange="updateCourses()" class="appearance-none bg-white rounded-lg border border-[#ccc] shadow-md py-[15px] pr-[50px] pl-[15px] text-base font-normal w-full bg-[url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20width%3D%2215%22%20height%3D%2215%22%20viewBox%3D%220%200%2015%2015%22%20fill%3D%22none%22%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%3E%3Cpath%20d%3D%22M4.5%206L7.5%209L10.5%206%22%20stroke%3D%22%23000%22%20stroke-width%3D%222%22/%3E%3C/svg%3E')] bg-no-repeat bg-[right_15px_center] bg-[length:18px] cursor-pointer">
                         <option value="" disabled selected>Select major</option>
-                        <option value="cs">Computer Science</option>
-                        <option value="it">Information Technology</option>
-                        <option value="ce">Computer Engineering</option>
-                        <option value="se">Software Engineering</option>
+                        <option value="informatika">S1 Informatika</option>
+                        <option value="data-sains">S1 Data Sains</option>
+                        <option value="rekayasa-perangkat-lunak">S1 Rekayasa Perangkat Lunak</option>
+                        <option value="teknologi-informasi">S1 Teknologi Informasi</option>
+                    </select>
+                </div>
+                <div class="w-1/2 flex flex-col p-5">
+                    <h2 class="text-3xl my-5">Course</h2>
+                    <select name="course" id="course" class="appearance-none bg-white rounded-lg border border-[#ccc] shadow-md py-[15px] pr-[50px] pl-[15px] text-base font-normal w-full bg-[url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20width%3D%2215%22%20height%3D%2215%22%20viewBox%3D%220%200%2015%2015%22%20fill%3D%22none%22%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%3E%3Cpath%20d%3D%22M4.5%206L7.5%209L10.5%206%22%20stroke%3D%22%23000%22%20stroke-width%3D%222%22/%3E%3C/svg%3E')] bg-no-repeat bg-[right_15px_center] bg-[length:18px] cursor-pointer">
+                        <option value="" disabled selected>Select course</option>
                     </select>
                 </div>
             </div>
-            <div class="container1">
-                <div class="body-inside2">
-                    <h2>Description</h2>
-                    <textarea placeholder="Lorem ipsum dolor sit amet consectetur adipisicing elit. Aspernatur, dolores! Quasi, obcaecati. Ipsum consequuntur est aliquam quidem delectus aperiam eligendi repellat sit molestiae, optio consequatur, deleniti tempora. Odit, recusandae officiis?"></textarea>
+            
+            <!-- Description -->
+            <div class="flex flex-col w-[60%]">
+                <div class="w-full flex flex-col p-5">
+                    <h2 class="text-3xl my-5">Description</h2>
+                    <textarea id="description" placeholder="Description" class="rounded-lg border-none shadow-md bg-white w-full min-h-[200px] max-h-[400px] text-base font-normal py-[15px] px-[10px] resize-y overflow-y-auto font-['Segoe_UI']"></textarea>
                 </div>
             </div>
-            <button type="submit" class="buttonEdit">Edit Note</button>
-        </div>
+            
+            <!-- Submit Button -->
+            <button type="submit" class="font-semibold shadow-md bg-primary text-white border-none rounded-lg py-3 px-10 text-3xl my-5 cursor-pointer transition-colors duration-300 hover:bg-primary-hover">Upload Note</button>
+        </form>
+    </div>
+    
   <script>
     // Ambil noteID dari elemen tersembunyi (misal: <div id="getNote" th:text="${noteID}"></div>)
     document.addEventListener('DOMContentLoaded', function () {
@@ -154,6 +160,7 @@
         document.querySelector('textarea').value = note.description || '';
         document.getElementById('course').value = note.course || '';
         document.getElementById('major').value = note.major || '';
+        document.getElementByID('description').value = note.description || '';
         // Jika ingin menampilkan nama file:
         if (note.file && note.file.name) {
           document.getElementById('file-name').textContent = note.file.name;
