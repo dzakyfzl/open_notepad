@@ -76,6 +76,18 @@ public class NoteDAO {
         // upload note to database logic
     }
 
+    //update note in database
+    public void updateToDatabase(Note note) {
+        String sql = "UPDATE Notes SET name = ?, description = ?, course = ?, major = ? WHERE moduleID = ?";
+        // Querry to update note
+        try {
+            jdbcTemplate.update(sql, note.getTitle(), note.getDescription(), note.getCourse(), note.getMajor(), note.getModuleID());
+        } catch (Exception e) {
+            System.out.println("Error updating note: " + e.getMessage());
+            throw new RuntimeException("Failed to update note in the database");
+        }
+    }
+
     public Note getFromDatabase(int noteID) {
         String sql = "SELECT * FROM Files INNER JOIN Notes ON Files.fileID = Notes.fileID WHERE moduleID = ?";
         // Querry to get note by ID

@@ -294,5 +294,51 @@ public class NoteController {
         .body(fileResource);
     }
 
+    //update note to database
+    @PostMapping("/update")
+    public ResponseEntity<Map<String, String>> updateNote(
+        @RequestParam("noteID") int noteID,
+        @RequestParam("name") String name,
+        @RequestParam("description") String description,
+        @RequestParam("course") String course,
+        @RequestParam("major") String major,
+        HttpServletRequest request, HttpSession session) {
+
+        // Check if the user is logged in
+        if (!security.isSessionValid(session, request)) {
+            return ResponseEntity.badRequest().body(Map.of("message", "User not logged in"));
+        }
+
+        String username = (String) session.getAttribute("username");
+        User user = userDAO.getFromDatabase(username);
+        if (user == null) {
+            return ResponseEntity.badRequest().body(Map.of("message", "User not found"));
+        }
+
+        // Check if the note exists in the database
+        Note note = noteDAO.getFromDatabase(noteID);
+        if (note == null) {
+            return ResponseEntity.badRequest().body(Map.of("message", "Note not found"));
+        }
+
+        // Check if the note belongs to the user
+        if (!note.getOwnerID().equals(username)) {
+            return ResponseEntity.badRequest().body(Map.of("message", "You do not have permission to update this note"));
+        }
+
+        // Update the note properties
+        note.setTitle(name);
+        note.setDescription(description);
+        note.setCourse(course);
+        note.setMajor(major);
+
+        // Save the updated note to the database
+        try {
+            noteDAO.updateToDatabase(note);
+            return ResponseEntity.ok().body(Map.of("message", "Note updated successfully"));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(Map.of("message", "Error updating note: " + e.getMessage()));
+        }
+    }
 }
 
