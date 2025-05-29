@@ -201,7 +201,7 @@ public class NoteDAO {
             params.add(course);
         }
 
-        sql.append("GROUP BY n.moduleID, n.name, n.course, n.major, a.username, v.total_views ");
+        sql.append("GROUP BY n.moduleID, n.name, n.course, n.major, a.username, v.total_views, n.dateUploaded ");
 
         // Tambahkan pengurutan berdasarkan Sort By dan Sort Order
         if (sortBy != null && !sortBy.isEmpty()) {
