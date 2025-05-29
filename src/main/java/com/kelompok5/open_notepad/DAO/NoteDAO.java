@@ -19,6 +19,7 @@ public class NoteDAO {
 
     public List<Map<String, Object>> getAllnotes() {
         String sql = "SELECT n.moduleID AS id, " +
+                "       n.name AS name, " +
                 "       n.course, " +
                 "       n.major, " +
                 "       a.username AS username, " +
@@ -33,9 +34,16 @@ public class NoteDAO {
                 ") v ON n.moduleID = v.moduleID " +
                 "LEFT JOIN Accounts a ON n.username = a.username " +
                 "WHERE n.visibility = 1 " +
-                "GROUP BY n.moduleID, n.course, n.major, a.username, v.total_views";
+                "GROUP BY n.moduleID, n.name, n.course, n.major, a.username, v.total_views";
         // Query to get all notes
-        List<Map<String, Object>> notes = jdbcTemplate.queryForList(sql);
+        List<Map<String, Object>> notes;
+        try {
+            notes = jdbcTemplate.queryForList(sql);
+        } catch (Exception e) {
+            System.out.println("failed query from database :" +  e.getMessage());
+            return null;
+        }
+        
         return notes;
     }
 

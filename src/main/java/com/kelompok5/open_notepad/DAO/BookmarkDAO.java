@@ -1,46 +1,50 @@
 package com.kelompok5.open_notepad.DAO;
 
-import java.sql.Date;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.stereotype.Component;
 
+import com.kelompok5.open_notepad.entity.Bookmark;
 
+@Component
 public class BookmarkDAO {
-    private String userID;
-    private String moduleID;
-    private Date dateBookmarked;
 
-    public void create(String userID, String moduleID) {
-        this.userID = userID;
-        this.moduleID = moduleID;
-        this.dateBookmarked = new Date(System.currentTimeMillis());
+    @Autowired
+    private JdbcTemplate jdbcTemplate;
+    
+    public int getFromUser(String userID) {
+        String sql = "SELECT COUNT(*) AS bookmark FROM Bookmarks WHERE username = ?";
+        try {
+            return jdbcTemplate.queryForObject(sql, new Object[]{userID},(rs,rowNum)-> rs.getInt("bookmark"));
+            
+        }catch(Exception e){
+            return -1;
+        }
     }
-
-    public void getFromDatabase(String userID, String moduleID) {
-        // Implement the logic to retrieve the bookmark from the database
+    public int getFromNote(int moduleID) {
+        String sql = "SELECT COUNT(*) AS bookmark FROM Bookmarks WHERE moduleID = ?";
+        try {
+            return jdbcTemplate.queryForObject(sql, new Object[]{moduleID},(rs,rowNum)-> rs.getInt("bookmark"));
+             
+        }catch(Exception e){
+            return -1;
+        }
+        
+    }
+    public void uploadToDatabase(Bookmark bookmark) {
+        // Implement the logic to upload the bookmark to the database
         // This could involve using JDBC or an ORM framework like Hibernate
-        // Example: DatabaseConnection.getBookmark(userID, moduleID);
+        // Example: DatabaseConnection.uploadBookmark(this);
     }
-    public void uploadToDatabase() {
-        // Implement the logic to upload the rate to the database
+    public void deleteFromUser(String userID) {
+        // Implement the logic to delete the bookmark from the database
         // This could involve using JDBC or an ORM framework like Hibernate
-        // Example: DatabaseConnection.uploadRate(this);
+        // Example: DatabaseConnection.deleteBookmark(this);
     }
-    public void deleteFromDatabase() {
-        // Implement the logic to delete the rate from the database
+        public void deleteFromModule(int noteID) {
+        // Implement the logic to delete the bookmark from the database
         // This could involve using JDBC or an ORM framework like Hibernate
-        // Example: DatabaseConnection.deleteRate(this);
-    }
-
-    // Getters
-    public String getUserID() {
-        return userID;
-    }
-
-    public String getModuleID() {
-        return moduleID;
-    }
-
-    public Date getDateBookmarked() {
-        return dateBookmarked;
+        // Example: DatabaseConnection.deleteBookmark(this);
     }
 
 }

@@ -127,7 +127,7 @@ fetch("/api/data/getAllnotes",{
           <span class="font-extralight text-sm text-[#555] mb-2.5 pt-2">${item.username}</span>
           <div class="h-full mt-2.5 pb-5 flex flex-col justify-end items-baseline text-sm text-[#444]">
             <div class="flex justify-center items-center"><img class="h-[15px] w-[15px] mr-1" src="/img/star.png"><p>${item.rating}/5.0</p></div>
-            <div class="flex justify-center items-center"><img class="h-[15px] w-[15px] mr-1" src="/img/view.png"><p>${item.view}</p></div>
+            <div class="flex justify-center items-center"><img class="h-[15px] w-[15px] mr-1" src="/img/view.png"><p>${item.views} Views</p></div>
           </div>
         </a>
     `;
