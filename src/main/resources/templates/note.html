@@ -5,91 +5,160 @@
     <title>Introduction to OOP</title>
     <link rel="stylesheet" href="/css/output.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .star-rating i {
+            cursor: pointer;
+            font-size: 1.5rem;
+            transition: color 0.2s ease;
+        }
+        
+        .star-rating i:hover {
+            color: #FCD34D !important;
+        }
+        
+        .notification {
+            animation: slideIn 0.3s ease-out;
+        }
+        
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+        
+        .bookmark-button {
+            transition: all 0.3s ease;
+        }
+        
+        .bookmark-button.bookmarked {
+            background-color: #10B981;
+            color: white;
+        }
+        
+        .pdf-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .judul {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        
+        .line {
+            height: 2px;
+            background-color: #e5e7eb;
+            margin: 20px 0;
+        }
+        
+        iframe {
+            width: 100%;
+            height: 600px;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+        }
+        
+        .star {
+            text-align: center;
+            margin-top: 30px;
+            padding: 20px;
+            background-color: #f9fafb;
+            border-radius: 8px;
+        }
+    </style>
 </head>
 <body>
+    <!-- Navbar -->
+    <header class="fixed shadow-lg flex top-0 bg-ijomuda w-full justify-between z-30">
+        <style>
+            @import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
+        </style>
+        <div class="flex items-stretch">
+            <div class="py-2 px-4 max-md:hover:bg-ijotaik">
+                <a class="" href="/">
+                    <img class="w-[125px]" src="/img/logo.png" />
+                </a>
+            </div>
+        </div>
 
-     <!-- Navbar -->
-  <header
-      class="fixed shadow-lg flex top-0  bg-ijomuda w-full justify-between z-30"
-    >
-    <style>
-      @import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
-    </style>
-      <div class="flex items-stretch">
-        <div class="py-2 px-4 max-md:hover:bg-ijotaik">
-          <a class="" href="/">
-            <img class="w-[125px]" src="/img/logo.png" />
-          </a>
+        <!--Navigation on left-->
+        <div class="flex items-center mr-0 ml-auto max-md:hidden">
+            <div class="p-3 font-inter font-semibold hover:bg-ijomudagelap border-b-[2px] border-ijomuda hover:border-black transition-all duration-300 ease-in-out">
+                <a href="/user/notes/upload" class="inline-block relative p-1">Upload</a>
+            </div>
+            <div class="p-3 font-inter font-semibold hover:bg-ijomudagelap border-b-[2px] border-ijomuda hover:border-black transition-all duration-300 ease-in-out">
+                <a href="/user/notes" class="inline-block relative p-1">MyNotes</a>
+            </div>
+            <div class="p-3 font-inter font-semibold hover:bg-ijomudagelap border-b-[2px] border-ijomuda hover:border-black transition-all duration-300 ease-in-out">
+                <a href="/user/notes/bookmark" class="inline-block relative p-1">Saved</a>
+            </div>
         </div>
-      </div>
 
-      <!--Navigation on left-->
-      <div class="flex items-center mr-0 ml-auto max-md:hidden">
-        <div
-          class="p-3 font-inter font-semibold hover:bg-ijomudagelap border-b-[2px] border-ijomuda hover:border-black transition-all duration-300 ease-in-out"
-        >
-          <a href="/user/notes/upload" class="inline-block relative p-1">Upload</a>
+        <!--SearchBar-->
+        <div class="flex">
+            <div class="p-3 max-md:hidden">
+                <input
+                    id="search-input"
+                    type="text"
+                    class="border-greenwhitey rounded-lg p-1"
+                    placeholder="Search..."
+                />
+                <button class="pl-1" onclick="searchByName()">
+                    <img class="w-4" src="/img/search.png" />
+                </button>
+            </div>
+            <a class="p-2 flex items-center" href="/user/profile">
+                <img id="profile-picture" src="/api/account/profile-photo" class="w-11 h-11 rounded-full border-[1px] border-gray-300" />
+            </a>
         </div>
-        <div
-          class="p-3 font-inter font-semibold hover:bg-ijomudagelap border-b-[2px] border-ijomuda hover:border-black transition-all duration-300 ease-in-out"
-        >
-          <a href="/user/notes" class="inline-block relative p-1">MyNotes</a>
-        </div>
-        <div
-          class="p-3 font-inter font-semibold hover:bg-ijomudagelap border-b-[2px] border-ijomuda hover:border-black transition-all duration-300 ease-in-out"
-        >
-          <a href="/user/notes/bookmark" class="inline-block relative p-1">Saved</a>
-        </div>
-      </div>
-      </div>
-
-      <!--SearchBar-->
-      <div class="flex">
-        
-        <div class="p-3 max-md:hidden">
-          <input
-            id="search-input"
-            type="text"
-            class="border-greenwhitey rounded-lg p-1"
-            placeholder="Search..."
-          />
-          <button
-            class="pl-1"
-            onclick="searchByName()"
-            >
-            <img class="w-4" src="/img/search.png" />
-          </button>
-          
-      </div>
-        <a class="p-2 flex items-center" href="/user/profile">
-          <img id="profile-picture" src="/api/account/profile-photo" class="w-11 h-11 rounded-full border-[1px] border-gray-300" />
-          <div class="border-sky-500"></div>
-        </a>
-      </div>
     </header>
     <script src="/js/navbar.js"></script>
 
-    
     <div class="pdf-container mt-20">
         <div class="judul">
-            <h2>Introduction to OOP</h2>
-            <h4>Major</h4>
+            <h2 class="text-3xl font-bold text-gray-800">Introduction to OOP</h2>
+            <h4 class="text-lg text-gray-600 mt-2">Computer Science</h4>
+            
+            <!-- Bookmark Button -->
+            <button 
+                id="bookmark-button" 
+                class="bookmark-button mt-4 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50"
+                onclick="toggleBookmark(window.noteID || new URLSearchParams(window.location.search).get('noteID'))"
+            >
+                <i class="far fa-bookmark"></i> Save
+            </button>
         </div>     
+        
         <div class="line"></div>
+        
+        <!-- PDF Viewer -->
         <iframe th:src="${'/api/note/getfile?noteID='+ noteID}"></iframe>
-        <div class="star" >
-            <h2>Overral Rating : 4,5/5</h2>
-            <div id="stars" class="star-rating">
-                <i class="fa-solid fa-star" data-value="1"></i>
-                <i class="fa-solid fa-star" data-value="2"></i>
-                <i class="fa-solid fa-star" data-value="3"></i>
-                <i class="fa-solid fa-star" data-value="4"></i>
-                <i class="fa-solid fa-star" data-value="5"></i>
+        
+        <!-- Rating Section -->
+        <div class="star">
+            <h2 class="text-xl font-semibold mb-4">Overall Rating: Loading...</h2>
+            <div id="stars" class="star-rating flex justify-center gap-1 mb-4">
+                <i class="fa-solid fa-star text-gray-300" data-value="1"></i>
+                <i class="fa-solid fa-star text-gray-300" data-value="2"></i>
+                <i class="fa-solid fa-star text-gray-300" data-value="3"></i>
+                <i class="fa-solid fa-star text-gray-300" data-value="4"></i>
+                <i class="fa-solid fa-star text-gray-300" data-value="5"></i>
             </div>
-            <div>
-            </div>
+            <p class="text-sm text-gray-600">Click on stars to rate this note</p>
         </div>
     </div>
+
+    <!-- Pass noteID to JavaScript -->
+    <script th:inline="javascript">
+        window.noteID = /*[[${noteID}]]*/ null;
+    </script>
+    
     <script src="/js/note.js"></script>
 </body>
 </html>
