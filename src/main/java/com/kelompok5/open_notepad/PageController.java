@@ -1,6 +1,8 @@
 package com.kelompok5.open_notepad;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
@@ -63,6 +65,16 @@ public class PageController{
         return "myNote";
     }
 
+    @GetMapping("/user/notes/saved")
+    public String savedNotes(HttpSession session, HttpServletRequest request) {
+        // Check if the user is logged in
+        if (!security.isSessionValid(session, request)) {
+            // If not logged in, redirect to the main page
+            return "redirect:/login";
+        }
+        return "savedNotes";
+    }
+
     @GetMapping("/user/profile/edit")
     public String editProfile(HttpSession session, HttpServletRequest request) {
         // Check if the user is logged in
@@ -73,13 +85,15 @@ public class PageController{
         return "editProfile";
     }
 
-    @GetMapping("/notes")
-    public String notesPage(HttpSession session, HttpServletRequest request) {
+    @GetMapping("/note/view/{id}")
+    public String notesPage(HttpSession session, HttpServletRequest request, @PathVariable("id") String noteId, Model model) {
         // Check if the user is logged in
         if (!security.isSessionValid(session, request)) {
             // If not logged in, redirect to the main page
             return "redirect:/login";
         }
+        model.addAttribute("noteID", noteId);
+        // Add any addition
         return "note";
     }
 
@@ -89,6 +103,10 @@ public class PageController{
         if (!security.isSessionValid(session, request)) {
             // If not logged in, redirect to the main page
             return "redirect:/login";
+        }
+        if (!security.isAdmin(session)) {
+            // If the user is not an admin, redirect to the main page
+            return "redirect:/";
         }
         return "admin";
     }
@@ -100,6 +118,10 @@ public class PageController{
             // If not logged in, redirect to the main page
             return "redirect:/login";
         }
+        if (!security.isAdmin(session)) {
+            // If the user is not an admin, redirect to the main page
+            return "redirect:/";
+        }
         return "adminProfile";
     }
 
@@ -109,6 +131,10 @@ public class PageController{
         if (!security.isSessionValid(session, request)) {
             // If not logged in, redirect to the main page
             return "redirect:/login";
+        }
+        if (!security.isAdmin(session)) {
+            // If the user is not an admin, redirect to the main page
+            return "redirect:/";
         }
         return "editAdminProfile";
     }

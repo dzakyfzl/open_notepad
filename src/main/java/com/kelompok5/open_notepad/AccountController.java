@@ -415,7 +415,7 @@ public class AccountController {
         if (contentType == null) {
             contentType = "application/octet-stream";
         }
-
+        System.out.println("File type: " + contentType);
         return ResponseEntity.ok().contentType(MediaType.parseMediaType(contentType)).body(fileResource);
     }
 

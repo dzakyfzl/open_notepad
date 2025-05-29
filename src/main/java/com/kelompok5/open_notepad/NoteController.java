@@ -7,8 +7,13 @@ import java.nio.file.Paths;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -217,14 +222,13 @@ public class NoteController {
     }
 
     //method to get a note by ID
-    @PostMapping("/getID")
-public ResponseEntity<Map<String, Object>> getNoteByID(
+    @GetMapping("/get")
+    public ResponseEntity<Map<String, Object>> getNoteByID(
         @RequestParam("noteID") int noteID,
         HttpServletRequest request,
         HttpSession session) {
     if (!security.isSessionValid(session, request)) {
         return ResponseEntity.badRequest().body(Map.of(
-            "success", false,
             "message", "User not logged in"
         ));
     }
@@ -232,22 +236,63 @@ public ResponseEntity<Map<String, Object>> getNoteByID(
     User user = userDAO.getFromDatabase(username);
     if (user == null) {
         return ResponseEntity.badRequest().body(Map.of(
-            "success", false,
             "message", "User not found"
         ));
     }
     Note note = noteDAO.getFromDatabase(noteID);
     if (note == null) {
         return ResponseEntity.badRequest().body(Map.of(
-            "success", false,
             "message", "Note not found"
         ));
     }
     return ResponseEntity.ok(Map.of(
-        "success", true,
-        "message", "Note found",
-        "data", note
+        "name", note.getTitle(),
+        "description", note.getDescription(),
+        "course", note.getCourse(),
+        "major", note.getMajor(),
+        "visibility", note.isVisibility(),
+        "uploadDate", note.getUploadDate(),
+        "username", note.getOwnerID()
     ));
 }
+
+    @GetMapping("/getfile")
+    public ResponseEntity<Resource> getFile(@RequestParam("noteID") int noteID, HttpServletRequest request, HttpSession session) throws IOException{
+        //check if user already log in
+        if(!security.isSessionValid(session, request)){
+            System.out.println("User is not logged in");
+            return ResponseEntity.badRequest().body(null);
+        }
+
+        //get note from database
+        Note note = noteDAO.getFromDatabase(noteID);
+        if (note == null) {
+            System.out.println("failed to get notes");
+            return ResponseEntity.badRequest().body(null);
+        }
+
+        // Get file from server
+        File noteFile =note.getFile();
+        Path filePath;
+        String contentType;
+        filePath = Paths.get("uploads/pdf").resolve(noteFile.getName());
+        if (!Files.exists(filePath)) {
+            System.out.println("File not found");
+            return ResponseEntity.notFound().build();
+        }
+        Resource fileResource = new UrlResource(filePath.toUri());
+        contentType = Files.probeContentType(filePath);
+        if (contentType == null) {
+            contentType = "application/octet-stream";
+        }
+        System.out.println("File type: " + contentType);
+
+        
+        return ResponseEntity.ok()
+        .contentType(MediaType.parseMediaType(contentType))
+        .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + noteFile.getName() + "\"")
+        .body(fileResource);
+    }
+
 }
 

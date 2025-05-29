@@ -4,6 +4,7 @@ import java.security.MessageDigest;
 import java.security.SecureRandom;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 
 import com.kelompok5.open_notepad.DAO.SessionDAO;
@@ -18,7 +19,10 @@ public class Security{
     @Autowired
     private SessionDAO sessionDAO;
 
-    protected boolean isSessionValid(HttpSession session, HttpServletRequest request) {
+    @Autowired
+    private JdbcTemplate jdbctemplate;
+
+    public boolean isSessionValid(HttpSession session, HttpServletRequest request) {
         String sessionID = session.getId();
         String username = (String) session.getAttribute("username");
         String UserAgent = request.getHeader("User-Agent");
@@ -35,6 +39,13 @@ public class Security{
             return false;
         }
         return sessionID.equals(savedSession.getSessionID()) && UserAgent.equals(savedSession.getUserAgent());
+    }
+
+    public boolean isAdmin(HttpSession session) {
+        // Check if the user has admin privileges
+        String sql = "SELECT isAdmin FROM Accounts WHERE username = ?";
+        return jdbctemplate.queryForObject(sql, Boolean.class, session.getAttribute("username"));
+
     }
 
     public String generateSalt() {

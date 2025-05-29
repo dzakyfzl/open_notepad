@@ -138,7 +138,7 @@
     });
     async function getNoteById(noteId) {
       try {
-        const response = await fetch('/api/note/getID', {
+        const response = await fetch('/api/note/get', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/x-www-form-urlencoded'
@@ -156,7 +156,7 @@
           return;
         }
         // Isi form dengan data note
-        document.querySelector('input[type="text"]').value = note.title || '';
+        document.querySelector('input[type="text"]').value = note.name || '';
         document.querySelector('textarea').value = note.description || '';
         document.getElementById('course').value = note.course || '';
         document.getElementById('major').value = note.major || '';
