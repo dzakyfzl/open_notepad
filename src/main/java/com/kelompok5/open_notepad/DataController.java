@@ -36,28 +36,21 @@ public class DataController {
         return ResponseEntity.ok(notes);
     }
 
-    @GetMapping("/getAllnotesByMajor")
-    public ResponseEntity<List<Map<String, Object>>> getAllnotesByMajor(String major) {
-        List<Map<String, Object>> notes;
-        try {
-            notes = noteDAO.searchByNames(major);
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body(List.of(Map.of("error", "Failed to retrieve notes")));
-        }
-        // Return note Name, Rating, Major, Course
-        return ResponseEntity.ok(notes);
-    }
-
     @GetMapping("/filterNotes")
     public ResponseEntity<List<Map<String, Object>>> filterNotes(
-            @RequestParam(required = false) String major,
+            @RequestParam(defaultValue = "false") boolean IF,
+            @RequestParam(defaultValue = "false") boolean DS,
+            @RequestParam(defaultValue = "false") boolean RPL,
+            @RequestParam(defaultValue = "false") boolean IT,
             @RequestParam(required = false) String course,
             @RequestParam(required = false) String sortBy,
             @RequestParam(required = false) String order) {
         try {
-            List<Map<String, Object>> notes = noteDAO.filterNotes(major, course, sortBy, order);
+            // Panggil metode filterNotes di NoteDAO dengan parameter yang diterima
+            List<Map<String, Object>> notes = noteDAO.filterNotes(course, sortBy, order, IF, DS, RPL, IT);
             return ResponseEntity.ok(notes);
         } catch (Exception e) {
+            e.printStackTrace();
             return ResponseEntity.badRequest().body(List.of(Map.of("error", "Failed to filter notes")));
         }
     }

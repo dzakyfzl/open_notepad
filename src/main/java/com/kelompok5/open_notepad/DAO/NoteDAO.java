@@ -40,10 +40,10 @@ public class NoteDAO {
         try {
             notes = jdbcTemplate.queryForList(sql);
         } catch (Exception e) {
-            System.out.println("failed query from database :" +  e.getMessage());
+            System.out.println("failed query from database :" + e.getMessage());
             return null;
         }
-        
+
         return notes;
     }
 
@@ -129,32 +129,91 @@ public class NoteDAO {
         }
     }
 
-    public List<Map<String, Object>> filterNotes(String major, String course, String sortBy, String order) {
+    public List<Map<String, Object>> filterNotes(String course, String sortBy, String sortOrder, boolean IF, boolean DS,
+            boolean RPL, boolean IT) {
         StringBuilder sql = new StringBuilder(
-                "SELECT n.name, COALESCE(AVG(r.rating), 0) AS avg_rating, n.major, n.course " +
+                "SELECT n.moduleID AS id, " +
+                        "       n.name AS name, " +
+                        "       n.course AS course, " +
+                        "       n.major AS major, " +
+                        "       a.username AS username, " +
+                        "       COALESCE(AVG(r.rating), 0) AS rating, " +
+                        "       COALESCE(v.total_views, 0) AS views " +
                         "FROM Notes n " +
                         "LEFT JOIN Ratings r ON n.moduleID = r.moduleID " +
+                        "LEFT JOIN ( " +
+                        "    SELECT v.moduleID, COUNT(*) AS total_views " +
+                        "    FROM Views v " +
+                        "    GROUP BY v.moduleID " +
+                        ") v ON n.moduleID = v.moduleID " +
+                        "LEFT JOIN Accounts a ON n.username = a.username " +
                         "WHERE n.visibility = 1 ");
 
-        List<Object> params = new ArrayList<>(); // List untuk parameter
+        List<Object> params = new ArrayList<>();
 
-        // Tambahkan filter hanya jika parameter diberikan
-        if (major != null && !major.isEmpty()) {
-            sql.append("AND n.major = ? ");
-            params.add(major); // Tambahkan parameter major
+        // Tambahkan filter berdasarkan Major
+        if (IF || DS || RPL || IT) {
+            sql.append("AND (");
+            boolean first = true;
+            if (IF) {
+                sql.append("n.major = ?");
+                params.add("S1 Informatika");
+                first = false;
+            }
+            if (DS) {
+                if (!first)
+                    sql.append(" OR ");
+                sql.append("n.major = ?");
+                params.add("S1 Data Sains");
+                first = false;
+            }
+            if (RPL) {
+                if (!first)
+                    sql.append(" OR ");
+                sql.append("n.major = ?");
+                params.add("S1 Rekayasa Perangkat Lunak");
+                first = false;
+            }
+            if (IT) {
+                if (!first)
+                    sql.append(" OR ");
+                sql.append("n.major = ?");
+                params.add("S1 Teknologi Informasi");
+            }
+            sql.append(") ");
         }
 
-        if (course != null && !course.isEmpty()) {
+        // Tambahkan filter berdasarkan Course
+        if (course != null && !course.equalsIgnoreCase("All")) {
             sql.append("AND n.course = ? ");
-            params.add(course); // Tambahkan parameter course
+            params.add(course);
         }
 
-        sql.append("GROUP BY n.name, n.major, n.course "); // GROUP BY sebelum ORDER BY
+        sql.append("GROUP BY n.moduleID, n.name, n.course, n.major, a.username, v.total_views ");
 
+        // Tambahkan pengurutan berdasarkan Sort By dan Sort Order
         if (sortBy != null && !sortBy.isEmpty()) {
-            sql.append("ORDER BY ").append(sortBy).append(" ");
-            if (order != null && !order.isEmpty()) {
-                sql.append(order);
+            sql.append("ORDER BY ");
+            switch (sortBy.toLowerCase()) {
+                case "letter":
+                    sql.append("n.name ");
+                    break;
+                case "rating":
+                    sql.append("rating ");
+                    break;
+                case "date":
+                    sql.append("n.dateUploaded ");
+                    break;
+                case "view":
+                    sql.append("views ");
+                    break;
+                default:
+                    sql.append("n.name "); // Default sorting by name
+            }
+            if (sortOrder != null && sortOrder.equalsIgnoreCase("desc")) {
+                sql.append("DESC ");
+            } else {
+                sql.append("ASC ");
             }
         }
 
