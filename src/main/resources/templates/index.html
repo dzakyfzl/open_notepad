@@ -41,11 +41,9 @@
           <a href="/user/notes/bookmark" class="inline-block relative p-1">Saved</a>
         </div>
       </div>
-      </div>
 
       <!--SearchBar-->
       <div class="flex">
-        
         <div class="p-3 max-md:hidden">
           <input
             id="search-input"
@@ -54,8 +52,8 @@
             placeholder="Search..."
           />
           <button
+            id="search-button"
             class="pl-1"
-            onclick="searchByName()"
             >
             <img class="w-4" src="/img/search.png" />
           </button>
@@ -108,25 +106,16 @@
         </select>
       </div>
       <div class="text-center pb-8">
-        <button class="self-center p-3 rounded-md bg-green-600 text-white font-inter" onclick="sortNotes()">Execute</button>
+        <button id="execute-filter" class="self-center p-3 rounded-md bg-green-600 text-white font-inter">Execute</button>
       </div>
     </div>
     </div>
     <!-- Card Grid -->
     <div id="card-grid" class="py-5 pt-20 max-w-[90%] mx-auto md:mr-8 grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8 w-full box-border">
-
-      
-      <a href="" class=" hidden flex h-[250px] flex-col text-left bg-white px-5 rounded-lg shadow-md transition-all duration-200 hover:translate-y-[-4px] hover:shadow-lg">
-        <!-- maksimal 22 huruf untuk judul note  -->
-        <h3 class="text-2xl m-0 pt-2">Object Oriented Programming</h3>
-        <p class="font-semibold text-base text-[#555]">Programming - S1 Informatika</p>
-        <span class="font-extralight text-sm text-[#555] mb-2.5 pt-2">Alice border</span>
-        <div class="h-full mt-2.5 pb-5 flex flex-col justify-end items-baseline text-sm text-[#444]">
-          <div class="flex justify-center items-center"><img class="h-[15px] w-[15px] mr-1" src="/img/star.png"><p>4.9/5.0</p></div>
-          <div class="flex justify-center items-center"><img class="h-[15px] w-[15px] mr-1" src="/img/view.png"><p>1000</p></div>
-        </div>
-      </a>
-    
+      <!-- Loading indicator will be shown here initially -->
+      <div id="loading-indicator" class="col-span-full text-center py-8">
+        <p class="text-gray-500">Loading notes...</p>
+      </div>
     </div>
   </div>
  <script src="/js/index.js"></script>
