@@ -17,7 +17,13 @@ public class NoteDAO {
     @Autowired
     private JdbcTemplate jdbcTemplate;
 
+    private List<Map<String, Object>> cachedNotes = null;
+
     public List<Map<String, Object>> getAllnotes() {
+        if (cachedNotes != null) {
+            return cachedNotes; // Return cached data
+        }
+
         String sql = "SELECT n.moduleID AS id, " +
                 "       n.name AS name, " +
                 "       n.course, " +
@@ -35,16 +41,30 @@ public class NoteDAO {
                 "LEFT JOIN Accounts a ON n.username = a.username " +
                 "WHERE n.visibility = 1 " +
                 "GROUP BY n.moduleID, n.name, n.course, n.major, a.username, v.total_views";
-        // Query to get all notes
-        List<Map<String, Object>> notes;
+
         try {
-            notes = jdbcTemplate.queryForList(sql);
+            cachedNotes = jdbcTemplate.queryForList(sql); // Cache the result
         } catch (Exception e) {
-            System.out.println("failed query from database :" + e.getMessage());
+            System.out.println("Failed query from database: " + e.getMessage());
             return null;
         }
 
-        return notes;
+        return cachedNotes;
+    }
+
+    public List<Map<String, Object>> searchInCachedNotes(String noteName) {
+        if (cachedNotes == null) {
+            getAllnotes(); // Load data into cache if not already loaded
+        }
+
+        List<Map<String, Object>> result = new ArrayList<>();
+        for (Map<String, Object> note : cachedNotes) {
+            String name = (String) note.get("name");
+            if (name != null && name.toLowerCase().contains(noteName.toLowerCase())) {
+                result.add(note);
+            }
+        }
+        return result;
     }
 
     public int searchNoteID(String noteName) {
@@ -76,12 +96,13 @@ public class NoteDAO {
         // upload note to database logic
     }
 
-    //update note in database
+    // update note in database
     public void updateToDatabase(Note note) {
         String sql = "UPDATE Notes SET name = ?, description = ?, course = ?, major = ? WHERE moduleID = ?";
         // Querry to update note
         try {
-            jdbcTemplate.update(sql, note.getTitle(), note.getDescription(), note.getCourse(), note.getMajor(), note.getModuleID());
+            jdbcTemplate.update(sql, note.getTitle(), note.getDescription(), note.getCourse(), note.getMajor(),
+                    note.getModuleID());
         } catch (Exception e) {
             System.out.println("Error updating note: " + e.getMessage());
             throw new RuntimeException("Failed to update note in the database");
