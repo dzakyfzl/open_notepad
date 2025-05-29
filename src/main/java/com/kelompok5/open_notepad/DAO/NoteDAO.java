@@ -18,12 +18,23 @@ public class NoteDAO {
     private JdbcTemplate jdbcTemplate;
 
     public List<Map<String, Object>> getAllnotes() {
-        String sql = "SELECT n.name, COALESCE(AVG(r.rating), 0) AS avg_rating, n.major, n.course " +
+        String sql = "SELECT n.moduleID AS id, " +
+                "       n.course, " +
+                "       n.major, " +
+                "       a.username AS username, " +
+                "       COALESCE(AVG(r.rating), 0) AS rating, " +
+                "       COALESCE(v.total_views, 0) AS views " +
                 "FROM Notes n " +
                 "LEFT JOIN Ratings r ON n.moduleID = r.moduleID " +
+                "LEFT JOIN ( " +
+                "    SELECT v.moduleID, COUNT(*) AS total_views " +
+                "    FROM Views v " +
+                "    GROUP BY v.moduleID " +
+                ") v ON n.moduleID = v.moduleID " +
+                "LEFT JOIN Accounts a ON n.username = a.username " +
                 "WHERE n.visibility = 1 " +
-                "GROUP BY n.name, n.major, n.course";
-        // Querry to get all notes
+                "GROUP BY n.moduleID, n.course, n.major, a.username, v.total_views";
+        // Query to get all notes
         List<Map<String, Object>> notes = jdbcTemplate.queryForList(sql);
         return notes;
     }
@@ -112,7 +123,7 @@ public class NoteDAO {
 
     public List<Map<String, Object>> filterNotes(String major, String course, String sortBy, String order) {
         StringBuilder sql = new StringBuilder(
-                        "SELECT n.name, COALESCE(AVG(r.rating), 0) AS avg_rating, n.major, n.course " +
+                "SELECT n.name, COALESCE(AVG(r.rating), 0) AS avg_rating, n.major, n.course " +
                         "FROM Notes n " +
                         "LEFT JOIN Ratings r ON n.moduleID = r.moduleID " +
                         "WHERE n.visibility = 1 ");
@@ -138,7 +149,7 @@ public class NoteDAO {
                 sql.append(order);
             }
         }
-        
+
         try {
             return jdbcTemplate.queryForList(sql.toString(), params.toArray());
         } catch (Exception e) {
