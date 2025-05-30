@@ -14,7 +14,7 @@ public class Note {
     private File file;
 
     //getter
-    public int  moduleID() {
+    public int  getModuleID() {
         return moduleID;
     }
     public String getOwnerID() {

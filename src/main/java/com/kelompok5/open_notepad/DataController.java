@@ -56,4 +56,16 @@ public class DataController {
             return ResponseEntity.badRequest().body(List.of(Map.of("error", "Failed to filter notes")));
         }
     }
+
+    @GetMapping("/searchByNames")
+    public ResponseEntity<List<Map<String, Object>>> searchByNames(@RequestParam String name) {
+        try {
+            // Gunakan metode searchInCachedNotes dari NoteDAO
+            List<Map<String, Object>> notes = noteDAO.searchInCachedNotes(name);
+            return ResponseEntity.ok(notes);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.badRequest().body(List.of(Map.of("error", "Failed to search notes by name")));
+        }
+    }
 }
