@@ -81,7 +81,7 @@ public class NoteDAO {
         String sql = "UPDATE Notes SET name = ?, description = ?, course = ?, major = ? WHERE moduleID = ?";
         // Querry to update note
         try {
-            jdbcTemplate.update(sql, note.getTitle(), note.getDescription(), note.getCourse(), note.getMajor(), note.getModuleID());
+            jdbcTemplate.update(sql, note.getTitle(), note.getDescription(), note.getCourse(), note.getMajor(), note.moduleID());
         } catch (Exception e) {
             System.out.println("Error updating note: " + e.getMessage());
             throw new RuntimeException("Failed to update note in the database");

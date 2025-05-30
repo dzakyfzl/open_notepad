@@ -59,6 +59,7 @@ public class NoteController {
         @RequestParam("description") String description,
         @RequestParam("course") String course,
         @RequestParam("major") String major,
+        @RequestParam("visibility") boolean visibility,
             HttpServletRequest request, HttpSession session) {
 
         
@@ -132,7 +133,7 @@ public class NoteController {
         note.setDescription(description);
         note.setCourse(course);
         note.setMajor(major);
-        note.setVisibility(true);
+        note.setVisibility(visibility);
         note.setUploadDate(new java.sql.Date(System.currentTimeMillis()));
         note.setOwnerID(user.getUsername());
         note.setFile(noteFile);
