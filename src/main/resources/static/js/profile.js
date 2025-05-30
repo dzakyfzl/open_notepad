@@ -29,3 +29,15 @@ fetch("/api/account/info",{
     console.error("Error fetching account info:", error);
     alert("Failed to load account information. Please try again later.");
 });
+
+function logout(){
+    fetch("/api/account/logout",{
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+        },
+    }).then((response)=>{
+        if (response.ok){
+            window.location.href = "/";
+        }})
+}

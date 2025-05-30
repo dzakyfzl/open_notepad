@@ -4,37 +4,39 @@ import java.sql.Date;
 
 public class View {
     private String userID;
-    private String moduleID;
+    private int moduleID;
     private Date dateViewed;
 
-    public void create(String userID, String moduleID) {
+    public void create(String userID, int moduleID) {
         this.userID = userID;
         this.moduleID = moduleID;
         this.dateViewed = new Date(System.currentTimeMillis());
     }
-    
-    public void getFromDatabase(String userID, String moduleID) {
-        // Implement the logic to retrieve the view from the database
-        // This could involve using JDBC or an ORM framework like Hibernate
-        // Example: DatabaseConnection.getView(userID, moduleID);
-    }
-    public void uploadToDatabase() {
-        // Implement the logic to upload the rate to the database
-        // This could involve using JDBC or an ORM framework like Hibernate
-        // Example: DatabaseConnection.uploadRate(this);
-    }
+
     
     // Getters and Setters
     public String getUserID() {
         return userID;
     }
+    public void setUserID(String userID) {
+        this.userID = userID;
+    }
 
-    public String getModuleID() {
+
+    public int getModuleID() {
         return moduleID;
     }
+    public void setModuleID(int moduleID) {
+        this.moduleID = moduleID;
+    }
+
+
 
     public Date getDateViewed() {
         return dateViewed;
+    }
+    public void setDateViewed(Date dateViewed) {
+        this.dateViewed = dateViewed;
     }
 
 }

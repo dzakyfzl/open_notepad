@@ -111,6 +111,23 @@
     </div>
     </div>
     <!-- Card Grid -->
+     <!--Example DO NOT DELETE-->
+    <a class="hidden h-[250px] flex-col text-left bg-white px-5 rounded-lg shadow-md transition-all duration-200 hover:translate-y-[-4px] hover:shadow-lg">
+      <div id="noteID" th:value="${noteID}" class=" text-yellow-400">${noteID}</div>
+      <h3 class="text-2xl m-0 pt-2">${item.name || "Untitled"}</h3>
+      <p class="font-semibold text-base text-[#555]">${item.course || "Unknown Course"} - ${item.major || "Unknown Major"}</p>
+      <span class="font-extralight text-sm text-[#555] mb-2.5 pt-2">${item.username || "Anonymous"}</span>
+      <div class="h-full mt-2.5 pb-5 flex flex-col justify-end items-baseline text-sm text-[#444]">
+        <div class="flex justify-center items-center">
+          <img class="h-[15px] w-[15px] mr-1" src="/img/star.png" alt="Rating">
+          <p>${item.rating || 0}/5.0</p>
+        </div>
+        <div class="flex justify-center items-center">
+          <img class="h-[15px] w-[15px] mr-1" src="/img/view.png" alt="Views">
+          <p>${item.views || 0} Views</p>
+        </div>
+      </div>
+    </a>
     <div id="card-grid" class="py-5 pt-20 max-w-[90%] mx-auto md:mr-8 grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8 w-full box-border">
       <!-- Loading indicator will be shown here initially -->
       <div id="loading-indicator" class="col-span-full text-center py-8">

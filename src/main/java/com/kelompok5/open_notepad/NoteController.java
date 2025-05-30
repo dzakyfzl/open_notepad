@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.HashMap;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,11 +21,15 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.kelompok5.open_notepad.DAO.BookmarkDAO;
 import com.kelompok5.open_notepad.DAO.FileDAO;
 import com.kelompok5.open_notepad.DAO.NoteDAO;
+import com.kelompok5.open_notepad.DAO.RateDAO;
 import com.kelompok5.open_notepad.DAO.UserDAO;
+import com.kelompok5.open_notepad.DAO.ViewDAO;
 import com.kelompok5.open_notepad.entity.File;
 import com.kelompok5.open_notepad.entity.Note;
+import com.kelompok5.open_notepad.entity.Rate;
 import com.kelompok5.open_notepad.entity.User;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -48,6 +53,18 @@ public class NoteController {
 
     @Autowired
     private UserDAO userDAO;
+
+    @Autowired
+    private RateDAO rateDAO;
+
+    @Autowired
+    private ViewDAO viewDAO;
+
+    @Autowired
+    private BookmarkDAO bookmarkDAO;
+
+
+
 
 
 
@@ -206,6 +223,9 @@ public class NoteController {
         }        
         // Delete the note from the database
         try {
+            bookmarkDAO.deleteFromNote(noteID);
+            rateDAO.deleteFromNote(noteID);
+            viewDAO.deleteFromNote(noteID);
             noteDAO.deleteFromDatabase(noteID);
         } catch (Exception e) {
             System.out.println("Error deleting note from database: " + e.getMessage());
@@ -246,15 +266,26 @@ public class NoteController {
             "message", "Note not found"
         ));
     }
-    return ResponseEntity.ok(Map.of(
-        "name", note.getTitle(),
-        "description", note.getDescription(),
-        "course", note.getCourse(),
-        "major", note.getMajor(),
-        "visibility", note.isVisibility(),
-        "uploadDate", note.getUploadDate(),
-        "username", note.getOwnerID()
-    ));
+    Rate userRate = rateDAO.getRate(username, noteID);
+    if (userRate == null) {
+        userRate = new Rate();
+        userRate.setRating(0);
+    }
+    float rate = rateDAO.getFromNote(noteID);
+
+    Map<String, Object> response = new HashMap<>();
+    response.put("name", note.getTitle());
+    response.put("description", note.getDescription());
+    response.put("course", note.getCourse());
+    response.put("major", note.getMajor());
+    response.put("visibility", note.isVisibility());
+    response.put("uploadDate", note.getUploadDate());
+    response.put("username", note.getOwnerID());
+    response.put("userRate", userRate.getRating());
+    response.put("rating", rate);
+    response.put("views", viewDAO.getFromNote(noteID));
+    response.put("bookmarked", bookmarkDAO.get(username, noteID));
+    return ResponseEntity.ok().body(response);
 }
 
     @GetMapping("/getfile")

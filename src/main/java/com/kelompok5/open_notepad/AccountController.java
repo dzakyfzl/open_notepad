@@ -24,9 +24,12 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.kelompok5.open_notepad.DAO.AdminDAO;
+import com.kelompok5.open_notepad.DAO.BookmarkDAO;
 import com.kelompok5.open_notepad.DAO.FileDAO;
+import com.kelompok5.open_notepad.DAO.RateDAO;
 import com.kelompok5.open_notepad.DAO.SessionDAO;
 import com.kelompok5.open_notepad.DAO.UserDAO;
+import com.kelompok5.open_notepad.DAO.ViewDAO;
 import com.kelompok5.open_notepad.entity.Admin;
 import com.kelompok5.open_notepad.entity.File;
 import com.kelompok5.open_notepad.entity.User;
@@ -43,6 +46,16 @@ public class AccountController {
     private final SessionDAO sessionDAO;
     private final FileDAO fileDAO;
     private final AdminDAO adminDAO;
+    
+    @Autowired
+    private ViewDAO viewDAO;
+    
+    @Autowired
+    private BookmarkDAO bookmarkDAO;
+
+    @Autowired
+    private RateDAO rateDAO;
+    
 
     @Autowired
     private JdbcTemplate jdbcTemplate;
@@ -357,6 +370,9 @@ public class AccountController {
         
         //Delete user from database
         try {
+            rateDAO.deleteFromUser(username);
+            viewDAO.deleteFromUser(username);
+            bookmarkDAO.deleteFromUser(username);
             userDAO.deleteAccount(username, hashedPassword);
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(Map.of("message", "Error deleting user: " + e.getMessage()));

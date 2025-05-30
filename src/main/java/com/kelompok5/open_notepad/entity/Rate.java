@@ -4,7 +4,7 @@ import java.util.Date;
 
 public class Rate {
     private String userID;
-    private String moduleID;
+    private int moduleID;
     private int rating;
     private Date dateRated;
 
@@ -12,7 +12,7 @@ public class Rate {
         
     }
 
-    public Rate(String userID, String moduleID, int rating) {
+    public Rate(String userID, int moduleID, int rating) {
         this.userID = userID;
         this.moduleID = moduleID;
         this.rating = rating;
@@ -25,7 +25,7 @@ public class Rate {
         return userID;
     }
 
-    public String getModuleID() {
+    public int getModuleID() {
         return moduleID;
     }
 
@@ -41,7 +41,7 @@ public class Rate {
     public void setRating(int rating) {
         this.rating = rating;
     }
-    public void setModuleID(String moduleID) {
+    public void setModuleID(int moduleID) {
         this.moduleID = moduleID;
     }
     public void setUserID(String userID) {

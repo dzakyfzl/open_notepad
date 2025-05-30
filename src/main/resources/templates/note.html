@@ -2,76 +2,9 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Introduction to OOP</title>
+    <title id="page-title" >Open Notepad</title>
     <link rel="stylesheet" href="/css/output.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <style>
-        .star-rating i {
-            cursor: pointer;
-            font-size: 1.5rem;
-            transition: color 0.2s ease;
-        }
-        
-        .star-rating i:hover {
-            color: #FCD34D !important;
-        }
-        
-        .notification {
-            animation: slideIn 0.3s ease-out;
-        }
-        
-        @keyframes slideIn {
-            from {
-                transform: translateX(100%);
-                opacity: 0;
-            }
-            to {
-                transform: translateX(0);
-                opacity: 1;
-            }
-        }
-        
-        .bookmark-button {
-            transition: all 0.3s ease;
-        }
-        
-        .bookmark-button.bookmarked {
-            background-color: #10B981;
-            color: white;
-        }
-        
-        .pdf-container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 20px;
-        }
-        
-        .judul {
-            text-align: center;
-            margin-bottom: 20px;
-        }
-        
-        .line {
-            height: 2px;
-            background-color: #e5e7eb;
-            margin: 20px 0;
-        }
-        
-        iframe {
-            width: 100%;
-            height: 600px;
-            border: 1px solid #e5e7eb;
-            border-radius: 8px;
-        }
-        
-        .star {
-            text-align: center;
-            margin-top: 30px;
-            padding: 20px;
-            background-color: #f9fafb;
-            border-radius: 8px;
-        }
-    </style>
 </head>
 <body>
     <!-- Navbar -->
@@ -120,45 +53,75 @@
     </header>
     <script src="/js/navbar.js"></script>
 
-    <div class="pdf-container mt-20">
-        <div class="judul">
-            <h2 id="title" class="text-3xl font-bold text-gray-800 mt-20">Introduction to OOP</h2>
-            <h4 id="major" class="text-lg text-gray-600 mt-2">Computer Science</h4>
-            
+    <div class="2xl:flex w-full">
+    <div class="pt-20 pl-8 2xl:h-screen overflow-scroll">
+        <div class="pb-2 pt-4">
+            <h2 id="title" class="text-3xl font-bold text-gray-800">Title</h2>
+            <h4 id="course" class="text-lg text-gray-600 mt-2">Course</h4>
+            <h4 id="major" class="text-lg font-light text-gray-600 mt-1">Major</h4>
+            <a href="#" id="owner" class="text-lg text-gray-600 mt-2 gap-2 flex"><i class="far fa-user self-center"></i></a>
+        </div>
+        <div class="flex gap-2 mt-1">
+            <!-- Rating -->
+            <div id="stars" class="star-rating flex justify-center items-center gap-1">
+                <i class="rate fa-solid fa-star text-gray-400"></i>
+                <i class="rate fa-solid fa-star text-gray-400"></i>
+                <i class="rate fa-solid fa-star text-gray-400"></i>
+                <i class="rate fa-solid fa-star text-gray-400"></i>
+                <i class="rate fa-solid fa-star text-gray-400"></i>
+                <!-- Rating Count -->
+                <div id="rate-count" class="justify-center items-center mx-1"><p class="text-center self-center font-light text-lg">rate/5</p></div>
+                <p class="mx-1">|</p>
+                <!-- Views Count -->
+                <p id="views" class=" text-inter font-light text-lg">100 View</p>
+            </div>
+        </div>
+        
+        <!-- Button Interface-->
+        <div class="flex my-2 gap-2">
             <!-- Bookmark Button -->
             <button 
                 id="bookmark-button" 
-                class="bookmark-button mt-4 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50"
-                onclick="toggleBookmark(window.noteID || new URLSearchParams(window.location.search).get('noteID'))"
+                class="bookmark-button border px-2 py-2 gap-2 flex border-gray-300 hover:bg-gray-200 rounded-lg"
+                onclick="bookmarked()"
             >
-                <i class="far fa-bookmark"></i> Save
+                <i class="far fa-bookmark justify-center text-center self-center"></i><p class="text-center justify-center">Bookmark</p>
             </button>
-        </div>     
-        
-        <div class="line"></div>
-        
-        <!-- PDF Viewer -->
-        <iframe th:src="${'/api/note/getfile?noteID='+ noteID}"></iframe>
-        
-        <!-- Rating Section -->
-        <div class="star">
-            <h2 class="text-xl font-semibold mb-4">Overall Rating: Loading...</h2>
-            <div id="stars" class="star-rating flex justify-center gap-1 mb-4">
-                <i class="fa-solid fa-star text-gray-300" data-value="1"></i>
-                <i class="fa-solid fa-star text-gray-300" data-value="2"></i>
-                <i class="fa-solid fa-star text-gray-300" data-value="3"></i>
-                <i class="fa-solid fa-star text-gray-300" data-value="4"></i>
-                <i class="fa-solid fa-star text-gray-300" data-value="5"></i>
+            <button 
+                id="download-button" 
+                class="border px-2 py-2 gap-2 flex border-gray-300 hover:bg-gray-200 rounded-lg"
+                onclick="download()"
+            >
+                <i class="fa fa-download justify-center text-center self-center"></i><p class="text-center justify-center">Download</p>
+            </button>
+            <div class="border px-2 py-2 gap-2 flex border-gray-300 rounded-lg items-center justify-center">
+                <i class="fa-solid fa-star star text-gray-400 cursor-pointer" data-index="1"></i>
+                <i class="fa-solid fa-star star text-gray-400 cursor-pointer" data-index="2"></i>
+                <i class="fa-solid fa-star star text-gray-400 cursor-pointer" data-index="3"></i>
+                <i class="fa-solid fa-star star text-gray-400 cursor-pointer" data-index="4"></i>
+                <i class="fa-solid fa-star star text-gray-400 cursor-pointer" data-index="5"></i>
             </div>
-            <p class="text-sm text-gray-600">Click on stars to rate this note</p>
+        </div>
+        <div class="text-lg font-bold my-4"><h2>Description :</h2></div>
+        <div id="description" class="pb-4"></div>          
+    </div>
+    
+    <div class="pdf-container right-0 ml-auto mr-0 pr-8 max-2xl:pl-8 pt-20 h-screen">    
+
+            <div class="line"></div>
+
+            <!-- PDF Viewer " -->
+            <iframe class="2xl:w-[920px] max-2xl:w-full h-full rounded-t-md" th:src="${'/api/note/getfile?noteID='+ noteID}"></iframe>
+            
         </div>
     </div>
-
+        
     <!-- Pass noteID to JavaScript -->
     <script th:inline="javascript">
         window.noteID = /*[[${noteID}]]*/ null;
     </script>
     
-    <script src="/js/note.js"></script>
+    
 </body>
+<script src="/js/note.js"></script>
 </html>

@@ -1,10 +1,9 @@
 package com.kelompok5.open_notepad.DAO;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
-
-import com.kelompok5.open_notepad.entity.Bookmark;
 
 @Component
 public class BookmarkDAO {
@@ -31,20 +30,27 @@ public class BookmarkDAO {
         }
         
     }
-    public void uploadToDatabase(Bookmark bookmark) {
-        // Implement the logic to upload the bookmark to the database
-        // This could involve using JDBC or an ORM framework like Hibernate
-        // Example: DatabaseConnection.uploadBookmark(this);
+    public boolean get(String userID, int moduleID) {
+        String sql = "SELECT * FROM Bookmarks WHERE username = ? AND moduleID = ?";
+        try {
+            jdbcTemplate.queryForObject( sql, new Object[]{userID,moduleID},(rs,rowNum)-> rs.getInt("moduleID"));
+            return true;
+        }catch(EmptyResultDataAccessException e){
+            return false;
+        }
+    }
+    
+    public void uplaodToDatabase(String username, int noteID){
+        String sql = "INSERT INTO Bookmarks(moduleID, username, dateBookmarked) VALUE (?,?,NOW)";
+        jdbcTemplate.update(sql, noteID, username);
     }
     public void deleteFromUser(String userID) {
-        // Implement the logic to delete the bookmark from the database
-        // This could involve using JDBC or an ORM framework like Hibernate
-        // Example: DatabaseConnection.deleteBookmark(this);
+        String sql = "DELETE FROM Bookmarks WHERE username = ?";
+        jdbcTemplate.update(sql, userID);
     }
-        public void deleteFromModule(int noteID) {
-        // Implement the logic to delete the bookmark from the database
-        // This could involve using JDBC or an ORM framework like Hibernate
-        // Example: DatabaseConnection.deleteBookmark(this);
+    public void deleteFromNote(int moduleID) {
+        String sql = "DELETE FROM Bookamarks WHERE moduleID = ?";
+        jdbcTemplate.update(sql, moduleID);
     }
 
 }

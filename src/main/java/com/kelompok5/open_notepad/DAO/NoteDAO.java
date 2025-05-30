@@ -51,6 +51,38 @@ public class NoteDAO {
 
         return cachedNotes;
     }
+    public List<Map<String, Object>> getMynotes(String username) {
+        if (cachedNotes != null) {
+            return cachedNotes; // Return cached data
+        }
+
+        String sql = "SELECT n.moduleID AS id, " +
+                "       n.name AS name, " +
+                "       n.course, " +
+                "       n.major, " +
+                "       a.username AS username, " +
+                "       COALESCE(AVG(r.rating), 0) AS rating, " +
+                "       COALESCE(v.total_views, 0) AS views " +
+                "FROM Notes n " +
+                "LEFT JOIN Ratings r ON n.moduleID = r.moduleID " +
+                "LEFT JOIN ( " +
+                "    SELECT v.moduleID, COUNT(*) AS total_views " +
+                "    FROM Views v " +
+                "    GROUP BY v.moduleID " +
+                ") v ON n.moduleID = v.moduleID " +
+                "LEFT JOIN Accounts a ON n.username = a.username " +
+                "WHERE n.username = ? " +
+                "GROUP BY n.moduleID, n.name, n.course, n.major, a.username, v.total_views";
+
+        try {
+            cachedNotes = jdbcTemplate.queryForList(sql,username); // Cache the result
+        } catch (Exception e) {
+            System.out.println("Failed query from database: " + e.getMessage());
+            return null;
+        }
+
+        return cachedNotes;
+    }
 
     public List<Map<String, Object>> searchInCachedNotes(String noteName) {
         if (cachedNotes == null) {
@@ -101,12 +133,8 @@ public class NoteDAO {
         String sql = "UPDATE Notes SET name = ?, description = ?, course = ?, major = ? WHERE moduleID = ?";
         // Querry to update note
         try {
-<<<<<<< HEAD
-            jdbcTemplate.update(sql, note.getTitle(), note.getDescription(), note.getCourse(), note.getMajor(), note.moduleID());
-=======
             jdbcTemplate.update(sql, note.getTitle(), note.getDescription(), note.getCourse(), note.getMajor(),
                     note.getModuleID());
->>>>>>> 6f32a6e5b7d649bb83809cfc0903805c8ba9a484
         } catch (Exception e) {
             System.out.println("Error updating note: " + e.getMessage());
             throw new RuntimeException("Failed to update note in the database");
@@ -114,27 +142,31 @@ public class NoteDAO {
     }
 
     public Note getFromDatabase(int noteID) {
-        String sql = "SELECT * FROM Files INNER JOIN Notes ON Files.fileID = Notes.fileID WHERE moduleID = ?";
+        String sql = "SELECT f.fileID, f.name, f.type, f.size, f.path, " +
+                "       n.moduleID, n.username, n.name AS noteName, n.description, " +
+                "       n.course, n.major, n.dateUploaded, n.visibility " +
+                "FROM Files f INNER JOIN Notes n ON f.fileID = n.fileID WHERE moduleID = ?";
         // Querry to get note by ID
         Note noted;
         System.out.println("Retrieving note with ID: " + noteID);
         try {
             noted = jdbcTemplate.queryForObject(sql, new Object[] { noteID }, (rs, rowNum) -> {
                 Note note = new Note();
-                note.setModuleID(rs.getInt("moduleID"));
-                note.setOwnerID(rs.getString("username"));
-                note.setTitle(rs.getString("name"));
-                note.setDescription(rs.getString("description"));
-                note.setCourse(rs.getString("course"));
-                note.setMajor(rs.getString("major"));
-                note.setUploadDate(rs.getDate("dateUploaded"));
-                note.setVisibility(rs.getBoolean("visibility"));
                 note.setFile(new File(
                         rs.getInt("fileID"),
                         rs.getString("name"),
                         rs.getString("type"),
                         rs.getLong("size"),
                         rs.getString("path")));
+                note.setModuleID(rs.getInt("moduleID"));
+                note.setOwnerID(rs.getString("username"));
+                note.setTitle(rs.getString("noteName"));
+                note.setDescription(rs.getString("description"));
+                note.setCourse(rs.getString("course"));
+                note.setMajor(rs.getString("major"));
+                note.setUploadDate(rs.getDate("dateUploaded"));
+                note.setVisibility(rs.getBoolean("visibility"));
+                
                 return note;
             });
         } catch (Exception e) {

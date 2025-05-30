@@ -33,20 +33,34 @@ public class RateDAO {
         }
         
     }
-    public void uploadToDatabase(Rate rate) {
-        // Implement the logic to upload the rate to the database
-        // This could involve using JDBC or an ORM framework like Hibernate
-        // Example: DatabaseConnection.uploadRate(this);
+    public Rate getRate(String username, int noteID){
+        String sql = "SELECT * FROM Ratings WHERE username = ? AND moduleID = ?";
+        try {
+            return jdbcTemplate.queryForObject(sql, new Object[]{username,noteID},(rs,rowNum)->{
+                Rate rate = new Rate();
+                rate.setRating(rs.getInt("rating"));
+                rate.setUserID(rs.getString("username"));
+                rate.setModuleID(rs.getInt("moduleID"));
+                rate.setDateRated(rs.getDate("dateRated"));
+                return rate;
+            });
+        }catch (Exception e){
+            System.out.println("get rate : "+e.getMessage());
+            return null;
+        }
+    }
+
+    public void uplaodToDatabase(String username, int noteID,int rate){
+        String sql = "INSERT INTO Ratings(moduleID, username, rating, dateRated) VALUE (?,?,?,NOW)";
+        jdbcTemplate.update(sql, noteID, username, rate);
     }
     public void deleteFromUser(String userID) {
-        // Implement the logic to delete the rate from the database
-        // This could involve using JDBC or an ORM framework like Hibernate
-        // Example: DatabaseConnection.deleteRate(this);
+        String sql = "DELETE FROM Ratings WHERE username = ?";
+        jdbcTemplate.update(sql, userID);
     }
-        public void deleteFromModule(int noteID) {
-        // Implement the logic to delete the rate from the database
-        // This could involve using JDBC or an ORM framework like Hibernate
-        // Example: DatabaseConnection.deleteRate(this);
+    public void deleteFromNote(int moduleID) {
+        String sql = "DELETE FROM Ratings WHERE moduleID = ?";
+        jdbcTemplate.update(sql, moduleID);
     }
 
 }

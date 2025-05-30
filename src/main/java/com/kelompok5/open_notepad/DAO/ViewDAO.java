@@ -4,8 +4,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 
-import com.kelompok5.open_notepad.entity.View;
-
 @Component
 public class ViewDAO {
 
@@ -33,20 +31,17 @@ public class ViewDAO {
         }
         
     }
-    public void uploadToDatabase(View view) {
-        // Implement the logic to upload the views to the database
-        // This could involve using JDBC or an ORM framework like Hibernate
-        // Example: DatabaseConnection.uploadRate(this);
+    public void uplaodToDatabase(String username, int noteID){
+        String sql = "INSERT INTO Views(username, moduleID, dateViewed) VALUE (?,?,?,NOW)";
+        jdbcTemplate.update(sql, noteID, username);
     }
     public void deleteFromUser(String userID) {
-        // Implement the logic to delete the views from the database
-        // This could involve using JDBC or an ORM framework like Hibernate
-        // Example: DatabaseConnection.deleteRate(this);
+        String sql = "DELETE FROM Views WHERE username = ?";
+        jdbcTemplate.update(sql, userID);
     }
-        public void deleteFromModule(int noteID) {
-        // Implement the logic to delete the views from the database
-        // This could involve using JDBC or an ORM framework like Hibernate
-        // Example: DatabaseConnection.deleteRate(this);
+    public void deleteFromNote(int moduleID) {
+        String sql = "DELETE FROM Views WHERE moduleID = ?";
+        jdbcTemplate.update(sql, moduleID);
     }
 
 }

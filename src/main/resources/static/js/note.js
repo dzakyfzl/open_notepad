@@ -1,42 +1,118 @@
-const stars = document.querySelectorAll('#stars i');
-    const ratingText = document.getElementById('rating-value');
-    let currentRating = 0;
-
-    stars.forEach(star => {
-        star.addEventListener('click', () => {
-        currentRating = star.getAttribute('data-value');
-        updateStars(currentRating);
-        ratingText.textContent = `You rated: ${currentRating} star${currentRating > 1 ? 's' : ''}`;
-
-        // Kirim rating ke Spring Boot
-        fetch('/api/interface/rate', {
-            method: 'POST',
-            headers: {
-            'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-            noteId: 123,            // <-- ganti dengan ID catatan sebenarnya
-            rating: currentRating
-            })
-        })
-        .then(response => {
-            if (!response.ok) throw new Error('Network error');
-            return response.json();
-        })
-        .then(data => {
-            console.log('Rating submitted:', data);
-        })
-        .catch(err => {
-            console.error('Submit failed:', err);
-        });
-        });
-
-        star.addEventListener('mouseover', () => updateStars(star.getAttribute('data-value')));
-        star.addEventListener('mouseout', () => updateStars(currentRating));
-    });
-
-    function updateStars(rating) {
-        stars.forEach(star => {
-        star.classList.toggle('active', star.getAttribute('data-value') <= rating);
-        });
+const stars = document.querySelectorAll('.star');
+let currentRating = 0;
+let isLocked = false;
+stars.forEach(star => {
+  star.addEventListener('mouseover', () => {
+    if (!isLocked) {
+      const rating = parseInt(star.dataset.index);
+      highlightStars(rating);
     }
+  });
+  star.addEventListener('mouseout', () => {
+    if (!isLocked) {
+      highlightStars(currentRating);
+    }
+  });
+  star.addEventListener('click', () => {
+    if (!isLocked) {
+      currentRating = parseInt(star.dataset.index);
+      highlightStars(currentRating);
+      fetch('/api/interface/rate', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ rate: currentRating })
+      }
+      )
+      isLocked = true; // Lock after selection
+      console.log("Final selected rating:", currentRating);
+      stars.forEach(s => {
+        s.classList.remove('cursor-pointer');
+        s.classList.add('cursor-default');
+      });
+    }
+  });
+});
+
+function highlightStars(rating) {
+      stars.forEach((star, index) => {
+        if (index < rating) {
+          star.classList.add('text-yellow-400');
+          star.classList.remove('text-gray-400');
+        } else {
+          star.classList.add('text-gray-400');
+          star.classList.remove('text-yellow-400');
+        }
+    });
+}
+
+pageTitle = document.getElementById("page-title")
+title = document.getElementById("title")
+major = document.getElementById("major")
+course = document.getElementById("course")
+owner = document.getElementById("owner")
+description = document.getElementById("description")
+bookmarkBTN = document.getElementById("bookmark-button")
+rating = document.getElementById("rate-count")
+views = document.getElementById("views")
+noteRate = document.querySelectorAll('.rate')
+
+noteID = window.noteID
+fetch('/api/interface/view?noteID=' + noteID,{
+  method: 'POST'
+})
+fetch('/api/note/get?noteID=' + noteID, {
+  method: 'GET',
+  headers: {
+    'Content-Type': 'application/json'
+  }
+})
+  .then(response => response.json())
+  .then(data => {
+    console.log(data)
+    pageTitle.innerHTML = data["title"] + " - Open Notepad"
+    title.innerHTML = data["name"]
+    major.innerHTML = data["major"]
+    course.innerHTML = data["course"]
+    owner.innerHTML += data["username"]
+    description.innerHTML = data["description"]
+    rating.innerHTML = data["rating"] + "/5"
+    views.innerHTML = data["views"] + " View"
+    if(data["userRate"] != 0){
+        highlightStars(data["userRate"])
+        isLocked = true;
+    }
+    noteRate.forEach((star, index) => {
+        if (index < data["rating"]) {
+          star.classList.add('text-yellow-400');
+          star.classList.remove('text-gray-400');
+        } else {
+          star.classList.add('text-gray-400');
+          star.classList.remove('text-yellow-400');
+        }
+    });
+    if(data["bookmarked"]){
+        bookmarkBTN.innerHTML = `<i class="fa fa-bookmark justify-center text-center self-center"></i><p class="text-center justify-center">Bookmarked</p>`
+    }
+})
+
+function bookmarked(){
+  formData = new FormData()
+  formData.append('noteID', noteID)
+    fetch('/api/interface/bookmark', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: formData
+    }).then((response) =>{
+      if(response.status == 200){
+        bookmarkBTN.innerHTML = `<i class="fa fa-bookmark justify-center text-center self-center"></i><p class="text-center justify-center">Bookmarked</p>`
+      }else{
+        alert("Something went wrong : " + response.message)
+      }
+    }
+    )
+
+  }
