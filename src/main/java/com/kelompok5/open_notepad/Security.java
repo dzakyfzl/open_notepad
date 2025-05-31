@@ -32,10 +32,12 @@ public class Security{
             sessionDAO.deleteExpiredSessions();
             savedSession = sessionDAO.getFromDatabase(username);
         } catch (Exception e) {
+            System.out.println(e.getMessage());
             return false;
         }
         // Return true if the sessionID and UserAgent match
         if (savedSession == null) {
+            System.out.println("Session not found");
             return false;
         }
         return sessionID.equals(savedSession.getSessionID()) && UserAgent.equals(savedSession.getUserAgent());

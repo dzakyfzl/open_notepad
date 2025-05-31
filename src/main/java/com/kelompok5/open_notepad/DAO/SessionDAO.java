@@ -3,7 +3,6 @@ package com.kelompok5.open_notepad.DAO;
 import java.sql.Date;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 
@@ -54,14 +53,12 @@ public class SessionDAO {
                             rs.getString("userAgent"),
                             rs.getDate("dateCreated")
                     ));
-        } catch (EmptyResultDataAccessException e) {
+        } catch (Exception e) {
             // Handle the case where no session is found for the given username
+            System.out.println("Failed to Retrive session: " + e.getMessage());
             return null;
             
-        }catch (Exception e) {
-            throw new RuntimeException("Failed to retrieve session data from the database");
         }
-
     }
 
     public void deleteExpiredSessions(){
@@ -70,7 +67,7 @@ public class SessionDAO {
         try {
             // Delete the session data from the database
             Date now = new Date(System.currentTimeMillis());
-            Date expiredDate = new Date(now.getTime() - 86400000); // 1 day
+            Date expiredDate = new Date(now.getTime()); // 1 day
             jdbcTemplate.update(sql, expiredDate);
         } catch (Exception e) {
             throw new RuntimeException("Failed to delete expired session data from the database");

@@ -55,5 +55,9 @@ public class BookmarkDAO {
         String sql = "DELETE FROM Bookamarks WHERE moduleID = ?";
         jdbcTemplate.update(sql, moduleID);
     }
+    public void delete(int moduleID, String userID) {
+        String sql = "DELETE FROM Bookmarks WHERE moduleID = ? AND username = ?";
+        jdbcTemplate.update(sql, moduleID,userID);
+    }
 
 }

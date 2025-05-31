@@ -106,12 +106,16 @@ function bookmarked(){
         'Content-Type': 'application/json'
       },
       body: formData
-    }).then((response) =>{
-      if(response.status == 200){
-        bookmarkBTN.innerHTML = `<i class="fa fa-bookmark justify-center text-center self-center"></i><p class="text-center justify-center">Bookmarked</p>`
-      }else{
-        alert("Something went wrong : " + response.message)
-      }
+    }).then((response) =>{ return response.json()})
+    .then((response) =>{
+      console.log(response)
+        if(response.bookmarked){
+          bookmarkBTN.innerHTML = `<i class="fa fa-bookmark justify-center text-center self-center"></i><p class="text-center justify-center">Bookmarked</p>`
+          console.log("Bookmarked")
+        }else{
+          bookmarkBTN.innerHTML = `<i class="far fa-bookmark justify-center text-center self-center"></i><p class="text-center justify-center">Bookmark</p>`
+          console.log("Unbookmarked")
+        }
     }
     )
 

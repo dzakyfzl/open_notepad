@@ -169,7 +169,7 @@ public class AccountController {
             return ResponseEntity.badRequest().body(Map.of("message", e.getMessage()));
         }
         // if register success, set the session attribute
-        session.setMaxInactiveInterval(60 * 60 * 24);
+        session.setMaxInactiveInterval(24 * 60 * 60);
         session.setAttribute("username", username);
         // upload session to database
         String sessionID = session.getId();

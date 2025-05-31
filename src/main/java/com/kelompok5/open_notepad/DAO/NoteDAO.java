@@ -22,11 +22,12 @@ public class NoteDAO {
 
 
     public List<Map<String, Object>> getAllnotes() {
-        lastUpdate = System.currentTimeMillis();
         if (cachedNotes != null && System.currentTimeMillis() - lastUpdate < 60000) {
             return cachedNotes; // Return cached data
         }
-        lastUpdate = System.currentTimeMillis();
+        if(lastUpdate + 60000 < System.currentTimeMillis()){
+            lastUpdate = System.currentTimeMillis();
+        }
 
         String sql = "SELECT n.moduleID AS id, " +
                 "       n.name AS name, " +
@@ -90,7 +91,9 @@ public class NoteDAO {
         if (cachedNotes == null) {
             getAllnotes(); // Load data into cache if not already loaded
         }
-        lastUpdate = System.currentTimeMillis();
+        if(lastUpdate + 60000 < System.currentTimeMillis()){
+            lastUpdate = System.currentTimeMillis();
+        }
 
         List<Map<String, Object>> result = new ArrayList<>();
         for (Map<String, Object> note : cachedNotes) {

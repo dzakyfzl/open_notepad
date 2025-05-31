@@ -4,7 +4,7 @@ import java.net.MalformedURLException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Date;
+import java.sql.Date;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,7 +32,7 @@ import jakarta.servlet.http.HttpSession;
 
 @RestController
 @RequestMapping("/api/interface")
-public class DataInterfaceController {
+public class InterController {
     @Autowired
     private NoteDAO noteDAO;
 
@@ -91,12 +91,19 @@ public ResponseEntity<Resource> download(@RequestParam("noteID") int noteID, Htt
         String username = (String) session.getAttribute("username");
         
         try{
-            bookmarkDAO.uplaodToDatabase(username, noteID);
+            if(bookmarkDAO.get(username, noteID)){
+                bookmarkDAO.delete(noteID, username);
+                System.out.println("bookmark deleted");
+                return ResponseEntity.ok(Map.of("bookmarked", false));
+            }else{
+                bookmarkDAO.uplaodToDatabase(username, noteID);
+                System.out.println("bookmark uploaded");
+                return ResponseEntity.ok(Map.of("bookmarked", true));
+            }
         }catch (Exception e){
             System.out.println("error uploading bookmark to database :"+ e.getMessage());
             return ResponseEntity.badRequest().body(Map.of("message", "error uploading bookmark to database"));
         }
-        return ResponseEntity.ok(Map.of("message", "bookmark uploaded"));
 
     }
 

@@ -20,6 +20,7 @@ public class PageController{
     public String home(HttpSession session, HttpServletRequest request) {
         // Check if the user is logged in
         if (!security.isSessionValid(session, request)) {
+            System.out.println("User is not logged in");
             // If not logged in, redirect to the main page
             return "redirect:/login";
         }
