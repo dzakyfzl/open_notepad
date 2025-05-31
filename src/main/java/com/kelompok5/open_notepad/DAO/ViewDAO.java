@@ -1,5 +1,7 @@
 package com.kelompok5.open_notepad.DAO;
 
+import java.sql.Date;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
@@ -32,8 +34,9 @@ public class ViewDAO {
         
     }
     public void uplaodToDatabase(String username, int noteID){
-        String sql = "INSERT INTO Views(username, moduleID, dateViewed) VALUE (?,?,?,NOW)";
-        jdbcTemplate.update(sql, noteID, username);
+        String sql = "INSERT INTO Views(username, moduleID, dateViewed) VALUES (?,?,?)";
+        Date timestamp = new Date(System.currentTimeMillis());
+        jdbcTemplate.update(sql, noteID, username,timestamp);
     }
     public void deleteFromUser(String userID) {
         String sql = "DELETE FROM Views WHERE username = ?";

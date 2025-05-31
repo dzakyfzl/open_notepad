@@ -1,5 +1,7 @@
 package com.kelompok5.open_notepad.DAO;
 
+import java.sql.Date;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -41,8 +43,9 @@ public class BookmarkDAO {
     }
     
     public void uplaodToDatabase(String username, int noteID){
-        String sql = "INSERT INTO Bookmarks(moduleID, username, dateBookmarked) VALUE (?,?,NOW)";
-        jdbcTemplate.update(sql, noteID, username);
+        String sql = "INSERT INTO Bookmarks(moduleID, username, dateBookmarked) VALUES (?,?,?)";
+        Date timestamp = new Date(System.currentTimeMillis());
+        jdbcTemplate.update(sql, noteID, username,timestamp);
     }
     public void deleteFromUser(String userID) {
         String sql = "DELETE FROM Bookmarks WHERE username = ?";

@@ -50,9 +50,9 @@ public class RateDAO {
         }
     }
 
-    public void uplaodToDatabase(String username, int noteID,int rate){
-        String sql = "INSERT INTO Ratings(moduleID, username, rating, dateRated) VALUE (?,?,?,NOW)";
-        jdbcTemplate.update(sql, noteID, username, rate);
+    public void uplaodToDatabase(Rate rating){
+        String sql = "INSERT INTO Ratings(moduleID, username, rating, dateRated) VALUES (?,?,?,?)";
+        jdbcTemplate.update(sql, rating.getModuleID(), rating.getUserID(), rating.getRating(), rating.getDateRated());
     }
     public void deleteFromUser(String userID) {
         String sql = "DELETE FROM Ratings WHERE username = ?";
