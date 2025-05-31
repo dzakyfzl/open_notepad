@@ -334,6 +334,7 @@ public class NoteController {
         @RequestParam("description") String description,
         @RequestParam("course") String course,
         @RequestParam("major") String major,
+        @RequestParam("visibility") boolean visibility,
         HttpServletRequest request, HttpSession session) {
 
         // Check if the user is logged in
@@ -363,6 +364,7 @@ public class NoteController {
         note.setDescription(description);
         note.setCourse(course);
         note.setMajor(major);
+        note.setVisibility(visibility);
 
         // Save the updated note to the database
         try {
@@ -372,5 +374,33 @@ public class NoteController {
             return ResponseEntity.badRequest().body(Map.of("message", "Error updating note: " + e.getMessage()));
         }
     }
+
+    //method to get file name by noteID
+    @GetMapping("/getFileName")
+    public ResponseEntity<Map<String, String>> getFileNameByNoteID(
+        @RequestParam("noteID") int noteID,
+        HttpServletRequest request, HttpSession session) {
+
+        // Check if the user is logged in
+        if (!security.isSessionValid(session, request)) {
+            return ResponseEntity.badRequest().body(Map.of("message", "User not logged in"));
+        }
+
+        String username = (String) session.getAttribute("username");
+        User user = userDAO.getFromDatabase(username);
+        if (user == null) {
+            return ResponseEntity.badRequest().body(Map.of("message", "User not found"));
+        }
+
+        // Get the note from the database
+        Note note = noteDAO.getFromDatabase(noteID);
+        if (note == null) {
+            return ResponseEntity.badRequest().body(Map.of("message", "Note not found"));
+        }
+
+        // Get the file name from the note
+        String fileName = note.getFile().getName();
+        return ResponseEntity.ok().body(Map.of("fileName", fileName));
+    }   
 }
 

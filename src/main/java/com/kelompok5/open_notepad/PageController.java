@@ -56,6 +56,17 @@ public class PageController{
         return "upload";
     }
 
+    @GetMapping("/user/notes/edit/{id}")
+    public String editNotes(HttpSession session, HttpServletRequest request, @PathVariable("id") String noteId, Model model) {
+        // Check if the user is logged in
+        if (!security.isSessionValid(session, request)) {
+            // If not logged in, redirect to the main page
+            return "redirect:/login";
+        }
+        model.addAttribute("noteID", noteId);
+        return "editNote";
+    }
+
     @GetMapping("/user/notes")
     public String myNotes(HttpSession session, HttpServletRequest request) {
         // Check if the user is logged in

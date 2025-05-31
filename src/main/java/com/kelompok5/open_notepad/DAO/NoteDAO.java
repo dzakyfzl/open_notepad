@@ -136,11 +136,11 @@ public class NoteDAO {
 
     // update note in database
     public void updateToDatabase(Note note) {
-        String sql = "UPDATE Notes SET name = ?, description = ?, course = ?, major = ? WHERE moduleID = ?";
+        String sql = "UPDATE Notes SET name = ?, description = ?, course = ?, major = ?, visibility = ? WHERE moduleID = ?";
         // Querry to update note
         try {
             jdbcTemplate.update(sql, note.getTitle(), note.getDescription(), note.getCourse(), note.getMajor(),
-                    note.getModuleID());
+                    note.isVisibility(), note.getModuleID());
         } catch (Exception e) {
             System.out.println("Error updating note: " + e.getMessage());
             throw new RuntimeException("Failed to update note in the database");
