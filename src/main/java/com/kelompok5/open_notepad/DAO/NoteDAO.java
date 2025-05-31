@@ -18,21 +18,42 @@ public class NoteDAO {
     private JdbcTemplate jdbcTemplate;
 
     private List<Map<String, Object>> cachedNotes = null;
-    private long lastUpdate;
+    private long lastUpdate = 0;
+    private long timeExpired = 0; 
+    private static final long CACHE_DURATION = 60000; 
 
+
+    private boolean isCacheValid() {
+        return cachedNotes != null && System.currentTimeMillis() < timeExpired;
+    }
+
+    private void updateCacheTimestamp() {
+        lastUpdate = System.currentTimeMillis();
+        timeExpired = lastUpdate + CACHE_DURATION;
+        System.out.println("Cache updated at: " + new java.util.Date(lastUpdate));
+        System.out.println("Cache expires at: " + new java.util.Date(timeExpired));
+    }
+
+    private void invalidateCache() {
+        cachedNotes = null;
+        lastUpdate = 0;
+        timeExpired = 0;
+        System.out.println("Cache invalidated at: " + new java.util.Date(System.currentTimeMillis()));
+    }
 
     public List<Map<String, Object>> getAllnotes() {
-        if (cachedNotes != null && System.currentTimeMillis() - lastUpdate < 60000) {
-            return cachedNotes; // Return cached data
+        if (isCacheValid()) {
+            System.out.println("Using cached notes data");
+            return cachedNotes; 
         }
-        if(lastUpdate + 60000 < System.currentTimeMillis()){
-            lastUpdate = System.currentTimeMillis();
-        }
+
+        System.out.println("Fetching fresh notes data from database");
 
         String sql = "SELECT n.moduleID AS id, " +
                 "       n.name AS name, " +
                 "       n.course, " +
                 "       n.major, " +
+                "       n.dateUploaded, " +
                 "       a.username AS username, " +
                 "       COALESCE(AVG(r.rating), 0) AS rating, " +
                 "       COALESCE(v.total_views, 0) AS views " +
@@ -45,10 +66,12 @@ public class NoteDAO {
                 ") v ON n.moduleID = v.moduleID " +
                 "LEFT JOIN Accounts a ON n.username = a.username " +
                 "WHERE n.visibility = 1 " +
-                "GROUP BY n.moduleID, n.name, n.course, n.major, a.username, v.total_views";
+                "GROUP BY n.moduleID, n.name, n.course, n.major, n.dateUploaded, a.username, v.total_views";
 
         try {
-            cachedNotes = jdbcTemplate.queryForList(sql); // Cache the result
+            cachedNotes = jdbcTemplate.queryForList(sql); 
+            updateCacheTimestamp(); 
+            System.out.println("Cached " + cachedNotes.size() + " notes");
         } catch (Exception e) {
             System.out.println("Failed query from database: " + e.getMessage());
             return null;
@@ -56,8 +79,8 @@ public class NoteDAO {
 
         return cachedNotes;
     }
-    public List<Map<String, Object>> getMynotes(String username) {
 
+    public List<Map<String, Object>> getMynotes(String username) {
         String sql = "SELECT n.moduleID AS id, " +
                 "       n.name AS name, " +
                 "       n.course, " +
@@ -77,22 +100,17 @@ public class NoteDAO {
                 "GROUP BY n.moduleID, n.name, n.course, n.major, a.username, v.total_views";
 
         try {
-            List<Map<String, Object>> response = jdbcTemplate.queryForList(sql,username); // Cache the result
+            List<Map<String, Object>> response = jdbcTemplate.queryForList(sql, username);
             return response;
         } catch (Exception e) {
             System.out.println("Failed query from database: " + e.getMessage());
             return null;
         }
-
-        
     }
 
     public List<Map<String, Object>> searchInCachedNotes(String noteName) {
-        if (cachedNotes == null) {
-            getAllnotes(); // Load data into cache if not already loaded
-        }
-        if(lastUpdate + 60000 < System.currentTimeMillis()){
-            lastUpdate = System.currentTimeMillis();
+        if (!isCacheValid()) {
+            getAllnotes(); 
         }
 
         List<Map<String, Object>> result = new ArrayList<>();
@@ -102,12 +120,13 @@ public class NoteDAO {
                 result.add(note);
             }
         }
+        System.out.println("Found " + result.size() + " notes matching '" + noteName + "' in cache");
         return result;
     }
 
     public int searchNoteID(String noteName) {
         String sql = "SELECT moduleID FROM Notes WHERE noteName = ?";
-        // Querry to get note ID by name
+  
         try {
             return jdbcTemplate.queryForObject(sql, new Object[] { noteName }, Integer.class);
         } catch (Exception e) {
@@ -115,23 +134,19 @@ public class NoteDAO {
         }
     }
 
-    public List<Map<String, Object>> searchByNames(String noteName) {
-        String sql = "SELECT * FROM Notes WHERE noteName LIKE ?";
-        // Querry to get some notes
-        List<Map<String, Object>> notes = jdbcTemplate.queryForList(sql, "%" + noteName + "%");
-        return notes;
-    }
-
     public void uploadToDatabase(Note note) {
         String sql = "INSERT INTO Notes (name, description, course, major, visibility, dateUploaded, username, fileID) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
-        // Querry to insert note
+        
         try {
             jdbcTemplate.update(sql, note.getTitle(), note.getDescription(), note.getCourse(), note.getMajor(),
                     note.isVisibility(), note.getUploadDate(), note.getOwnerID(), note.getFile().getFileID());
+
+            invalidateCache();
+            System.out.println("Cache invalidated after adding new note");
+
         } catch (Exception e) {
             throw new RuntimeException("Failed to upload note data to the database");
         }
-        // upload note to database logic
     }
 
     // update note in database
@@ -139,8 +154,16 @@ public class NoteDAO {
         String sql = "UPDATE Notes SET name = ?, description = ?, course = ?, major = ?, visibility = ? WHERE moduleID = ?";
         // Querry to update note
         try {
-            jdbcTemplate.update(sql, note.getTitle(), note.getDescription(), note.getCourse(), note.getMajor(),
+            int rowsAffected = jdbcTemplate.update(sql, note.getTitle(), note.getDescription(), note.getCourse(),
+                    note.getMajor(),
                     note.isVisibility(), note.getModuleID());
+
+            // 🗑️ Invalidate cache jika ada perubahan
+            if (rowsAffected > 0) {
+                invalidateCache();
+                System.out.println("Cache invalidated after updating note");
+            }
+
         } catch (Exception e) {
             System.out.println("Error updating note: " + e.getMessage());
             throw new RuntimeException("Failed to update note in the database");
@@ -172,7 +195,7 @@ public class NoteDAO {
                 note.setMajor(rs.getString("major"));
                 note.setUploadDate(rs.getDate("dateUploaded"));
                 note.setVisibility(rs.getBoolean("visibility"));
-                
+
                 return note;
             });
         } catch (Exception e) {
@@ -196,8 +219,14 @@ public class NoteDAO {
         String sql = "DELETE FROM Notes WHERE moduleID = ?";
         // Querry to delete note by ID
         try {
-            jdbcTemplate.update(sql, noteID);
+            int rowsAffected = jdbcTemplate.update(sql, noteID);
             jdbcTemplate.update("DELETE FROM Files WHERE fileID = ?", fileID);
+
+            if (rowsAffected > 0) {
+                invalidateCache();
+                System.out.println("Cache invalidated after deleting note");
+            }
+
         } catch (Exception e) {
             System.out.println("Error deleting note: " + e.getMessage());
             throw new RuntimeException("Failed to delete note from the database");
@@ -206,97 +235,128 @@ public class NoteDAO {
 
     public List<Map<String, Object>> filterNotes(String course, String sortBy, String sortOrder, boolean IF, boolean DS,
             boolean RPL, boolean IT) {
-        StringBuilder sql = new StringBuilder(
-                "SELECT n.moduleID AS id, " +
-                        "       n.name AS name, " +
-                        "       n.course AS course, " +
-                        "       n.major AS major, " +
-                        "       a.username AS username, " +
-                        "       COALESCE(AVG(r.rating), 0) AS rating, " +
-                        "       COALESCE(v.total_views, 0) AS views " +
-                        "FROM Notes n " +
-                        "LEFT JOIN Ratings r ON n.moduleID = r.moduleID " +
-                        "LEFT JOIN ( " +
-                        "    SELECT v.moduleID, COUNT(*) AS total_views " +
-                        "    FROM Views v " +
-                        "    GROUP BY v.moduleID " +
-                        ") v ON n.moduleID = v.moduleID " +
-                        "LEFT JOIN Accounts a ON n.username = a.username " +
-                        "WHERE n.visibility = 1 ");
 
-        List<Object> params = new ArrayList<>();
-
-        // Tambahkan filter berdasarkan Major
-        if (IF || DS || RPL || IT) {
-            sql.append("AND (");
-            boolean first = true;
-            if (IF) {
-                sql.append("n.major = ?");
-                params.add("S1 Informatika");
-                first = false;
-            }
-            if (DS) {
-                if (!first)
-                    sql.append(" OR ");
-                sql.append("n.major = ?");
-                params.add("S1 Data Sains");
-                first = false;
-            }
-            if (RPL) {
-                if (!first)
-                    sql.append(" OR ");
-                sql.append("n.major = ?");
-                params.add("S1 Rekayasa Perangkat Lunak");
-                first = false;
-            }
-            if (IT) {
-                if (!first)
-                    sql.append(" OR ");
-                sql.append("n.major = ?");
-                params.add("S1 Teknologi Informasi");
-            }
-            sql.append(") ");
+        if (!isCacheValid()) {
+            getAllnotes(); // Load fresh data jika cache expired
         }
 
-        // Tambahkan filter berdasarkan Course
-        if (course != null && !course.equalsIgnoreCase("All")) {
-            sql.append("AND n.course = ? ");
-            params.add(course);
+        System.out.println("Filtering " + cachedNotes.size() + " notes from cache");
+
+        // 🔍 Filter berdasarkan kriteria
+        List<Map<String, Object>> filteredNotes = new ArrayList<>();
+
+        for (Map<String, Object> note : cachedNotes) {
+            // Filter berdasarkan major
+            boolean majorMatch = matchesMajorFilter(note, IF, DS, RPL, IT);
+
+            // Filter berdasarkan course
+            boolean courseMatch = matchesCourseFilter(note, course);
+
+            // Tambahkan ke hasil jika memenuhi semua filter
+            if (majorMatch && courseMatch) {
+                filteredNotes.add(note);
+            }
         }
 
-        sql.append("GROUP BY n.moduleID, n.name, n.course, n.major, a.username, v.total_views, n.dateUploaded ");
-
-        // Tambahkan pengurutan berdasarkan Sort By dan Sort Order
+        // 📊 Sort berdasarkan kriteria
         if (sortBy != null && !sortBy.isEmpty()) {
-            sql.append("ORDER BY ");
-            switch (sortBy.toLowerCase()) {
-                case "letter":
-                    sql.append("n.name ");
-                    break;
-                case "rating":
-                    sql.append("rating ");
-                    break;
-                case "date":
-                    sql.append("n.dateUploaded ");
-                    break;
-                case "view":
-                    sql.append("views ");
-                    break;
-                default:
-                    sql.append("n.name "); // Default sorting by name
-            }
-            if (sortOrder != null && sortOrder.equalsIgnoreCase("desc")) {
-                sql.append("DESC ");
-            } else {
-                sql.append("ASC ");
-            }
+            sortNotes(filteredNotes, sortBy, sortOrder);
         }
 
-        try {
-            return jdbcTemplate.queryForList(sql.toString(), params.toArray());
-        } catch (Exception e) {
-            e.printStackTrace();
-            throw new RuntimeException("Failed to filter notes: " + e.getMessage());
+        System.out.println("Filter completed: " + filteredNotes.size() + " notes match criteria");
+        return filteredNotes;
+    }
+
+    private boolean matchesMajorFilter(Map<String, Object> note, boolean IF, boolean DS, boolean RPL, boolean IT) {
+        // Jika tidak ada filter major yang aktif, return true
+        if (!IF && !DS && !RPL && !IT) {
+            return true;
         }
+
+        String major = (String) note.get("major");
+        if (major == null) {
+            return false;
+        }
+
+        return (IF && major.equals("S1 Informatika")) ||
+                (DS && major.equals("S1 Data Sains")) ||
+                (RPL && major.equals("S1 Rekayasa Perangkat Lunak")) ||
+                (IT && major.equals("S1 Teknologi Informasi"));
+    }
+
+    private boolean matchesCourseFilter(Map<String, Object> note, String course) {
+        if (course == null || course.equalsIgnoreCase("All")) {
+            return true;
+        }
+
+        String noteCourse = (String) note.get("course");
+        return noteCourse != null && noteCourse.equals(course);
+    }
+
+    private void sortNotes(List<Map<String, Object>> notes, String sortBy, String sortOrder) {
+        notes.sort((a, b) -> {
+            int result = compareNotes(a, b, sortBy);
+            return sortOrder != null && sortOrder.equalsIgnoreCase("desc") ? -result : result;
+        });
+    }
+
+    private int compareNotes(Map<String, Object> a, Map<String, Object> b, String sortBy) {
+        switch (sortBy.toLowerCase()) {
+            case "letter":
+                return compareStrings((String) a.get("name"), (String) b.get("name"));
+
+            case "rating":
+                return compareNumbers(a.get("rating"), b.get("rating"));
+
+            case "view":
+                return compareNumbers(a.get("views"), b.get("views"));
+
+            case "date":
+                return compareDates(a.get("dateUploaded"), b.get("dateUploaded"));
+
+            default:
+                return compareStrings((String) a.get("name"), (String) b.get("name"));
+        }
+    }
+
+    private int compareStrings(String a, String b) {
+        if (a == null && b == null)
+            return 0;
+        if (a == null)
+            return -1;
+        if (b == null)
+            return 1;
+        return a.compareToIgnoreCase(b);
+    }
+
+    private int compareNumbers(Object a, Object b) {
+        Double numA = a instanceof Number ? ((Number) a).doubleValue() : 0.0;
+        Double numB = b instanceof Number ? ((Number) b).doubleValue() : 0.0;
+        return numA.compareTo(numB);
+    }
+
+    private int compareDates(Object a, Object b) {
+        if (a instanceof java.util.Date && b instanceof java.util.Date) {
+            return ((java.util.Date) a).compareTo((java.util.Date) b);
+        }
+        // Fallback to string comparison if not dates
+        return compareStrings(String.valueOf(a), String.valueOf(b));
+    }
+
+    public void forceRefreshCache() {
+        invalidateCache();
+        getAllnotes();
+        System.out.println("Cache force refreshed");
+    }
+
+    public Map<String, Object> getCacheStatus() {
+        Map<String, Object> status = new java.util.HashMap<>();
+        status.put("isCached", cachedNotes != null);
+        status.put("isValid", isCacheValid());
+        status.put("lastUpdate", lastUpdate > 0 ? new java.util.Date(lastUpdate) : null);
+        status.put("timeExpired", timeExpired > 0 ? new java.util.Date(timeExpired) : null);
+        status.put("cacheSize", cachedNotes != null ? cachedNotes.size() : 0);
+        status.put("timeRemaining", timeExpired > 0 ? Math.max(0, timeExpired - System.currentTimeMillis()) : 0);
+        return status;
     }
 }
