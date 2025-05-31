@@ -63,6 +63,7 @@ public class PageController{
             // If not logged in, redirect to the main page
             return "redirect:/login";
         }
+        System.out.println("Note ID: " + noteId);
         model.addAttribute("noteID", noteId);
         return "editNote";
     }

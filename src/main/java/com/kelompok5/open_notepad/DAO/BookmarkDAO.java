@@ -62,7 +62,7 @@ public class BookmarkDAO {
     }
 
     public void deleteFromNote(int moduleID) {
-        String sql = "DELETE FROM Bookamarks WHERE moduleID = ?";
+        String sql = "DELETE FROM Bookmarks WHERE moduleID = ?";
         jdbcTemplate.update(sql, moduleID);
     }
 

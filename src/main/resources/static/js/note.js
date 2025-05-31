@@ -1,4 +1,4 @@
-const stars = document.querySelectorAll('.star');
+const stars = document.querySelectorAll('.star'); 
 let currentRating = 0;
 let isLocked = false;
 noteID = window.noteID
