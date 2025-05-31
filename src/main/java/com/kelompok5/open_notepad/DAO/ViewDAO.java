@@ -36,7 +36,7 @@ public class ViewDAO {
     public void uplaodToDatabase(String username, int noteID){
         String sql = "INSERT INTO Views(username, moduleID, dateViewed) VALUES (?,?,?)";
         Date timestamp = new Date(System.currentTimeMillis());
-        jdbcTemplate.update(sql, noteID, username,timestamp);
+        jdbcTemplate.update(sql, username,noteID,timestamp);
     }
     public void deleteFromUser(String userID) {
         String sql = "DELETE FROM Views WHERE username = ?";

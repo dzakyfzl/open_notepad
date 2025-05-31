@@ -1,6 +1,7 @@
 const stars = document.querySelectorAll('.star');
 let currentRating = 0;
 let isLocked = false;
+noteID = window.noteID
 stars.forEach(star => {
   star.addEventListener('mouseover', () => {
     if (!isLocked) {
@@ -17,12 +18,11 @@ stars.forEach(star => {
     if (!isLocked) {
       currentRating = parseInt(star.dataset.index);
       highlightStars(currentRating);
-      fetch('/api/interface/rate', {
+      fetch('/api/interface/rate?noteID=' + noteID + '&rate=' + currentRating, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ rate: currentRating })
       }
       )
       isLocked = true; // Lock after selection
@@ -58,7 +58,7 @@ rating = document.getElementById("rate-count")
 views = document.getElementById("views")
 noteRate = document.querySelectorAll('.rate')
 
-noteID = window.noteID
+
 fetch('/api/interface/view?noteID=' + noteID,{
   method: 'POST'
 })
@@ -71,7 +71,7 @@ fetch('/api/note/get?noteID=' + noteID, {
   .then(response => response.json())
   .then(data => {
     console.log(data)
-    pageTitle.innerHTML = data["title"] + " - Open Notepad"
+    pageTitle.innerHTML = data["name"] + " - Open Notepad"
     title.innerHTML = data["name"]
     major.innerHTML = data["major"]
     course.innerHTML = data["course"]
@@ -100,7 +100,7 @@ fetch('/api/note/get?noteID=' + noteID, {
 function bookmarked(){
   formData = new FormData()
   formData.append('noteID', noteID)
-    fetch('/api/interface/bookmark', {
+    fetch('/api/interface/bookmark?noteID=' + noteID, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
@@ -116,3 +116,17 @@ function bookmarked(){
     )
 
   }
+
+function download() {
+  const downloadUrl = `/api/interface/download?noteID=${noteID}`;
+
+  // Buat elemen <a> secara dinamis untuk memicu download
+  const link = document.createElement('a');
+  link.href = downloadUrl;
+  link.download = ''; // kosongkan jika backend sudah set Content-Disposition
+
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+}
+

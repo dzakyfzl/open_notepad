@@ -1,6 +1,6 @@
 package com.kelompok5.open_notepad;
 
-import java.io.IOException;
+import java.net.MalformedURLException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -47,28 +48,39 @@ public class DataInterfaceController {
     @Autowired
     private Security security;
 
-    @GetMapping("/download")//Download file
-    public ResponseEntity<Resource> download(@RequestParam("noteID") int noteID, HttpSession session, HttpServletRequest request)
-        throws IOException {
-        if(!security.isSessionValid(session, request)){
-            return ResponseEntity.badRequest().build();
-        }
-        Note note = noteDAO.getFromDatabase(noteID);
-        if (note == null) {
-            return ResponseEntity.notFound().build();
-        }
-        Path filePath = Paths.get("uploads/pdf").resolve(note.getFile().getName());
-        if (!Files.exists(filePath)) {
+@GetMapping("/download")
+public ResponseEntity<Resource> download(@RequestParam("noteID") int noteID, HttpSession session, HttpServletRequest request) {
+    if (!security.isSessionValid(session, request)) {
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+    }
+
+    Note note = noteDAO.getFromDatabase(noteID);
+    if (note == null) {
+        return ResponseEntity.notFound().build();
+    }
+
+    Path filePath = Paths.get("uploads/pdf").resolve(note.getFile().getName()).normalize();
+    if (!Files.exists(filePath)) {
+        return ResponseEntity.notFound().build();
+    }
+
+    try {
+        Resource fileResource = new UrlResource(filePath.toUri());
+        if (!fileResource.exists() || !fileResource.isReadable()) {
             return ResponseEntity.notFound().build();
         }
 
-        Resource fileResource = new UrlResource(filePath.toUri());
         return ResponseEntity.ok()
-        .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" +
-        fileResource.getFilename() + "\"")
-        .contentType(MediaType.APPLICATION_OCTET_STREAM)
-        .body(fileResource);
+                .contentType(MediaType.APPLICATION_OCTET_STREAM)
+                .header(HttpHeaders.CONTENT_DISPOSITION,
+                        "attachment; filename=\"" + fileResource.getFilename() + "\"")
+                .body(fileResource);
+
+    } catch (MalformedURLException e) {
+        return ResponseEntity.internalServerError().build();
     }
+}
+
 
     @PostMapping("/bookmark")
     public ResponseEntity<Map<String, Object>> bookmark(
@@ -113,7 +125,7 @@ public class DataInterfaceController {
             return ResponseEntity.badRequest().body(Map.of("message", "user not logged in"));
         }
         String username = (String) session.getAttribute("username");
-        if(rate < 0 || rate > 5){
+        if(rate < 1 || rate > 5){
             return ResponseEntity.badRequest().body(Map.of("message", "rate must be between 0 and 5"));
         }
         Rate rating = new Rate();

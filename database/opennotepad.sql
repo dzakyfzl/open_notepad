@@ -44,7 +44,7 @@ CREATE TABLE Ratings (
     rating INT CHECK (rating BETWEEN 1 AND 5),
     PRIMARY KEY (username, moduleID),
     FOREIGN KEY (username) REFERENCES Accounts(username),
-    FOREIGN KEY (moduleID) REFERENCES Modules(moduleID)
+    FOREIGN KEY (moduleID) REFERENCES Notes(moduleID)
 );
 
 CREATE TABLE Bookmarks (
@@ -53,16 +53,16 @@ CREATE TABLE Bookmarks (
     dateBookmarked DATETIME,
     PRIMARY KEY (username, moduleID),
     FOREIGN KEY (username) REFERENCES Accounts(username),
-    FOREIGN KEY (moduleID) REFERENCES Modules(moduleID)
+    FOREIGN KEY (moduleID) REFERENCES Notes(moduleID)
 );
 
 CREATE TABLE Views (
+    viewID INT IDENTITY(1,1) PRIMARY KEY,
     username VARCHAR(50),
     moduleID INT,
     dateViewed DATETIME,
-    PRIMARY KEY (username, moduleID),
     FOREIGN KEY (username) REFERENCES Accounts(username),
-    FOREIGN KEY (moduleID) REFERENCES Modules(moduleID)
+    FOREIGN KEY (moduleID) REFERENCES Notes(moduleID)
 );
 
 CREATE TABLE UserDetails (

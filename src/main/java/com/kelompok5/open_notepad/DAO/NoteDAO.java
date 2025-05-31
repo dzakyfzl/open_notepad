@@ -18,11 +18,15 @@ public class NoteDAO {
     private JdbcTemplate jdbcTemplate;
 
     private List<Map<String, Object>> cachedNotes = null;
+    private long lastUpdate;
+
 
     public List<Map<String, Object>> getAllnotes() {
-        if (cachedNotes != null) {
+        lastUpdate = System.currentTimeMillis();
+        if (cachedNotes != null && System.currentTimeMillis() - lastUpdate < 60000) {
             return cachedNotes; // Return cached data
         }
+        lastUpdate = System.currentTimeMillis();
 
         String sql = "SELECT n.moduleID AS id, " +
                 "       n.name AS name, " +
@@ -52,9 +56,6 @@ public class NoteDAO {
         return cachedNotes;
     }
     public List<Map<String, Object>> getMynotes(String username) {
-        if (cachedNotes != null) {
-            return cachedNotes; // Return cached data
-        }
 
         String sql = "SELECT n.moduleID AS id, " +
                 "       n.name AS name, " +
@@ -75,19 +76,21 @@ public class NoteDAO {
                 "GROUP BY n.moduleID, n.name, n.course, n.major, a.username, v.total_views";
 
         try {
-            cachedNotes = jdbcTemplate.queryForList(sql,username); // Cache the result
+            List<Map<String, Object>> response = jdbcTemplate.queryForList(sql,username); // Cache the result
+            return response;
         } catch (Exception e) {
             System.out.println("Failed query from database: " + e.getMessage());
             return null;
         }
 
-        return cachedNotes;
+        
     }
 
     public List<Map<String, Object>> searchInCachedNotes(String noteName) {
         if (cachedNotes == null) {
             getAllnotes(); // Load data into cache if not already loaded
         }
+        lastUpdate = System.currentTimeMillis();
 
         List<Map<String, Object>> result = new ArrayList<>();
         for (Map<String, Object> note : cachedNotes) {
