@@ -155,11 +155,6 @@ function displayNotes(data) {
     cardGrid.innerHTML = `
       <div class="col-span-full text-center py-8">
         <div class="bg-gray-50 border border-gray-200 rounded-lg p-8">
-          <div class="flex items-center justify-center mb-4">
-            <svg class="w-16 h-16 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"></path>
-            </svg>
-          </div>
           <h3 class="text-xl font-semibold text-gray-900 mb-2">No Saved Notes</h3>
           <p class="text-gray-500 mb-4">You haven't saved any notes yet.</p>
           <a href="/" class="inline-flex items-center px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors">
