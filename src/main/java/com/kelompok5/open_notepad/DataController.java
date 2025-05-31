@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.kelompok5.open_notepad.DAO.NoteDAO;
+import com.kelompok5.open_notepad.DAO.BookmarkDAO;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
@@ -26,6 +27,8 @@ public class DataController {
     @Autowired
     private Security security;
 
+    @Autowired
+    private BookmarkDAO bookmarkDAO;
 
     @Autowired
     private JdbcTemplate jdbcTemplate;
@@ -78,7 +81,8 @@ public class DataController {
     }
 
     @GetMapping("/searchByNames")
-    public ResponseEntity<List<Map<String, Object>>> searchByNames(@RequestParam String name,HttpSession session, HttpServletRequest request) {
+    public ResponseEntity<List<Map<String, Object>>> searchByNames(@RequestParam String name, HttpSession session,
+            HttpServletRequest request) {
         if (!security.isSessionValid(session, request)) {
             return ResponseEntity.badRequest().build();
         }
@@ -99,7 +103,7 @@ public class DataController {
     @GetMapping("/getMyNotes")
     public ResponseEntity<List<Map<String, Object>>> getMynotes(HttpSession session, HttpServletRequest request) {
         if (!security.isSessionValid(session, request)) {
-           return ResponseEntity.badRequest().build();
+            return ResponseEntity.badRequest().build();
         }
         String username = (String) session.getAttribute("username");
         if (username == null) {
@@ -114,4 +118,37 @@ public class DataController {
         // Return note Name, Rating, Major, Course
         return ResponseEntity.ok(notes);
     }
+
+    @GetMapping("/getBookmarkedNotes")
+    public ResponseEntity<List<Map<String, Object>>> getBookmarkedNotes(HttpSession session,
+            HttpServletRequest request) {
+        if (!security.isSessionValid(session, request)) {
+            return ResponseEntity.badRequest().build();
+        }
+        String username = (String) session.getAttribute("username");
+        if (username == null) {
+            return ResponseEntity.badRequest().build();
+        }
+
+        // TAMBAHKAN LOGGING INI
+        System.out.println("DEBUG: Username from session: '" + username + "'");
+
+        List<Map<String, Object>> bookmarkedNotes;
+        try {
+            bookmarkedNotes = bookmarkDAO.getBookmarkedNotes(username);
+
+            // TAMBAHKAN LOGGING INI
+            System.out.println("DEBUG: Query result size: " + bookmarkedNotes.size());
+
+            if (bookmarkedNotes.isEmpty()) {
+                return ResponseEntity.ok(List.of(Map.of("message", "No bookmarked notes found")));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.badRequest().body(List.of(Map.of("error", "Failed to retrieve bookmarked notes")));
+        }
+
+        return ResponseEntity.ok(bookmarkedNotes);
+    }
+
 }

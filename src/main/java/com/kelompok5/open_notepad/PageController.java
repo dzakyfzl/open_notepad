@@ -73,7 +73,7 @@ public class PageController{
             // If not logged in, redirect to the main page
             return "redirect:/login";
         }
-        return "savedNotes";
+        return "saved";
     }
 
     @GetMapping("/user/profile/edit")
