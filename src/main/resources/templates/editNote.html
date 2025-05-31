@@ -132,6 +132,8 @@
 
               <!-- Submit Button -->
               <button type="submit" class="font-semibold shadow-md bg-primary text-white border-none rounded-lg py-3 px-10 text-3xl my-5 cursor-pointer transition-colors duration-300 hover:bg-primary-hover">Edit Note</button>
+            
+              <button type="button" id="deleteNote" class="font-semibold shadow-md bg-red-500 text-white border-none rounded-lg py-3 px-10 text-3xl my-5 cursor-pointer transition-colors duration-300 hover:bg-red-600">Delete Note</button>
           </form>
       </div>
       
@@ -150,6 +152,31 @@
       } else {
         alert('No note ID provided in the URL.');
       }
+
+      document.getElementById('deleteNote').addEventListener('click', function() {
+        // Gunakan noteId dari atas, tidak perlu ambil ulang
+        if (!noteId || isNaN(noteId)) {
+          alert('Note ID tidak ditemukan!');
+          return;
+        }
+        if (confirm('Are you sure you want to delete this note?')) {
+          fetch('/api/note/delete?noteID=' + window.noteID, {
+            method: 'POST',
+          })
+          .then(response => {
+            if (response.ok) {
+              alert('Note deleted successfully!');
+              window.location.href = '/user/notes';
+            } else {
+              alert('Failed to delete note.');
+            }
+          })
+          .catch(error => {
+            console.error('Error deleting note:', error);
+            alert('An error occurred while deleting the note.');
+          });
+        }
+      });
 
       /// Function to fetch note data by ID
       function getNoteById(noteId) {
