@@ -9,8 +9,8 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" integrity="sha512-DfN3huwA5R8SlB9lg/MqP4whXpqv6GCpMf6VgL9Ih97UQobgb3fpvsvHJZaEm8a+q0xTLF7vIqZHRZTrHeAPvA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 </head>
 <body>
-    <!-- navbar -->
-    <header
+   <!-- Navbar -->
+  <header
       class="fixed shadow-lg flex top-0  bg-ijomuda w-full justify-between z-30"
     >
     <style>
@@ -39,14 +39,12 @@
         <div
           class="p-3 font-inter font-semibold hover:bg-ijomudagelap border-b-[2px] border-ijomuda hover:border-black transition-all duration-300 ease-in-out"
         >
-          <a href="/user/notes/bookmark" class="inline-block relative p-1">Saved</a>
+          <a href="/user/notes/saved" class="inline-block relative p-1">Saved</a>
         </div>
-      </div>
       </div>
 
       <!--SearchBar-->
       <div class="flex">
-        
         <div class="p-3 max-md:hidden">
           <input
             id="search-input"
@@ -55,8 +53,8 @@
             placeholder="Search..."
           />
           <button
+            id="search-button"
             class="pl-1"
-            onclick="searchByName()"
             >
             <img class="w-4" src="/img/search.png" />
           </button>
