@@ -143,7 +143,31 @@
                 });
             });
 
-            
+            // Function to search notes by name if not avaible show no results
+            function searchByName() {
+                const searchInput = document.getElementById('search-input').value.toLowerCase();
+                const cards = document.querySelectorAll('#card-grid a');
+
+                let found = false;
+                cards.forEach(card => {
+                    const title = card.querySelector('h3').textContent.toLowerCase();
+                    if (title.includes(searchInput)) {
+                        card.style.display = 'flex'; // Show the card
+                        found = true;
+                    } else {
+                        card.style.display = 'none'; // Hide the card
+                    }
+                });
+
+                if (!found) {
+                    const noResults = document.createElement('div');
+                    noResults.className = 'col-span-full text-center py-8';
+                    noResults.innerHTML = '<p class="text-gray-500">No results found</p>';
+                    const container = document.getElementById('card-grid');
+                    container.innerHTML = ''; // Clear previous results
+                    container.appendChild(noResults);
+                }
+            }
     </script>
 </body>
 </html>
