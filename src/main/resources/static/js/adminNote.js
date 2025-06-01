@@ -2,38 +2,6 @@ const stars = document.querySelectorAll('.star');
 let currentRating = 0;
 let isLocked = false;
 noteID = window.noteID
-stars.forEach(star => {
-  star.addEventListener('mouseover', () => {
-    if (!isLocked) {
-      const rating = parseInt(star.dataset.index);
-      highlightStars(rating);
-    }
-  });
-  star.addEventListener('mouseout', () => {
-    if (!isLocked) {
-      highlightStars(currentRating);
-    }
-  });
-  star.addEventListener('click', () => {
-    if (!isLocked) {
-      currentRating = parseInt(star.dataset.index);
-      highlightStars(currentRating);
-      fetch('/api/interface/rate?noteID=' + noteID + '&rate=' + currentRating, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-      }
-      )
-      isLocked = true; // Lock after selection
-      console.log("Final selected rating:", currentRating);
-      stars.forEach(s => {
-        s.classList.remove('cursor-pointer');
-        s.classList.add('cursor-default');
-      });
-    }
-  });
-});
 
 function highlightStars(rating) {
       stars.forEach((star, index) => {
@@ -57,11 +25,10 @@ bookmarkBTN = document.getElementById("bookmark-button")
 rating = document.getElementById("rate-count")
 views = document.getElementById("views")
 noteRate = document.querySelectorAll('.rate')
+visibility = document.getElementById("set-visibility")
 
 
-fetch('/api/interface/view?noteID=' + noteID,{
-  method: 'POST'
-})
+
 fetch('/api/note/get?noteID=' + noteID, {
   method: 'GET',
   headers: {
@@ -71,7 +38,7 @@ fetch('/api/note/get?noteID=' + noteID, {
   .then(response => response.json())
   .then(data => {
     console.log(data)
-    pageTitle.innerHTML = data["name"] + " - Note"
+    pageTitle.innerHTML = data["name"] + " - Admin Open Notepad"
     document.title = data["name"] + " - Open Notepad"
     title.innerHTML = data["name"]
     major.innerHTML = data["major"]
@@ -93,9 +60,56 @@ fetch('/api/note/get?noteID=' + noteID, {
           star.classList.remove('text-yellow-400');
         }
     });
-    if(data["bookmarked"]){
-        bookmarkBTN.innerHTML = `<i class="fa fa-bookmark justify-center text-center self-center"></i><p class="text-center justify-center">Bookmarked</p>`
-    }
 })
 
+visibility.addEventListener("change", function() {
+  if(confirm("Are you sure you want to change the visibility of this note?")){
+    console.log(visibility.value)
+    var visibilityBoolean = visibility.value == "public";
+    console.log(visibilityBoolean)
+    fetch('/api/note/visibility?noteID=' + noteID + '&visibility=' + visibilityBoolean, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+    })
+    .then(response => {
+      if (!response.ok) {
+        alert('Failed to change visibility : ' + response.json().message);
 
+      }else{
+        alert('Visibility changed successfully!');
+        window.location.href = '/admin';
+      }
+    })
+  }
+})
+
+function download() {
+  const downloadUrl = `/api/interface/download?noteID=${noteID}`;
+
+  // Buat elemen <a> secara dinamis untuk memicu download
+  const link = document.createElement('a');
+  link.href = downloadUrl;
+  link.download = ''; // kosongkan jika backend sudah set Content-Disposition
+
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+}
+
+function deleteNote(){
+  if (confirm('Are you sure you want to delete this note?')) {
+    fetch('/api/note/delete?noteID=' + noteID, {
+      method: 'POST',
+    })
+    .then(response => {
+      if (response.ok) {
+        alert('Note deleted successfully!');
+        window.location.href = '/admin';
+      } else {
+        alert('Failed to delete note.');
+      }
+    })
+  }
+}

@@ -187,8 +187,8 @@ public class NoteController {
         if (note == null) {
             return ResponseEntity.badRequest().body(Map.of("message", "Note not found"));
         }
-        // Check if the note belongs to the user
-        if (!note.getOwnerID().equals(username)) {
+        // Check if the note belongs to the user or the account ststus is admin
+        if (!note.getOwnerID().equals(username) || !security.isAdmin(session)) {
             return ResponseEntity.badRequest().body(Map.of("message", "You do not have permission to delete this note"));
         }
         //Create querry to get the file name associated with the note
@@ -402,5 +402,33 @@ public class NoteController {
         String fileName = note.getFile().getName();
         return ResponseEntity.ok().body(Map.of("fileName", fileName));
     }   
+
+    @PostMapping("/visibility")
+    public ResponseEntity<Map<String, String>> setVisibility(HttpSession session, HttpServletRequest request, @RequestParam("noteID") int noteID, @RequestParam("visibility") boolean visibility){
+        if(!security.isSessionValid(session, request)){
+            return ResponseEntity.badRequest().body(Map.of("message", "User not logged in"));
+        }
+        String username = (String) session.getAttribute("username");
+        Note note;
+        try {
+            note = noteDAO.getFromDatabase(noteID);
+        } catch (Exception e) {
+            System.out.println("error retrieving note from database :"+ e.getMessage());
+            return ResponseEntity.badRequest().body(Map.of("message", "error retrieving note from database"));
+        }
+        //CHECK IF USER HAVE PERMISSION TO EDIT THE NOTE
+        if(!note.getOwnerID().equals(username) || !security.isAdmin(session)){
+            return ResponseEntity.badRequest().body(Map.of("message", "You do not have permission to edit this note"));
+        }
+        note.setVisibility(visibility);
+        try {
+            noteDAO.updateToDatabase(note);
+        } catch (Exception e) {
+            System.out.println("error updating note to database :"+ e.getMessage());
+            return ResponseEntity.badRequest().body(Map.of("message", "error updating note from database"));
+        }
+        
+        return ResponseEntity.ok().body(Map.of("message", "Note visibility updated successfully"));
+    }
 }
 

@@ -104,14 +104,17 @@ public class AccountController {
 
         // if statement
         if (isAdmin) {
-            session.setMaxInactiveInterval(60 * 60 * 24);
-            session.setAttribute("username", username);
-            String sessionID = session.getId();
-            try {
-                sessionDAO.uploadToDatabase(sessionID, username, request.getHeader("User-Agent"));
-            } catch (Exception e) {
-                return ResponseEntity.badRequest().body(Map.of("message", e.getMessage()));
+            System.out.println("Admin login attempt");
+            Admin admin = adminDAO.getFromDatabase(username);
+            if(admin == null){
+                return ResponseEntity.badRequest().body(Map.of("message", "account not found"));
             }
+            System.out.println("Admin login attempt success");
+            if (!security.passwordIsValid(password, admin.getHashedPassword(), admin.getSalt())) {
+                // If the password does not match, return an error message
+                return ResponseEntity.badRequest().body(Map.of("message", "invalid password"));
+            }
+            System.out.println("Admin login success");
             return ResponseEntity.ok().body(Map.of("message", "User logged in successfully", "role", "admin"));
         } else {
             User user = userDAO.getFromDatabase(username);
@@ -136,6 +139,7 @@ public class AccountController {
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(Map.of("message", e.getMessage()));
         }
+        System.out.println("Login attempt success");
 
         // return success message
         return ResponseEntity.ok().body(Map.of("message", "User logged in successfully"));

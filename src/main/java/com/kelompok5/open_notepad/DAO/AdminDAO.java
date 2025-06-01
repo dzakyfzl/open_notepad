@@ -31,7 +31,7 @@ public class AdminDAO extends AccountDAO {
     public Admin getFromDatabase(String username) {
         // get user from database logic
         // Query the database to check if the user exists
-        String sql = "SELECT * FROM Accounts INNER JOIN UserDetails ON Accounts.username = UserDetails.username WHERE Accounts.username = ?";
+        String sql = "SELECT * FROM Accounts INNER JOIN UserDetails ON Accounts.username = UserDetails.username WHERE Accounts.username = ? AND Accounts.isAdmin = 1";
         try {
             return jdbcTemplate.queryForObject(sql, new Object[] { username }, (rs, rowNum) -> {
                 return new Admin(

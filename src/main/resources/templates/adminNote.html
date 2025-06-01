@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Note - Admin Panel</title>
+    <title id="page-title">Note - Admin Panel</title>
     <link rel="stylesheet" href="/css/output.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
@@ -53,7 +53,29 @@
                 <p id="views" class=" text-inter font-light text-lg">100 View</p>
             </div>
         </div>
-        
+        <!-- Button Interface-->
+        <div class="flex my-2 gap-2">
+            <!-- Bookmark Button -->
+            <button 
+                id="delete-button" 
+                class="border px-2 py-2 gap-2 flex border-gray-300 hover:bg-gray-200 rounded-lg"
+                onclick="deleteNote()"
+            >
+                <i class="fa-solid fa-trash justify-center text-center self-center"></i><p class="text-center justify-center">Delete</p>
+            </button>
+            <select id="set-visibility" class="border px-2 py-2 gap-2 flex border-gray-300 bg-white rounded-lg">
+                <option value="public">Public</option>
+                <option value="private">Private</option>
+            </select>
+            <button 
+                id="download-button" 
+                class="border px-2 py-2 gap-2 flex border-gray-300 hover:bg-gray-200 rounded-lg"
+                onclick="download()"
+            >
+                <i class="fa fa-download justify-center text-center self-center"></i><p class="text-center justify-center">Download</p>
+            </button>
+        </div>
+        <!-- Description -->
         <div class="text-lg font-bold my-4"><h2>Description :</h2></div>
         <div id="description" class="pb-4"></div>          
     </div>
@@ -70,7 +92,7 @@
         
     <!-- Pass noteID to JavaScript -->
     <script th:inline="javascript">
-        window.noteID = /*[[${noteID}]]*/ null;
+        window.noteID = [[${noteID}]];
     </script>
     <script src="/js/adminNote.js"></script>
     
