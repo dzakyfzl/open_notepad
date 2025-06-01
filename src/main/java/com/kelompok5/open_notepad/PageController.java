@@ -153,4 +153,19 @@ public class PageController{
         return "editAdminProfile";
     }
     
+    //add adminNote.html
+    @GetMapping("/admin/note/{id}")
+    public String adminNote(HttpSession session, HttpServletRequest request, @PathVariable("id") String noteId, Model model) {
+        // Check if the user is logged in
+        if (!security.isSessionValid(session, request)) {
+            // If not logged in, redirect to the main page
+            return "redirect:/login";
+        }
+        if (!security.isAdmin(session)) {
+            // If the user is not an admin, redirect to the main page
+            return "redirect:/";
+        }
+        model.addAttribute("noteID", noteId);
+        return "adminNote";
+    }
 }

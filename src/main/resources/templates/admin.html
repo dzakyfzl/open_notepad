@@ -6,388 +6,54 @@
     <title>Open Notepad - Admin Panel</title>
     <link rel="stylesheet" href="/css/output.css" />
     <link rel="stylesheet" href="/css/navbar.css" />
-    <style>
-        .status-select {
-            appearance: none;
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%23666666'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
-            background-repeat: no-repeat;
-            background-position: right 0.5rem center;
-            background-size: 1em;
-        }
-    </style>
 </head>
 <body>
-    <!-- navbar -->
-    <header id="navbar">
-        <div class="left">
-        <img src="/img/logo.png" alt="Logo">
-        </div>
-        <div class="right">
-            <div class="search">
-                <img src="/img/search.png" alt="Search Icon">
-                <input type="text" placeholder="Search notes">
+    <!-- Navbar -->
+    <header class="fixed shadow-lg flex top-0 bg-ijomuda w-full justify-between z-30">
+        <style>
+            @import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
+        </style>
+        <div class="flex items-stretch">
+            <div class="py-2 px-4 max-md:hover:bg-ijotaik">
+                <a class="" href="/admin">
+                    <img class="w-[125px]" src="/img/logo.png" />
+                </a>
             </div>
+        </div>
 
-            <select class="major-filter">
-                <option value="">All Majors</option>
-                <option value="informatics">Informatics</option>
-                <option value="electrical">Electrical Engineering</option>
-                <option value="mechanical">Mechanical Engineering</option>
-                <option value="civil">Civil Engineering</option>
-            </select>
-        <a href="/user/notes"><img src="/img/myNote.png" alt="myNote Icon"></a>
-        <a href="/user/notes/upload"><img src="/img/upload.png" alt="Upload Icon"></a>
-        <a href="/user/profile"><img src="/img/profile.png" alt="Profile Icon">  </a>
+        <!--SearchBar-->
+        <div class="flex">
+            <a class="p-2 flex items-center" href="/admin/profile">
+                <img id="profile-picture" src="/api/account/profile-photo" class="w-11 h-11 rounded-full border-[1px] border-gray-300" />
+            </a>
         </div>
     </header>
+    <script src="/js/navbar.js"></script>
 
-
-<!-- navbar end -->
-
-    <!-- Main Content -->
-    <main class="mx-auto max-w-6xl p-8 bg-white mt-4 rounded-lg">
-        <h1 class="mb-8 text-4xl font-bold">Admin Panel</h1>
-
-        <!-- Notes Table -->
-        <div class="overflow-x-auto">
-            <table class="w-full border-collapse">
-                <thead>
-                    <tr class="border-b">
-                        <th class="py-3 text-left font-semibold">Title</th>
-                        <th class="py-3 text-left font-semibold">Author</th>
-                        <th class="py-3 text-left font-semibold">Course</th>
-                        <th class="py-3 text-center font-semibold">View</th>
-                        <th class="py-3 text-center font-semibold">Status</th>
-                    </tr>
-                </thead>
-                <tbody id="notesTableBody">
-                    <!-- Notes will be populated here by JavaScript -->
-                </tbody>
-            </table>
+     <!--Example DO NOT DELETE-->
+    <a class="hidden h-[250px] flex-col text-left bg-white px-5 rounded-lg shadow-md transition-all duration-200 hover:translate-y-[-4px] hover:shadow-lg">
+      <div id="noteID" th:value="${noteID}" class=" text-yellow-400">${noteID}</div>
+      <h3 class="text-2xl m-0 pt-2">${item.name || "Untitled"}</h3>
+      <p class="font-semibold text-base text-[#555]">${item.course || "Unknown Course"} - ${item.major || "Unknown Major"}</p>
+      <span class="font-extralight text-sm text-[#555] mb-2.5 pt-2">${item.username || "Anonymous"}</span>
+      <div class="h-full mt-2.5 pb-5 flex flex-col justify-end items-baseline text-sm text-[#444]">
+        <div class="flex justify-center items-center">
+          <img class="h-[15px] w-[15px] mr-1" src="/img/star.png" alt="Rating">
+          <p>${item.rating || 0}/5.0</p>
         </div>
-
-        <!-- Note Preview Modal -->
-        <div id="notePreviewModal" class="fixed inset-0 bg-black bg-opacity-50 items-center justify-center hidden z-50">
-            <div class="bg-white p-6 rounded-lg w-full max-w-3xl max-h-[80vh] overflow-y-auto">
-                <div class="flex justify-between items-center mb-4">
-                    <h2 id="previewTitle" class="text-2xl font-bold">Note Title</h2>
-                    <button id="closePreviewBtn" class="text-gray-500 hover:text-gray-700">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                        </svg>
-                    </button>
-                </div>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                    <div>
-                        <p class="text-sm text-gray-500">Author</p>
-                        <p id="previewAuthor" class="font-medium">John Doe</p>
-                    </div>
-                    <div>
-                        <p class="text-sm text-gray-500">Course</p>
-                        <p id="previewCourse" class="font-medium">Database System</p>
-                    </div>
-                    <div>
-                        <p class="text-sm text-gray-500">Upload Date</p>
-                        <p id="previewDate" class="font-medium">May 14, 2025</p>
-                    </div>
-                    <div>
-                        <p class="text-sm text-gray-500">Status</p>
-                        <p id="previewStatus" class="font-medium">Pending</p>
-                    </div>
-                </div>
-                <div class="mb-4">
-                    <p class="text-sm text-gray-500">Description</p>
-                    <p id="previewDescription" class="mt-1">Note description will appear here.</p>
-                </div>
-                <div class="mb-4">
-                    <p class="text-sm text-gray-500">File</p>
-                    <div id="previewFile" class="mt-2 p-3 border rounded-md flex items-center">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-500 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                        </svg>
-                        <span id="previewFileName">filename.pdf</span>
-                    </div>
-                </div>
-                <div class="flex justify-end space-x-3">
-                    <button id="previewRejectBtn" class="px-4 py-2 bg-red-100 text-red-700 rounded-md hover:bg-red-200">Reject</button>
-                    <button id="previewApproveBtn" class="px-4 py-2 bg-green-100 text-green-700 rounded-md hover:bg-green-200">Approve</button>
-                </div>
-            </div>
+        <div class="flex justify-center items-center">
+          <img class="h-[15px] w-[15px] mr-1" src="/img/view.png" alt="Views">
+          <p>${item.views || 0} Views</p>
         </div>
-    </main>
-
-    <script>
-        // Load profile picture from localStorage when page loads
-    document.addEventListener('DOMContentLoaded', function() {
-        // Check for admin data first (for admin pages)
-        const adminData = JSON.parse(localStorage.getItem('adminData') || '{}');
-        // Check for user data as fallback (for regular user pages)
-        const userData = JSON.parse(localStorage.getItem('userData') || '{}');
-        
-        // Use admin profile image if available, otherwise use user profile image
-        const profileImage = adminData.profileImage || userData.profileImage;
-        
-        if (profileImage) {
-            // Set the profile image source
-            document.getElementById('navProfileImg').src = profileImage;
-            // Show the profile image container
-            document.getElementById('profileNavImage').classList.remove('hidden');
-            // Hide the default profile icon
-            document.getElementById('profileNavIcon').classList.add('hidden');
-        }
-    });
-
-        document.addEventListener('DOMContentLoaded', function() {
-            // Check if user is admin
-            const userData = JSON.parse(localStorage.getItem('userData') || '{}');
-            if (!userData.isAdmin) {
-                // Redirect non-admin users
-                // Uncomment this in production
-                // window.location.href = 'index.html';
-                // alert('You do not have permission to access this page.');
-            }
-
-            // Get notes from localStorage
-            const notes = JSON.parse(localStorage.getItem('userNotes') || '[]');
-            const tableBody = document.getElementById('notesTableBody');
-            
-            // Populate table with notes
-            renderNotesTable(notes);
-            
-            // Add event listeners for status changes
-            document.addEventListener('change', function(e) {
-                if (e.target.classList.contains('status-select')) {
-                    const noteId = e.target.getAttribute('data-note-id');
-                    const newStatus = e.target.value;
-                    updateNoteStatus(noteId, newStatus);
-                }
-            });
-            
-            // Add event listeners for view buttons
-            document.addEventListener('click', function(e) {
-                if (e.target.classList.contains('view-btn') || e.target.closest('.view-btn')) {
-                    const noteId = e.target.closest('.view-btn').getAttribute('data-note-id');
-                    openNotePreview(noteId);
-                }
-            });
-            
-            // Close preview modal
-            document.getElementById('closePreviewBtn').addEventListener('click', function() {
-                const modal = document.getElementById('notePreviewModal');
-                modal.classList.add('hidden');
-                modal.classList.remove('flex');
-            });
-            
-            // Preview approve button
-            document.getElementById('previewApproveBtn').addEventListener('click', function() {
-                const noteId = this.getAttribute('data-note-id');
-                updateNoteStatus(noteId, 'Published');
-                document.getElementById('notePreviewModal').classList.add('hidden');
-            });
-            
-            // Preview reject button
-            document.getElementById('previewRejectBtn').addEventListener('click', function() {
-                const noteId = this.getAttribute('data-note-id');
-                updateNoteStatus(noteId, 'Pending');
-                document.getElementById('notePreviewModal').classList.add('hidden');
-            });
-            
-            // Function to render notes table
-            function renderNotesTable(notes) {
-                tableBody.innerHTML = '';
-                
-                if (notes.length === 0) {
-                    const emptyRow = document.createElement('tr');
-                    emptyRow.innerHTML = `
-                        <td colspan="5" class="py-4 text-center text-gray-500">No notes found</td>
-                    `;
-                    tableBody.appendChild(emptyRow);
-                    return;
-                }
-                
-                notes.forEach(note => {
-                    const row = document.createElement('tr');
-                    row.className = 'border-b';
-                    
-                    // Format author name
-                    let authorName = 'Anonymous';
-                    if (note.uploadedBy && note.uploadedBy.name) {
-                        authorName = note.uploadedBy.name;
-                    }
-                    
-                    // Default status if not set
-                    const status = note.status || 'Pending';
-                    
-                    row.innerHTML = `
-                        <td class="py-4">${note.title}</td>
-                        <td class="py-4">${authorName}</td>
-                        <td class="py-4">${note.course}</td>
-                        <td class="py-4 text-center">
-                            <button class="view-btn p-1 bg-gray-100 rounded-full" data-note-id="${note.id}">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                                </svg>
-                            </button>
-                        </td>
-                        <td class="py-4 text-center">
-                            <select class="status-select rounded-md bg-gray-200 px-3 py-1 pr-8 text-sm" data-note-id="${note.id}">
-                                <option value="Pending" ${status === 'Pending' ? 'selected' : ''}>Pending</option>
-                                <option value="Published" ${status === 'Published' ? 'selected' : ''}>Published</option>
-                            </select>
-                        </td>
-                    `;
-                    
-                    tableBody.appendChild(row);
-                });
-            }
-            
-            // Function to update note status
-            function updateNoteStatus(noteId, newStatus) {
-                const notes = JSON.parse(localStorage.getItem('userNotes') || '[]');
-                const updatedNotes = notes.map(note => {
-                    if (note.id == noteId) {
-                        return { ...note, status: newStatus };
-                    }
-                    return note;
-                });
-                
-                localStorage.setItem('userNotes', JSON.stringify(updatedNotes));
-                renderNotesTable(updatedNotes);
-                
-                // Update status in preview if open
-                const previewStatus = document.getElementById('previewStatus');
-                if (previewStatus.parentElement.parentElement.parentElement.getAttribute('data-note-id') == noteId) {
-                    previewStatus.textContent = newStatus;
-                }
-            }
-            
-            // Function to open note preview
-            function openNotePreview(noteId) {
-                const notes = JSON.parse(localStorage.getItem('userNotes') || '[]');
-                const note = notes.find(n => n.id == noteId);
-                
-                if (!note) return;
-                
-                // Format author name
-                let authorName = 'Anonymous';
-                if (note.uploadedBy && note.uploadedBy.name) {
-                    authorName = note.uploadedBy.name;
-                }
-                
-                // Format date
-                let formattedDate = 'Unknown';
-                if (note.uploadDate) {
-                    formattedDate = new Date(note.uploadDate).toLocaleDateString('en-US', {
-                        year: 'numeric',
-                        month: 'long',
-                        day: 'numeric'
-                    });
-                }
-                
-                // Set preview content
-                document.getElementById('previewTitle').textContent = note.title;
-                document.getElementById('previewAuthor').textContent = authorName;
-                document.getElementById('previewCourse').textContent = note.course;
-                document.getElementById('previewDate').textContent = formattedDate;
-                document.getElementById('previewStatus').textContent = note.status || 'Pending';
-                document.getElementById('previewDescription').textContent = note.description || 'No description provided.';
-                document.getElementById('previewFileName').textContent = note.fileName || 'No file attached.';
-                
-                // Set note ID for action buttons
-                document.getElementById('previewApproveBtn').setAttribute('data-note-id', noteId);
-                // Show modal
-                const modal = document.getElementById('notePreviewModal');
-                modal.classList.remove('hidden');
-                modal.classList.add('flex');
-                // Show modal
-                document.getElementById('notePreviewModal').classList.remove('hidden');
-            }
-            
-            // Add some sample notes if none exist (for demo purposes)
-            if (notes.length === 0) {
-                const sampleNotes = [
-                    {
-                        id: 1,
-                        title: 'Database Design',
-                        course: 'Database System',
-                        description: 'Comprehensive notes on database design principles and normalization.',
-                        fileName: 'database_design.pdf',
-                        fileSize: 2500000,
-                        fileType: 'application/pdf',
-                        uploadDate: new Date('2025-05-10').toISOString(),
-                        status: 'Pending',
-                        uploadedBy: {
-                            name: 'John Doe',
-                            email: 'john.doe@example.com'
-                        }
-                    },
-                    {
-                        id: 2,
-                        title: 'Database Design',
-                        course: 'Database System',
-                        description: 'Advanced concepts in database design and implementation.',
-                        fileName: 'advanced_db_design.pdf',
-                        fileSize: 3200000,
-                        fileType: 'application/pdf',
-                        uploadDate: new Date('2025-05-11').toISOString(),
-                        status: 'Published',
-                        uploadedBy: {
-                            name: 'John Doe',
-                            email: 'john.doe@example.com'
-                        }
-                    },
-                    {
-                        id: 3,
-                        title: 'Database Design',
-                        course: 'Database System',
-                        description: 'SQL query optimization techniques for better performance.',
-                        fileName: 'sql_optimization.pdf',
-                        fileSize: 1800000,
-                        fileType: 'application/pdf',
-                        uploadDate: new Date('2025-05-12').toISOString(),
-                        status: 'Published',
-                        uploadedBy: {
-                            name: 'John Doe',
-                            email: 'john.doe@example.com'
-                        }
-                    },
-                    {
-                        id: 4,
-                        title: 'Database Design',
-                        course: 'Database System',
-                        description: 'Introduction to NoSQL databases and their use cases.',
-                        fileName: 'nosql_intro.pdf',
-                        fileSize: 2100000,
-                        fileType: 'application/pdf',
-                        uploadDate: new Date('2025-05-13').toISOString(),
-                        status: 'Pending',
-                        uploadedBy: {
-                            name: 'John Doe',
-                            email: 'john.doe@example.com'
-                        }
-                    },
-                    {
-                        id: 5,
-                        title: 'Database Design',
-                        course: 'Database System',
-                        description: 'Database security best practices and implementation.',
-                        fileName: 'db_security.pdf',
-                        fileSize: 2700000,
-                        fileType: 'application/pdf',
-                        uploadDate: new Date('2025-05-14').toISOString(),
-                        status: 'Pending',
-                        uploadedBy: {
-                            name: 'John Doe',
-                            email: 'john.doe@example.com'
-                        }
-                    }
-                ];
-                
-                localStorage.setItem('userNotes', JSON.stringify(sampleNotes));
-                renderNotesTable(sampleNotes);
-            }
-        });
-    </script>
+      </div>
+    </a>
+    <div id="card-grid" class="py-5 pt-20 max-w-[90%] mx-auto md:mr-8 grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8 w-full box-border">
+      <!-- Loading indicator will be shown here initially -->
+      <div id="loading-indicator" class="col-span-full text-center py-8">
+        <p class="text-gray-500">Loading notes...</p>
+      </div>
+    </div>
+    <script src="/js/admin.js"></script>
+    
 </body>
 </html>

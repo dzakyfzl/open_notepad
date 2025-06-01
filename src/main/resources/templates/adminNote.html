@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Note - Admin Panel</title>
+    <link rel="stylesheet" href="/css/output.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <!-- Navbar -->
+    <header class="fixed shadow-lg flex top-0 bg-ijomuda w-full justify-between z-30">
+        <style>
+            @import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
+        </style>
+        <div class="flex items-stretch">
+            <div class="py-2 px-4 max-md:hover:bg-ijotaik">
+                <a class="" href="/admin">
+                    <img class="w-[125px]" src="/img/logo.png" />
+                </a>
+            </div>
+        </div>
+
+        <!--SearchBar-->
+        <div class="flex">
+            <a class="p-2 flex items-center" href="/admin/profile">
+                <img id="profile-picture" src="/api/account/profile-photo" class="w-11 h-11 rounded-full border-[1px] border-gray-300" />
+            </a>
+        </div>
+    </header>
+    <script src="/js/navbar.js"></script>
+
+    <div class="2xl:flex w-full">
+    <div class="pt-20 pl-8 2xl:h-screen overflow-scroll">
+        <div class="pb-2 pt-4">
+            <h2 id="title" class="text-3xl font-bold text-gray-800">Title</h2>
+            <h4 id="course" class="text-lg text-gray-600 mt-2">Course</h4>
+            <h4 id="major" class="text-lg font-light text-gray-600 mt-1">Major</h4>
+            <a href="#" id="owner" class="text-lg text-gray-600 mt-2 gap-2 flex"><i class="far fa-user self-center"></i></a>
+        </div>
+        <div class="flex gap-2 mt-1">
+            <!-- Rating -->
+            <div id="stars" class="star-rating flex justify-center items-center gap-1">
+                <i class="rate fa-solid fa-star text-gray-400"></i>
+                <i class="rate fa-solid fa-star text-gray-400"></i>
+                <i class="rate fa-solid fa-star text-gray-400"></i>
+                <i class="rate fa-solid fa-star text-gray-400"></i>
+                <i class="rate fa-solid fa-star text-gray-400"></i>
+                <!-- Rating Count -->
+                <div id="rate-count" class="justify-center items-center mx-1"><p class="text-center self-center font-light text-lg">rate/5</p></div>
+                <p class="mx-1">|</p>
+                <!-- Views Count -->
+                <p id="views" class=" text-inter font-light text-lg">100 View</p>
+            </div>
+        </div>
+        
+        <div class="text-lg font-bold my-4"><h2>Description :</h2></div>
+        <div id="description" class="pb-4"></div>          
+    </div>
+    
+    <div class="pdf-container right-0 ml-auto mr-0 pr-8 max-2xl:pl-8 pt-20 h-screen">    
+
+            <div class="line"></div>
+
+            <!-- PDF Viewer " -->
+            <iframe class="2xl:w-[920px] max-2xl:w-full h-full rounded-t-md" th:src="${'/api/note/getfile?noteID='+ noteID}"></iframe>
+            
+        </div>
+    </div>
+        
+    <!-- Pass noteID to JavaScript -->
+    <script th:inline="javascript">
+        window.noteID = /*[[${noteID}]]*/ null;
+    </script>
+    <script src="/js/adminNote.js"></script>
+    
+</body>
+</html>
