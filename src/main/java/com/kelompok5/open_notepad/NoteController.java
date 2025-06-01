@@ -173,22 +173,28 @@ public class NoteController {
     public ResponseEntity<Map<String, String>> deleteNote(@RequestParam("noteID") int noteID, HttpServletRequest request, HttpSession session) {
         // Check if the user is logged in
         if (!security.isSessionValid(session, request)) {
+            System.out.println("User is not logged in");
             return ResponseEntity.badRequest().body(Map.of("message", "User not logged in"));
         }
         String username = (String) session.getAttribute("username");
 
         User user = userDAO.getFromDatabase(username);
         if (user == null) {
+            System.out.println("User not found");
             return ResponseEntity.badRequest().body(Map.of("message", "User not found"));
         }
-        System.out.println("Username: " + username);
+        
         // Check if the note exists in the database
         Note note = noteDAO.getFromDatabase(noteID);
+        System.out.println("Username: [" + username+"]");
+        System.out.println("Note Username: [" + note.getOwnerID()+"]");
         if (note == null) {
+            System.out.println("Note not found");
             return ResponseEntity.badRequest().body(Map.of("message", "Note not found"));
         }
         // Check if the note belongs to the user or the account ststus is admin
-        if (!note.getOwnerID().equals(username) || !security.isAdmin(session)) {
+        if (!note.getOwnerID().trim().equalsIgnoreCase(username.trim()) && !security.isAdmin(session)) {
+            System.out.println("You do not have permission to delete this note");
             return ResponseEntity.badRequest().body(Map.of("message", "You do not have permission to delete this note"));
         }
         //Create querry to get the file name associated with the note
@@ -212,6 +218,7 @@ public class NoteController {
         //get file from database
         File file = fileDAO.GetFromDatabase(note.getFile().getFileID());
         if (file == null) {
+            System.out.println("File not found");
             return ResponseEntity.badRequest().body(Map.of("message", "File not found"));
         }
         // Delete the file from the server
@@ -219,6 +226,7 @@ public class NoteController {
         try {
             Files.deleteIfExists(filePath);
         } catch (IOException e) {
+            System.out.println("Error deleting file from server: " + e.getMessage());
             return ResponseEntity.badRequest().body(Map.of("message", "Error deleting file from server"));
         }        
         // Delete the note from the database
@@ -417,7 +425,7 @@ public class NoteController {
             return ResponseEntity.badRequest().body(Map.of("message", "error retrieving note from database"));
         }
         //CHECK IF USER HAVE PERMISSION TO EDIT THE NOTE
-        if(!note.getOwnerID().equals(username) || !security.isAdmin(session)){
+        if(!note.getOwnerID().trim().equals(username.trim()) && !security.isAdmin(session)){
             return ResponseEntity.badRequest().body(Map.of("message", "You do not have permission to edit this note"));
         }
         note.setVisibility(visibility);

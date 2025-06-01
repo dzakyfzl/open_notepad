@@ -115,6 +115,15 @@ public class AccountController {
                 return ResponseEntity.badRequest().body(Map.of("message", "invalid password"));
             }
             System.out.println("Admin login success");
+            session.setMaxInactiveInterval(60 * 60 * 24);
+            session.setAttribute("username", username);
+            // upload session to database
+            String sessionID = session.getId();
+            try {
+                sessionDAO.uploadToDatabase(sessionID, username, request.getHeader("User-Agent"));
+            } catch (Exception e) {
+                return ResponseEntity.badRequest().body(Map.of("message", e.getMessage()));
+            }
             return ResponseEntity.ok().body(Map.of("message", "User logged in successfully", "role", "admin"));
         } else {
             User user = userDAO.getFromDatabase(username);
@@ -133,7 +142,6 @@ public class AccountController {
         session.setAttribute("username", username);
         // upload session to database
         String sessionID = session.getId();
-        session.setMaxInactiveInterval(60 * 60 * 24); // 1 day
         try {
             sessionDAO.uploadToDatabase(sessionID, username, request.getHeader("User-Agent"));
         } catch (Exception e) {
