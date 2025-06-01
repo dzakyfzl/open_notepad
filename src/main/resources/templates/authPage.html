@@ -1,11 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title id="title">Login/Register</title>
   <link rel="stylesheet" href="/css/output.css">
 </head>
+
 <body class="font-['Segoe_UI'] m-0 p-0 h-full overflow-y-auto">
   <div class="w-full h-screen flex relative">
     <!-- Image Section -->
@@ -19,23 +21,36 @@
         <!-- Login Form -->
         <form class="w-1/2 p-[60px_30px] bg-white flex flex-col justify-center shadow-md" id="login">
           <h2 class="text-5xl text-center text-primary">SIGN IN</h2>
-          <input type="text" placeholder="Username" name="username" required class="self-center p-3 my-2.5 rounded-md border-none shadow-md w-4/5" />
-          <input type="password" placeholder="Password" name="password" required class="self-center p-3 my-2.5 rounded-md border-none shadow-md w-4/5" />
-          <button type="submit" class="self-center mt-5 p-3 bg-primary text-white font-bold border-none cursor-pointer w-[100px] rounded-md hover:bg-primary-hover hover:text-black transition duration-500">Login</button>
-          <p class="text-xs mt-20 text-center">Don't have an account? <a onclick="toggleForm('signup')" class="font-bold text-primary cursor-pointer">Create One</a></p>
+          <input type="text" placeholder="Username" name="username" required
+            class="self-center p-3 my-2.5 rounded-md border-none shadow-md w-4/5" />
+          <input type="password" placeholder="Password" name="password" required
+            class="self-center p-3 my-2.5 rounded-md border-none shadow-md w-4/5" />
+          <button type="submit"
+            class="self-center mt-5 p-3 bg-primary text-white font-bold border-none cursor-pointer w-[100px] rounded-md hover:bg-primary-hover hover:text-black transition duration-500">Login</button>
+          <p class="text-xs mt-20 text-center">Don't have an account? <a onclick="toggleForm('signup')"
+              class="font-bold text-primary cursor-pointer">Create One</a></p>
         </form>
 
         <!-- Sign Up Form -->
         <form class="w-1/2 p-[60px_30px] bg-white flex flex-col justify-center shadow-md" id="signup">
           <h2 class="text-5xl text-center text-primary">SIGN UP</h2>
-          <input type="text" placeholder="First Name" name="firstName" required class="self-center p-3 my-2.5 rounded-md border-none shadow-md w-4/5" />
-          <input type="text" placeholder="Last Name" name="lastName" required class="self-center p-3 my-2.5 rounded-md border-none shadow-md w-4/5" />
-          <input type="text" placeholder="Username" name="username" required class="self-center p-3 my-2.5 rounded-md border-none shadow-md w-4/5" />
-          <input type="text" placeholder="Email" name="email" required class="self-center p-3 my-2.5 rounded-md border-none shadow-md w-4/5" />
-          <input type="password" placeholder="Password" name="password" required class="self-center p-3 my-2.5 rounded-md border-none shadow-md w-4/5" />
-          <input type="password" placeholder="Confirm Password" name="confirmedPassword" required class="self-center p-3 my-2.5 rounded-md border-none shadow-md w-4/5" />
-          <button type="submit" class="self-center mt-5 p-3 bg-primary text-white font-bold border-none cursor-pointer w-[100px] rounded-md hover:bg-primary-hover hover:text-black transition duration-500">Sign Up</button>
-          <p class="text-xs mt-20 text-center">Already have an account? <a href="#" onclick="toggleForm('login')" class="font-bold text-primary cursor-pointer">Login</a></p>
+          <input type="text" placeholder="First Name" name="firstName" required
+            class="self-center p-3 my-2.5 rounded-md border-none shadow-md w-4/5" />
+          <input type="text" placeholder="Last Name" name="lastName" required
+            class="self-center p-3 my-2.5 rounded-md border-none shadow-md w-4/5" />
+          <input type="text" placeholder="Username" name="username" required
+            class="self-center p-3 my-2.5 rounded-md border-none shadow-md w-4/5" />
+          <input type="text" placeholder="Email" name="email" required
+            class="self-center p-3 my-2.5 rounded-md border-none shadow-md w-4/5" />
+          <input type="password" placeholder="Password" name="password" required
+            class="self-center p-3 my-2.5 rounded-md border-none shadow-md w-4/5" />
+          <input type="password" placeholder="Confirm Password" name="confirmedPassword" required
+            class="self-center p-3 my-2.5 rounded-md border-none shadow-md w-4/5" />
+          <button type="submit"
+            class="self-center mt-5 p-3 bg-primary text-white font-bold border-none cursor-pointer w-[100px] rounded-md hover:bg-primary-hover hover:text-black transition duration-500">Sign
+            Up</button>
+          <p class="text-xs mt-20 text-center">Already have an account? <a href="#" onclick="toggleForm('login')"
+              class="font-bold text-primary cursor-pointer">Login</a></p>
         </form>
       </div>
     </div>
@@ -43,59 +58,68 @@
 
   <script>
     const formSlider = document.getElementById("formSlider");
-    
+
     // Toggle between login and signup forms
     function toggleForm(form) {
-        if (form === "signup") {
-            formSlider.style.transform = "translateX(-50%)";
-        } else {
-            formSlider.style.transform = "translateX(0)";
-        }
+      if (form === "signup") {
+        formSlider.style.transform = "translateX(-50%)";
+      } else {
+        formSlider.style.transform = "translateX(0)";
+      }
     }
-    
+
     document.getElementById("signup").addEventListener("submit", function (event) {
-        event.preventDefault(); // Prevent the default form submission
-        const formData = new FormData(this);
-        const data = Object.fromEntries(formData.entries());
-        fetch("/api/account/signup", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify(data),
-        })
-            .then((response) => {
-                if (response.ok) {
-                  window.location.href = "/"; // Redirect to home page on success
-                } else if (response.status === 400) {
-                    return response.json().then((data) => {
-                        alert(data.message); // Show error message
-                    });
-                }
-            })
-    });
-    
-    document.getElementById("login").addEventListener("submit", function (event) {
-        event.preventDefault(); // Prevent the default form submission
-        const formData = new FormData(this);
-        const data = Object.fromEntries(formData.entries());
-        fetch("/api/account/signin", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify(data),
-        })
+      event.preventDefault(); // Prevent the default form submission
+      const formData = new FormData(this);
+      const data = Object.fromEntries(formData.entries());
+      fetch("/api/account/signup", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+      })
         .then((response) => {
           if (response.ok) {
             window.location.href = "/"; // Redirect to home page on success
           } else if (response.status === 400) {
-              return response.json().then((data) => {
-                  alert(data.message); // Show error message
-              });
+            return response.json().then((data) => {
+              alert(data.message); // Show error message
+            });
           }
+        })
+    });
+
+    document.getElementById("login").addEventListener("submit", function (event) {
+      event.preventDefault(); // Prevent the default form submission
+      const formData = new FormData(this);
+      const data = Object.fromEntries(formData.entries());
+      fetch("/api/account/signin", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
       })
+        .then((response) => {
+          if (response.ok) {
+            return response.json(); 
+          } else if (response.status === 400) {
+            return response.json().then((data) => {
+              alert(data.message);
+            });
+          }
+        })
+        .then((data) => {
+          if (!data) return;
+          if (data.role === "admin") {
+            window.location.href = "/admin";
+          } else {
+            window.location.href = "/";
+          }
+        });
     });
   </script>
 </body>
+
 </html>

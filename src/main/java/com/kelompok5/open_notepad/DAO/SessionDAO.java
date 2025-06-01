@@ -3,6 +3,7 @@ package com.kelompok5.open_notepad.DAO;
 import java.sql.Date;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 
@@ -15,8 +16,9 @@ public class SessionDAO {
     private JdbcTemplate jdbcTemplate;
 
     public void uploadToDatabase(String sessionID, String username, String userAgent) {
-        //set session logic
-        //Querry inserting to database
+        // set session logic
+        // Querry inserting to database
+        deleteSession(username);
         String sql = "INSERT INTO Sessions (sessionID, username, userAgent, dateCreated) VALUES (?, ?, ?, ?)";
         try {
             // Get the current timestamp in SQL format
@@ -25,13 +27,13 @@ public class SessionDAO {
             jdbcTemplate.update(sql, sessionID, username, userAgent, timestamp);
         } catch (Exception e) {
             throw new RuntimeException("Failed to upload session data to the database");
-            
+
         }
 
     }
 
     public void deleteSession(String username) {
-        //Querry deleting from database
+        // Querry deleting from database
         String sql = "DELETE FROM Sessions WHERE username = ?";
         try {
             // Delete the session data from the database
@@ -40,29 +42,28 @@ public class SessionDAO {
             throw new RuntimeException("Failed to delete session data from the database");
         }
     }
+
     public Session getFromDatabase(String username) {
-        //set session logic
-        //Querry inserting to database
-        String sql = "SELECT sessionID, username, userAgent, dateCreated  FROM Sessions WHERE username = ?";
+        String sql = "SELECT sessionID, username, userAgent, dateCreated FROM Sessions WHERE username = ?";
         try {
-            // Insert the session data into the database
-            return jdbcTemplate.queryForObject(sql, new Object[]{username},
+            return jdbcTemplate.queryForObject(sql, new Object[] { username },
                     (rs, rowNum) -> new Session(
                             rs.getString("sessionID"),
                             rs.getString("username"),
                             rs.getString("userAgent"),
-                            rs.getDate("dateCreated")
-                    ));
-        } catch (Exception e) {
-            // Handle the case where no session is found for the given username
-            System.out.println("Failed to Retrive session: " + e.getMessage());
+                            rs.getDate("dateCreated")));
+        } catch (EmptyResultDataAccessException e) {
+            // Tidak ada session ditemukan
             return null;
-            
+        } catch (Exception e) {
+            // Error lain
+            System.out.println("Failed to Retrieve session: " + e.getMessage());
+            return null;
         }
     }
 
-    public void deleteExpiredSessions(){
-        //Querry deleting from database that more than 1 day
+    public void deleteExpiredSessions() {
+        // Querry deleting from database that more than 1 day
         String sql = "DELETE FROM Sessions WHERE dateCreated < ?";
         try {
             // Delete the session data from the database

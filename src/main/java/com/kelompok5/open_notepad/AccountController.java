@@ -46,16 +46,15 @@ public class AccountController {
     private final SessionDAO sessionDAO;
     private final FileDAO fileDAO;
     private final AdminDAO adminDAO;
-    
+
     @Autowired
     private ViewDAO viewDAO;
-    
+
     @Autowired
     private BookmarkDAO bookmarkDAO;
 
     @Autowired
     private RateDAO rateDAO;
-    
 
     @Autowired
     private JdbcTemplate jdbcTemplate;
@@ -79,7 +78,7 @@ public class AccountController {
         if (security.isSessionValid(session, request)) {
             return ResponseEntity.badRequest().body(Map.of("message", "User already logged in"));
         }
-        //check if there is another session
+        // check if there is another session
         // delete session from database
         if (sessionDAO.getFromDatabase(username) != null) {
             try {
@@ -88,7 +87,6 @@ public class AccountController {
                 return ResponseEntity.badRequest().body(Map.of("message", "Error deleting session"));
             }
         }
-
 
         if (username == null || password == null) {
             return ResponseEntity.badRequest().body(Map.of("message", "Username and password are required"));
@@ -100,22 +98,21 @@ public class AccountController {
             isAdmin = jdbcTemplate.queryForObject(sql, new Object[] { username }, (rs, rowNum) -> {
                 return rs.getBoolean("isAdmin");
             });
-        }catch (Exception e) {
+        } catch (Exception e) {
             return ResponseEntity.badRequest().body(Map.of("message", "account not found"));
         }
 
         // if statement
         if (isAdmin) {
-            Admin admin = adminDAO.getFromDatabase(username);
-            if (admin == null) {
-                // If the admin is not found, return an error message
-                return ResponseEntity.badRequest().body(Map.of("message", "account not found"));
+            session.setMaxInactiveInterval(60 * 60 * 24);
+            session.setAttribute("username", username);
+            String sessionID = session.getId();
+            try {
+                sessionDAO.uploadToDatabase(sessionID, username, request.getHeader("User-Agent"));
+            } catch (Exception e) {
+                return ResponseEntity.badRequest().body(Map.of("message", e.getMessage()));
             }
-            // Check if the password matches
-            if (!security.passwordIsValid(password, admin.getHashedPassword(), admin.getSalt())) {
-                // If the password does not match, return an error message
-                return ResponseEntity.badRequest().body(Map.of("message", "invalid password"));
-            }
+            return ResponseEntity.ok().body(Map.of("message", "User logged in successfully", "role", "admin"));
         } else {
             User user = userDAO.getFromDatabase(username);
             if (user == null) {
@@ -146,7 +143,7 @@ public class AccountController {
 
     @PostMapping("/signup") // register
     public ResponseEntity<Map<String, String>> signUp(@RequestBody Map<String, String> requestData,
-        HttpServletRequest request, HttpSession session) {
+            HttpServletRequest request, HttpSession session) {
         String username = requestData.get("username");
         String password = requestData.get("password");
         String email = requestData.get("email");
@@ -198,17 +195,17 @@ public class AccountController {
         return ResponseEntity.ok().body(Map.of("message", "User logged out successfully"));
     }
 
-    @PostMapping("/edit") // edit profile 
+    @PostMapping("/edit") // edit profile
     public ResponseEntity<Map<String, String>> editProfile(
-        @RequestParam(value = "file", required = false) MultipartFile file,
-        @RequestParam("email") String newEmail,
-        @RequestParam("firstName") String newFirstName,
-        @RequestParam("lastName") String newLastName,
-        @RequestParam("password") String newPassword,
-        @RequestParam(value = "aboutMe", required = false) String newAboutMe,
-        @RequestParam(value = "instagram", required = false) String newInstagram,
-        @RequestParam(value = "linkedin", required = false) String newLinkedin,
-        HttpServletRequest request, HttpSession session) {
+            @RequestParam(value = "file", required = false) MultipartFile file,
+            @RequestParam("email") String newEmail,
+            @RequestParam("firstName") String newFirstName,
+            @RequestParam("lastName") String newLastName,
+            @RequestParam("password") String newPassword,
+            @RequestParam(value = "aboutMe", required = false) String newAboutMe,
+            @RequestParam(value = "instagram", required = false) String newInstagram,
+            @RequestParam(value = "linkedin", required = false) String newLinkedin,
+            HttpServletRequest request, HttpSession session) {
         if (!security.isSessionValid(session, request)) {
             return ResponseEntity.badRequest().body(Map.of("message", "User not logged in"));
         }
@@ -235,15 +232,15 @@ public class AccountController {
             newLastName = user.getLastName();
         }
         if (newPassword.equals("")) {
-            hashedPassword= user.getHashedPassword();
+            hashedPassword = user.getHashedPassword();
             salt = user.getSalt();
-        }else{
+        } else {
             salt = security.generateSalt();
             hashedPassword = security.hashPassword(newPassword, salt);
         }
-        System.out.println(" Username: " + username + 
-            ", Email: " + newEmail + ", First Name: " + newFirstName + ", Last Name: " + newLastName);
-        //Check if aboutMe, instagram, and linkedin are empty
+        System.out.println(" Username: " + username +
+                ", Email: " + newEmail + ", First Name: " + newFirstName + ", Last Name: " + newLastName);
+        // Check if aboutMe, instagram, and linkedin are empty
         if (newAboutMe.equals("")) {
             newAboutMe = user.getAboutMe();
         }
@@ -259,7 +256,7 @@ public class AccountController {
             System.out.println("file is not empty \nfile name :" + file.getOriginalFilename());
             // Check if the file is an image
             String contentType = file.getContentType();
-            if (!contentType.startsWith("image/")) {   
+            if (!contentType.startsWith("image/")) {
                 return ResponseEntity.badRequest().body(Map.of("message", "File is not an image file"));
             }
             // Check if the file size is less than 10MB
@@ -293,11 +290,11 @@ public class AccountController {
                 try {
                     fileDAO.DeleteFromDatabase(oldProfilePicture.getFileID());
                 } catch (Exception e) {
-                    return ResponseEntity.badRequest().body(Map.of("message", "Error deleting old profile picture from database"));
+                    return ResponseEntity.badRequest()
+                            .body(Map.of("message", "Error deleting old profile picture from database"));
                 }
 
             }
-
 
             // Create a new file name and upload directory
             String fileName = System.currentTimeMillis() + "_" + file.getOriginalFilename();
@@ -330,7 +327,7 @@ public class AccountController {
             int ID = fileDAO.getFileID(fileName);
             profilePicture.setFileID(ID);
 
-            //Attach the file to the user
+            // Attach the file to the user
             try {
                 userDAO.uploadProfilePicture(username, ID);
             } catch (Exception e) {
@@ -367,8 +364,7 @@ public class AccountController {
         // Hash password and salt
         String hashedPassword = security.hashPassword(password, user.getSalt());
 
-        
-        //Delete user from database
+        // Delete user from database
         try {
             rateDAO.deleteFromUser(username);
             viewDAO.deleteFromUser(username);
