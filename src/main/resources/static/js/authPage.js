@@ -16,7 +16,7 @@ document.addEventListener('DOMContentLoaded', function () {
       headers: {
         'Content-Type': 'application/json'
       },
-      credentials: 'include', // penting untuk mengirim dan menerima session cookie
+      credentials: 'include',
       body: JSON.stringify(data)
     });
 
@@ -24,7 +24,12 @@ document.addEventListener('DOMContentLoaded', function () {
     alert(result.message);
 
     if (response.ok) {
-      window.location.href = '/'; // ganti dengan halaman utama kamu
+      // Cek role dari response backend
+      if (result.role === 'admin') {
+        window.location.href = '/admin.html';
+      } else {
+        window.location.href = '/index.html'; // atau '/' sesuai halaman utama user
+      }
     }
   });
 
