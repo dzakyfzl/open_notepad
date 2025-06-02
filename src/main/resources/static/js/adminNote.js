@@ -47,6 +47,7 @@ fetch('/api/note/get?noteID=' + noteID, {
     description.innerHTML = data["description"]
     rating.innerHTML = data["rating"] + "/5"
     views.innerHTML = data["views"] + " View"
+    visibility.value = data["visibility"] ? "public" : "private"
     if(data["userRate"] != 0){
         highlightStars(data["userRate"])
         isLocked = true;

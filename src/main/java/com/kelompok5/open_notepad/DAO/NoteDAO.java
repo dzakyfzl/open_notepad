@@ -80,6 +80,38 @@ public class NoteDAO {
         return cachedNotes;
     }
 
+    public List<Map<String, Object>> getAllnotesForAdmin() {
+
+        System.out.println("Fetching fresh notes data from database");
+
+        String sql = "SELECT n.moduleID AS id, " +
+                "       n.name AS name, " +
+                "       n.course, " +
+                "       n.major, " +
+                "       n.dateUploaded, " +
+                "       a.username AS username, " +
+                "       COALESCE(AVG(r.rating), 0) AS rating, " +
+                "       COALESCE(v.total_views, 0) AS views " +
+                "FROM Notes n " +
+                "LEFT JOIN Ratings r ON n.moduleID = r.moduleID " +
+                "LEFT JOIN ( " +
+                "    SELECT v.moduleID, COUNT(*) AS total_views " +
+                "    FROM Views v " +
+                "    GROUP BY v.moduleID " +
+                ") v ON n.moduleID = v.moduleID " +
+                "LEFT JOIN Accounts a ON n.username = a.username " +
+                "GROUP BY n.moduleID, n.name, n.course, n.major, n.dateUploaded, a.username, v.total_views";
+        List<Map<String, Object>> notes = null;
+        try {
+            notes = jdbcTemplate.queryForList(sql); 
+        } catch (Exception e) {
+            System.out.println("Failed query from database: " + e.getMessage());
+            return null;
+        }
+
+        return notes;
+    }
+
     public List<Map<String, Object>> getMynotes(String username) {
         String sql = "SELECT n.moduleID AS id, " +
                 "       n.name AS name, " +

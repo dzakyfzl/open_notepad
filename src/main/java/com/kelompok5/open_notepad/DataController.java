@@ -11,8 +11,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.kelompok5.open_notepad.DAO.NoteDAO;
+import com.kelompok5.open_notepad.DAO.AdminDAO;
 import com.kelompok5.open_notepad.DAO.BookmarkDAO;
+import com.kelompok5.open_notepad.DAO.NoteDAO;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
@@ -31,6 +32,10 @@ public class DataController {
     private BookmarkDAO bookmarkDAO;
 
     @Autowired
+    private AdminDAO adminDAO;
+
+
+    @Autowired
     private JdbcTemplate jdbcTemplate;
     // Example method to save a user
 
@@ -44,10 +49,18 @@ public class DataController {
             return ResponseEntity.badRequest().build();
         }
         List<Map<String, Object>> notes;
-        try {
-            notes = noteDAO.getAllnotes();
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body(List.of(Map.of("error", "Failed to retrieve notes")));
+        if(!security.isAdmin(session)){
+            try {
+                notes = noteDAO.getAllnotes();
+            } catch (Exception e) {
+                return ResponseEntity.badRequest().body(List.of(Map.of("error", "Failed to retrieve notes")));
+            }
+        }else{
+            try {
+                notes = noteDAO.getAllnotesForAdmin();
+            } catch (Exception e) {
+                return ResponseEntity.badRequest().body(List.of(Map.of("error", "Failed to retrieve notes")));
+            }
         }
         // Return note Name, Rating, Major, Course
         return ResponseEntity.ok(notes);

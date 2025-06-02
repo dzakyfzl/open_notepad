@@ -85,8 +85,6 @@ public class Security{
 
     public boolean passwordIsValid(String password, String hashedPassword, String salt) {
         String hashedInputPassword = hashPassword(password, salt);
-        System.out.println("Hashed Input Password: " + hashedInputPassword);
-        System.out.println("Hashed Password: " + hashedPassword);
         return hashedInputPassword.equals(hashedPassword);
     }
 }
