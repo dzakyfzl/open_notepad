@@ -6,6 +6,7 @@
     <title>Open Notepad - Profile</title>
     <link rel="stylesheet" href="/css/output.css" />
     <link rel="stylesheet" href="/css/navbar.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
  <!-- Navbar -->
@@ -62,11 +63,11 @@
                 <div class="space-y-4">
                     <div class="flex items-center gap-2">
                         <img src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/mdi_linkedin-1kMkmeryjsjlD3Rnvvex4zuc38enni.png" alt="LinkedIn" class="w-6 h-6">
-                        <span id="linkedIn">Add LinkedIn</span>
+                        <div id="linkedIn">Add LinkedIn</div>
                     </div>
                     <div class="flex items-center gap-2">
                         <img src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/iconsax-instagram-lr8l3JZrI0k0CSIaJSohbMZCCUNBqZ.png" alt="Instagram" class="w-6 h-6">
-                        <span id="instagram">Add Instagram</span>
+                        <div id="instagram">Add Instagram</div>
                     </div>
                 </div>
 
@@ -97,9 +98,30 @@
                     <button onclick="logout()" class="self-center p-3 rounded-md border-red-600 border-2 text-red-600 font-inter">
                         Logout
                     </button>
+                <button onclick="openPopUp()" class="self-center p-3 rounded-md border-red-600 border-2 text-red-600 font-inter">
+                        <i class="fa-solid fa-trash text-red-600 mr-2"></i>Delete
+                    </button>
                 </div>
             </div>
         </div>
+
+        <div id="pop-up-window" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+            <div class="bg-white p-8 rounded-2xl shadow-2xl w-96">
+                <h2 class="text-xl font-semibold mb-4">Delete Account</h2>
+                <p class="text-gray-700">Are you sure to delete this account?</p>
+                <input type="password" id="password" class="p-2 border rounded-md mt-4" placeholder="password" aria-hidden="true">
+                <div class="flex gap-2 justify-end mt-4">
+                    <button onclick="closePopUp()" class="mt-4 text-red-600 border border-red-600 px-4 py-2 rounded">
+                    Close
+                    </button>
+                    <button onclick="deleteAccount()" class="mt-4 text-white bg-red-600 px-4 py-2 rounded">
+                    Delete
+                    </button>
+                </div>
+            </div>
+        </div>
+    </main>
+
     </main>
 
     <script src="/js/profile.js"></script>

@@ -71,7 +71,7 @@ fetch('/api/note/get?noteID=' + noteID, {
   .then(response => response.json())
   .then(data => {
     console.log(data)
-    pageTitle.innerHTML = data["name"] + " - Open Notepad"
+    pageTitle.innerHTML = "Open Notepad - " + data["name"]
     title.innerHTML = data["name"]
     major.innerHTML = data["major"]
     course.innerHTML = data["course"]

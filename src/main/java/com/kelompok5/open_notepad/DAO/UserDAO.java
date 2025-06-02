@@ -150,17 +150,18 @@ public class UserDAO extends AccountDAO {
 
             //Ambil ID file foto profil dari Accounts
             sql = "SELECT fileID FROM Accounts WHERE username = ?";
-            int fileID = jdbcTemplate.queryForObject(sql, new Object[] { username }, Integer.class);
+            Integer fileID = jdbcTemplate.queryForObject(sql, new Object[] {username}, Integer.class);
             sql = "UPDATE Accounts SET fileID = NULL WHERE username = ?";
             jdbcTemplate.update(sql, username);
 
            
-            // Ambil data foto profil dari tabel Files
-            String profilePhotoSql = "SELECT * FROM Files WHERE fileID = ?";
-            File profilePhoto = jdbcTemplate.queryForObject(profilePhotoSql, new Object[] { fileID }, (rs, rowNum) -> {
-                return new File(rs.getInt("fileID"), rs.getString("name"), rs.getString("type"), rs.getLong("size"), rs.getString("path"));
-            });
-            if (profilePhoto != null) {
+
+            if (fileID != null) {
+                // Ambil data foto profil dari tabel Files
+                String profilePhotoSql = "SELECT * FROM Files WHERE fileID = ?";
+                File profilePhoto = jdbcTemplate.queryForObject(profilePhotoSql, new Object[] { fileID }, (rs, rowNum) -> {
+                    return new File(rs.getInt("fileID"), rs.getString("name"), rs.getString("type"), rs.getLong("size"), rs.getString("path"));
+                });
                 // Hapus file foto profil di server
                 Path oldFilePath = Paths.get(profilePhoto.getPath());
                 try {
