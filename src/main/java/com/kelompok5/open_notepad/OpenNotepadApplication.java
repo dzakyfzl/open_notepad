@@ -1,13 +1,13 @@
 package com.kelompok5.open_notepad;
 
+import java.util.Arrays;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import io.github.cdimascio.dotenv.Dotenv;
-
 import org.springframework.jdbc.core.JdbcTemplate;
-//import javax.sql.DataSource;
-//import java.sql.Connection;
+
+import io.github.cdimascio.dotenv.Dotenv;
 
 @SpringBootApplication
 public class OpenNotepadApplication {
@@ -16,9 +16,30 @@ public class OpenNotepadApplication {
 	private JdbcTemplate jdbcTemplate;
 
 	public static void main(String[] args) {
-		io.github.cdimascio.dotenv.Dotenv dotenv = io.github.cdimascio.dotenv.Dotenv.load();
-        System.setProperty("SQLusername", dotenv.get("SQLusername"));
-        System.setProperty("SQLpassword", dotenv.get("SQLpassword"));
+		String profile = getActiveProfile(args);
+
+		if(!"prod".equalsIgnoreCase(profile)){
+			Dotenv dotenv = Dotenv.configure().directory("./").ignoreIfMissing().load();
+        	setPropertyIfPresent("SQLusername", dotenv.get("SQLusername"));
+        	setPropertyIfPresent("SQLpassword", dotenv.get("SQLpassword"));
+		}else{
+			setPropertyIfPresent("SQLusername", System.getenv("SQLusername"));
+			setPropertyIfPresent("SQLpassword", System.getenv("SQLpassword"));
+		}
 		SpringApplication.run(OpenNotepadApplication.class, args);
 	}
+
+	private static String getActiveProfile(String[] args) {
+        return Arrays.stream(args)
+                .filter(arg -> arg.startsWith("--profiles="))
+                .map(arg -> arg.split("=")[1])
+                .findFirst()
+                .orElse(System.getenv().getOrDefault("PROFILES", "default"));
+    }
+
+    private static void setPropertyIfPresent(String key, String value) {
+        if (value != null && !value.isBlank()) {
+            System.setProperty(key, value);
+        }
+    }
 }

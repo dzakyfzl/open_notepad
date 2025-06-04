@@ -1,82 +1,65 @@
-document.addEventListener('DOMContentLoaded', function () {
-  const loginForm = document.querySelector('#login');
-  const signupForm = document.querySelector('#signup');
-
-  loginForm.addEventListener('submit', async function (e) {
-    e.preventDefault();
-
-    const formData = new FormData(loginForm);
-    const data = {
-      username: formData.get('username'),
-      password: formData.get('password')
-    };
-
-    const response = await fetch('/api/account/signin', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      credentials: 'include',
-      body: JSON.stringify(data)
-    });
-
-    const result = await response.json();
-    alert(result.message);
-
-    if (response.ok) {
-      // Cek role dari response backend
-      if (result.role === 'admin') {
-        window.location.href = '/admin.html';
-      } else {
-        window.location.href = '/index.html'; // atau '/' sesuai halaman utama user
-      }
-    }
-  });
-
-  signupForm.addEventListener('submit', async function (e) {
-    e.preventDefault();
-
-    const formData = new FormData(signupForm);
-    const password = formData.get('password');
-    const confirmedPassword = formData.get('confirmedPassword');
-
-    if (password !== confirmedPassword) {
-      alert("Passwords do not match!");
-      return;
-    }
-
-    const data = {
-      username: formData.get('username'),
-      password: password,
-      email: formData.get('email'),
-      firstName: formData.get('firstName'),
-      lastName: formData.get('lastName')
-    };
-
-    const response = await fetch('/api/account/signup', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      credentials: 'include', // kirim dan terima session cookie
-      body: JSON.stringify(data)
-    });
-
-    const result = await response.json();
-    alert(result.message);
-
-    if (response.ok) {
-      window.location.href = '/'; // ganti juga dengan halaman utama
-    }
-  });
-});
-
-// Fungsi untuk toggle tampilan login <-> register
-function toggleForm(formType) {
-  const formSlider = document.getElementById('formSlider');
-  if (formType === 'signup') {
-    formSlider.style.transform = 'translateX(-100%)';
+const formSlider = document.getElementById("formSlider");
+// Toggle between login and signup forms
+function toggleForm(form) {
+  if (form === "signup") {
+    formSlider.style.transform = "translateX(-50%)";
   } else {
-    formSlider.style.transform = 'translateX(0)';
+    formSlider.style.transform = "translateX(0)";
   }
 }
+document.getElementById("signup").addEventListener("submit", function (event) {
+  event.preventDefault(); // Prevent the default form submission
+  const formData = new FormData(this);
+  const data = Object.fromEntries(formData.entries());
+  password = formData.get("password");
+  repeatPassword = formData.get("confirmedPassword");
+  if (password !== repeatPassword) {
+    alert("Passwords do not match");
+    return;
+  }
+  fetch("/api/account/signup", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(data),
+  })
+    .then((response) => {
+      if (response.ok) {
+        window.location.href = "/"; // Redirect to home page on success
+      } else if (response.status === 400) {
+        return response.json().then((data) => {
+          alert(data.message); // Show error message
+        });
+      }
+    })
+});
+document.getElementById("login").addEventListener("submit", function (event) {
+  event.preventDefault(); // Prevent the default form submission
+  const formData = new FormData(this);
+  const data = Object.fromEntries(formData.entries());
+  fetch("/api/account/signin", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(data),
+  })
+    .then((response) => {
+      if (response.ok) {
+        return response.json(); 
+      } else if (response.status === 400) {
+        return response.json().then((data) => {
+          alert(data.message);
+        });
+      }
+    })
+    .then((data) => {
+      if (!data) return;
+      if (data.role === "admin") {
+        window.location.href = "/admin";
+      } else {
+        window.location.href = "/";
+      }
+    });
+});

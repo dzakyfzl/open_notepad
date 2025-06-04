@@ -1,6 +1,6 @@
 spring:
   application:
-    name: open_notepad
+    name: open-notepad
   servlet:
     multipart:
       enabled: true

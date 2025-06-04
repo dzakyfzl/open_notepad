@@ -1,6 +1,8 @@
 package com.kelompok5.open_notepad.DAO;
 
 import java.sql.Date;
+import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -15,6 +17,9 @@ public class SessionDAO {
     @Autowired
     private JdbcTemplate jdbcTemplate;
 
+    List<Map<String,Object>> sessionCache;
+
+
     public void uploadToDatabase(String sessionID, String username, String userAgent) {
         // set session logic
         // Querry inserting to database
@@ -25,6 +30,7 @@ public class SessionDAO {
             Date timestamp = new Date(System.currentTimeMillis());
             // Insert the session data into the database
             jdbcTemplate.update(sql, sessionID, username, userAgent, timestamp);
+            databaseToCache();
         } catch (Exception e) {
             throw new RuntimeException("Failed to upload session data to the database");
 
@@ -38,12 +44,20 @@ public class SessionDAO {
         try {
             // Delete the session data from the database
             jdbcTemplate.update(sql, username);
+            databaseToCache();
         } catch (Exception e) {
             throw new RuntimeException("Failed to delete session data from the database");
         }
     }
 
     public Session getFromDatabase(String username) {
+        if(sessionCache != null){
+            for(Map<String,Object> session : sessionCache){
+                if(session.get("username").equals(username)){
+                    return new Session((String)session.get("sessionID"),(String)session.get("username"),(String)session.get("userAgent"),(Date)session.get("dateCreated"));
+                }
+            }
+        }
         String sql = "SELECT sessionID, username, userAgent, dateCreated FROM Sessions WHERE username = ?";
         try {
             return jdbcTemplate.queryForObject(sql, new Object[] { username },
@@ -70,8 +84,13 @@ public class SessionDAO {
             Date now = new Date(System.currentTimeMillis());
             Date expiredDate = new Date(now.getTime()); // 1 day
             jdbcTemplate.update(sql, expiredDate);
+            databaseToCache();
         } catch (Exception e) {
             throw new RuntimeException("Failed to delete expired session data from the database");
         }
+    }
+
+    public List<Map<String,Object>> databaseToCache() {
+        return jdbcTemplate.queryForList("SELECT * FROM Sessions");
     }
 }

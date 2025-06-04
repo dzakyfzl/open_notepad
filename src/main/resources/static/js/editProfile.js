@@ -139,6 +139,7 @@ function uploadProfile(event){
     }).then(data => {
         console.log('Profile updated successfully:', data);
         alert('Profile updated successfully!');
+        window.location.href = '/user/profile';
     }).catch(error => {
         console.log('Error updating profile:', error);
         alert('Failed to update profile. Please try again later.');

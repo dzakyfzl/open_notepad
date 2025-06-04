@@ -9,8 +9,8 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.kelompok5</groupId>
-	<artifactId>open_notepad</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<artifactId>open-notepad</artifactId>
+	<version>1.0-SNAPSHOT</version>
 	<name>open_notepad</name>
 	<description>Project Open Notepad</description>
 	<properties>

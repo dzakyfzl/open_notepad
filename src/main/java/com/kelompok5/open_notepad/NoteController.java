@@ -85,7 +85,14 @@ public class NoteController {
             return ResponseEntity.badRequest().body(Map.of("message", "User not logged in"));
         }
 
-         String username = (String) session.getAttribute("username");
+        //Check if the storage is over 20gb
+        String sql = "SELECT SUM(size) FROM Files";
+        long totalSize = jdbcTemplate.queryForObject(sql, Long.class);
+        if (totalSize > 20 * 1024 * 1024 * 1024) {
+            return ResponseEntity.badRequest().body(Map.of("message", "Storage is over 20GB"));
+        }
+
+        String username = (String) session.getAttribute("username");
         System.out.println("Username: " + username);
         try {
             // Check if the request data contains all required fields
