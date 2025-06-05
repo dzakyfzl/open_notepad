@@ -14,9 +14,19 @@ spring:
           predicates:
             - Path=/api/**
   datasource:
-    url: jdbc:sqlserver://pacipapa.database.windows.net:1433;database=pacipapaDB;encrypt=true;trustServerCertificate=false;hostNameInCertificate=*.database.windows.net;loginTimeout=30;
+    url: ${SQLurl}
     username: ${SQLusername}
     password: ${SQLpassword}
     driver-class-name: com.microsoft.sqlserver.jdbc.SQLServerDriver
+register:
+    token: ${RegisterToken}
+server:
+  port: 443
+  ssl:
+    enabled: true
+    key-store: classpath:keystore.p12
+    key-store-password: ${SSLpassword}
+    key-store-type: PKCS12
+  
 
  

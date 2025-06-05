@@ -1,5 +1,8 @@
 package com.kelompok5.open_notepad.DAO;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
@@ -65,6 +68,14 @@ public abstract  class AccountDAO {
             System.out.println(e.getMessage());
             throw new RuntimeException("Error uploading profile picture");
         }
+    }
+
+    public boolean  emailIsValid(String email){
+        //check if email is valid
+        String regex = "^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,6}$";
+        Pattern pattern = Pattern.compile(regex, Pattern.CASE_INSENSITIVE);
+        Matcher matcher = pattern.matcher(email);
+        return matcher.matches();
     }
 
 

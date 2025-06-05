@@ -152,7 +152,13 @@ public class UserDAO extends AccountDAO {
             sql = "SELECT fileID FROM Accounts WHERE username = ?";
             Integer fileID = jdbcTemplate.queryForObject(sql, new Object[] {username}, Integer.class);
             sql = "UPDATE Accounts SET fileID = NULL WHERE username = ?";
-            jdbcTemplate.update(sql, username);
+            try {
+                jdbcTemplate.update(sql, username);
+            } catch (Exception e) {
+                System.out.println("Error updating fileID: " + e.getMessage());
+                throw new RuntimeException("Failed to update fileID");
+            }
+            
 
            
 
@@ -172,8 +178,8 @@ public class UserDAO extends AccountDAO {
                 }
 
                  // Hapus data file foto profil di database
-                String deleteProfilePicSql = "DELETE FROM Files WHERE fileID = (SELECT fileID FROM UserDetails WHERE username = ?)";
-                jdbcTemplate.update(deleteProfilePicSql, username);
+                String deleteProfilePicSql = "DELETE FROM Files WHERE fileID = ?";
+                jdbcTemplate.update(deleteProfilePicSql, fileID);
             }
             
 

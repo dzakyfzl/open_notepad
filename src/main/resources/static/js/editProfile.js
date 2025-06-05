@@ -132,18 +132,14 @@ function uploadProfile(event){
         body: formData,
     }).then(response => {
         if (response.ok) {
-            return response.json();
+            alert('Profile updated successfully!');
+            window.location.href = '/user/profile';
         } else {
-            throw new Error('Error updating profile: ' + response.statusText);
+            return response.json().then(data => {
+                alert('Error updating profile: ' + data.message);
+            })
         }
-    }).then(data => {
-        console.log('Profile updated successfully:', data);
-        alert('Profile updated successfully!');
-        window.location.href = '/user/profile';
-    }).catch(error => {
-        console.log('Error updating profile:', error);
-        alert('Failed to update profile. Please try again later.');
-    });
+    })
 }
 // Attach to form submit event
 const profileForm = document.getElementById('profileForm');

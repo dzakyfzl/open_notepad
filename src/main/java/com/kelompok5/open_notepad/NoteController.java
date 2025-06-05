@@ -88,7 +88,7 @@ public class NoteController {
         //Check if the storage is over 20gb
         String sql = "SELECT SUM(size) FROM Files";
         long totalSize = jdbcTemplate.queryForObject(sql, Long.class);
-        if (totalSize > 20 * 1024 * 1024 * 1024) {
+        if (totalSize > 21474836480L) {
             return ResponseEntity.badRequest().body(Map.of("message", "Storage is over 20GB"));
         }
 
@@ -112,7 +112,7 @@ public class NoteController {
         if (file.isEmpty()) {
             return ResponseEntity.badRequest().body(Map.of("message", "File is empty"));
         }
-        // Check if the file is an image
+        // Check if the file is an PDF
         String contentType = file.getContentType();
         if (!contentType.startsWith("application/pdf")) {   
             return ResponseEntity.badRequest().body(Map.of("message", "File is not an pdf file"));

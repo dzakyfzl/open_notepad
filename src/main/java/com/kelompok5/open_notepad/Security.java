@@ -29,10 +29,9 @@ public class Security{
         //Querry from database using SessionDAO
         Session savedSession; 
         try {
-            sessionDAO.deleteExpiredSessions();
             savedSession = sessionDAO.getFromDatabase(username);
         } catch (Exception e) {
-            System.out.println(e.getMessage());
+            System.out.println("Failed to verify : " +e.getMessage());
             return false;
         }
         // Return true if the sessionID and UserAgent match

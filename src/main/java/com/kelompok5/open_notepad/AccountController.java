@@ -9,6 +9,7 @@ import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -46,6 +47,9 @@ public class AccountController {
     private final SessionDAO sessionDAO;
     private final FileDAO fileDAO;
     private final AdminDAO adminDAO;
+
+    @Value("${register.token}")
+    private String registerToken;
 
     @Autowired
     private ViewDAO viewDAO;
@@ -161,11 +165,18 @@ public class AccountController {
         String email = requestData.get("email");
         String firstName = requestData.get("firstName");
         String lastName = requestData.get("lastName");
+        String accessToken = requestData.get("accessToken");
+        if(!accessToken.equals(registerToken)){
+            return ResponseEntity.badRequest().body(Map.of("message", "you dont have any access to register"));
+        }
         if (security.isSessionValid(session, request)) {
             return ResponseEntity.badRequest().body(Map.of("message", "User already logged in"));
         }
         if (username == null || password == null || email == null || firstName == null || lastName == null) {
             return ResponseEntity.badRequest().body(Map.of("message", "All fields are required"));
+        }
+        if(!userDAO.emailIsValid(email)){
+            return ResponseEntity.badRequest().body(Map.of("message", "Invalid email"));
         }
         // Hash password and salt it
         String salt = security.generateSalt();
@@ -199,6 +210,8 @@ public class AccountController {
         String username = (String) session.getAttribute("username");
         // delete session from database
         try {
+            System.out.println("Logging out user: " + username);
+            session.invalidate();
             sessionDAO.deleteSession(username);
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(Map.of("message", e.getMessage()));
@@ -263,6 +276,10 @@ public class AccountController {
             newLinkedin = user.getLinkedin();
         }
 
+        if(!userDAO.emailIsValid(newEmail)){
+            return ResponseEntity.badRequest().body(Map.of("message", "Invalid email"));
+        }
+
         // Check if the file is not empty
         if (file != null) {
             System.out.println("file is not empty \nfile name :" + file.getOriginalFilename());
@@ -271,6 +288,13 @@ public class AccountController {
             if (!contentType.startsWith("image/")) {
                 return ResponseEntity.badRequest().body(Map.of("message", "File is not an image file"));
             }
+            //Check if the storage is over 20gb
+            String sql = "SELECT SUM(size) FROM Files";
+            long totalSize = jdbcTemplate.queryForObject(sql, Long.class);
+            if (totalSize > 21474836480L) {
+                return ResponseEntity.badRequest().body(Map.of("message", "Storage is over 20GB"));
+            }
+
             // Check if the file size is less than 10MB
             if (file.getSize() > 10 * 1024 * 1024) {
                 return ResponseEntity.badRequest().body(Map.of("message", "File size is too large"));
@@ -279,7 +303,7 @@ public class AccountController {
             // Delete the old profile picture if it exists
             // Get Profile Picture ID from database
             File oldProfilePicture = null;
-            String sql = "SELECT * FROM Files WHERE fileID = (SELECT fileID FROM Accounts WHERE username = ?)";
+            sql = "SELECT * FROM Files WHERE fileID = (SELECT fileID FROM Accounts WHERE username = ?)";
             try {
                 oldProfilePicture = jdbcTemplate.queryForObject(sql, new Object[] { username },
                         (rs, rowNum) -> new File(rs.getInt("fileID"), rs.getString("name"), rs.getString("type"),

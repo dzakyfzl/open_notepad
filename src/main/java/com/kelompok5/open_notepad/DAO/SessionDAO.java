@@ -5,8 +5,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import com.kelompok5.open_notepad.entity.Session;
@@ -23,74 +23,50 @@ public class SessionDAO {
     public void uploadToDatabase(String sessionID, String username, String userAgent) {
         // set session logic
         // Querry inserting to database
-        deleteSession(username);
-        String sql = "INSERT INTO Sessions (sessionID, username, userAgent, dateCreated) VALUES (?, ?, ?, ?)";
-        try {
-            // Get the current timestamp in SQL format
-            Date timestamp = new Date(System.currentTimeMillis());
-            // Insert the session data into the database
-            jdbcTemplate.update(sql, sessionID, username, userAgent, timestamp);
-            databaseToCache();
-        } catch (Exception e) {
-            throw new RuntimeException("Failed to upload session data to the database");
-
+        if(sessionCache == null){
+            sessionCache = databaseToCache();
         }
-
+        System.out.println("Get from cache : " + sessionCache.size() + " session in cache");
+        sessionCache.add(Map.of("sessionID",sessionID,"username",username,"userAgent",userAgent,"dateCreated",new Date(System.currentTimeMillis())));
     }
 
     public void deleteSession(String username) {
-        // Querry deleting from database
-        String sql = "DELETE FROM Sessions WHERE username = ?";
-        try {
-            // Delete the session data from the database
-            jdbcTemplate.update(sql, username);
-            databaseToCache();
-        } catch (Exception e) {
-            throw new RuntimeException("Failed to delete session data from the database");
+        if(sessionCache != null){
+            System.out.println("Get from cache : " + sessionCache.size() + " session in cache");
+            for(int i = 0; i < sessionCache.size(); i++){
+                if(sessionCache.get(i).get("username").equals(username)){
+                    System.out.println("Removed");
+                    sessionCache.remove(i);
+                    break;
+                }
+            }
+        }else{
+            sessionCache = databaseToCache();
         }
     }
 
     public Session getFromDatabase(String username) {
         if(sessionCache != null){
+            System.out.println("Get from cache : " + sessionCache.size() + " session in cache");
             for(Map<String,Object> session : sessionCache){
                 if(session.get("username").equals(username)){
                     return new Session((String)session.get("sessionID"),(String)session.get("username"),(String)session.get("userAgent"),(Date)session.get("dateCreated"));
                 }
             }
         }
-        String sql = "SELECT sessionID, username, userAgent, dateCreated FROM Sessions WHERE username = ?";
-        try {
-            return jdbcTemplate.queryForObject(sql, new Object[] { username },
-                    (rs, rowNum) -> new Session(
-                            rs.getString("sessionID"),
-                            rs.getString("username"),
-                            rs.getString("userAgent"),
-                            rs.getDate("dateCreated")));
-        } catch (EmptyResultDataAccessException e) {
-            // Tidak ada session ditemukan
-            return null;
-        } catch (Exception e) {
-            // Error lain
-            System.out.println("Failed to Retrieve session: " + e.getMessage());
-            return null;
-        }
+        return null;
     }
 
-    public void deleteExpiredSessions() {
-        // Querry deleting from database that more than 1 day
-        String sql = "DELETE FROM Sessions WHERE dateCreated < ?";
-        try {
-            // Delete the session data from the database
-            Date now = new Date(System.currentTimeMillis());
-            Date expiredDate = new Date(now.getTime()); // 1 day
-            jdbcTemplate.update(sql, expiredDate);
-            databaseToCache();
-        } catch (Exception e) {
-            throw new RuntimeException("Failed to delete expired session data from the database");
-        }
-    }
-
-    public List<Map<String,Object>> databaseToCache() {
+    private List<Map<String,Object>> databaseToCache() {
         return jdbcTemplate.queryForList("SELECT * FROM Sessions");
+    }
+
+    @Scheduled(cron = "0 0 0 * * *")
+    public void cacheToDatabase() {
+        jdbcTemplate.update("DELETE FROM Sessions");
+        for(Map<String,Object> session : sessionCache){
+            jdbcTemplate.update("INSERT INTO Sessions (sessionID, username, userAgent, dateCreated) VALUES (?,?,?,?)",session.get("sessionID"),session.get("username"),session.get("userAgent"),session.get("dateCreated"));
+        }
+        sessionCache = null;
     }
 }
