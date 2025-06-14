@@ -39,7 +39,9 @@ public class Security{
             System.out.println("Session not found");
             return false;
         }
-        return sessionID.equals(savedSession.getSessionID()) && UserAgent.equals(savedSession.getUserAgent());
+        boolean returnVal = sessionID.equals(savedSession.getSessionID());
+        boolean returnVal2 = UserAgent.equals(savedSession.getUserAgent());
+        return returnVal && returnVal2;
     }
 
     public boolean isAdmin(HttpSession session) {

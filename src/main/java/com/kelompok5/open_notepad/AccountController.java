@@ -84,6 +84,8 @@ public class AccountController {
         }
         // check if there is another session
         // delete session from database
+        System.out.println(username);
+        System.out.println(sessionDAO.getFromDatabase(username));
         if (sessionDAO.getFromDatabase(username) != null) {
             try {
                 sessionDAO.deleteSession(username);
@@ -99,7 +101,7 @@ public class AccountController {
         String sql = "SELECT isAdmin FROM Accounts WHERE username = ?";
         boolean isAdmin;
         try {
-            isAdmin = jdbcTemplate.queryForObject(sql, new Object[] { username }, (rs, rowNum) -> {
+            isAdmin = jdbcTemplate.queryForObject(sql, new Object[] {username}, (rs, rowNum) -> {
                 return rs.getBoolean("isAdmin");
             });
         } catch (Exception e) {

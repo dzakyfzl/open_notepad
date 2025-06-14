@@ -1,6 +1,7 @@
 package com.kelompok5.open_notepad.DAO;
 
 import java.sql.Date;
+import java.sql.Timestamp;
 import java.util.List;
 import java.util.Map;
 
@@ -31,6 +32,7 @@ public class SessionDAO {
     }
 
     public void deleteSession(String username) {
+        System.out.println("Delete session");
         if(sessionCache != null){
             System.out.println("Get from cache : " + sessionCache.size() + " session in cache");
             for(int i = 0; i < sessionCache.size(); i++){
@@ -49,16 +51,32 @@ public class SessionDAO {
         if(sessionCache != null){
             System.out.println("Get from cache : " + sessionCache.size() + " session in cache");
             for(Map<String,Object> session : sessionCache){
+                Object dateObj = session.get("dateCreated");
+                Date dateCreated;
+                if (dateObj instanceof Timestamp timestamp) {
+                    dateCreated = new Date(timestamp.getTime());
+                } else if (dateObj instanceof Date date) {
+                    dateCreated = date;
+                } else{
+                    throw new IllegalArgumentException("Unsupported date type: " + dateObj.getClass().getName());
+                }
+
                 if(session.get("username").equals(username)){
-                    return new Session((String)session.get("sessionID"),(String)session.get("username"),(String)session.get("userAgent"),(Date)session.get("dateCreated"));
+                    System.out.println("is approved");
+                    Session session1 = new Session((String)session.get("sessionID"),(String)session.get("username"),(String)session.get("userAgent"),dateCreated);
+                    System.out.println(session1.getDateCreated());
+                    return session1;
                 }
             }
+        }else{
+            sessionCache = databaseToCache();
         }
         return null;
     }
 
     private List<Map<String,Object>> databaseToCache() {
-        return jdbcTemplate.queryForList("SELECT * FROM Sessions");
+        List<Map<String,Object>> returnVal = jdbcTemplate.queryForList("SELECT sessionID, username, userAgent, dateCreated FROM Sessions");
+        return returnVal;
     }
 
     @Scheduled(cron = "0 0 0 * * *")
